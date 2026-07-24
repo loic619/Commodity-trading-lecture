@@ -8,7 +8,9 @@ import { useState } from 'react'
 // every wrong reply subtracts its cost.
 const BASE_PNL = 4300
 
-export type Reply = { label: string; delta: number; feedback: string }
+// `label` is the short line shown on the reply button; `full` (optional) is
+// the FORMATTED email actually sent — shown once the reply is chosen.
+export type Reply = { label: string; full?: string; delta: number; feedback: string }
 export type Email = { time: string; from: string; dept: string; subject: string; body: string; replies: Reply[] }
 export type InboxGrade = { label: string; cls: string; box: string }
 
@@ -32,9 +34,15 @@ Linh Pham
 Risk & Product Control — HCM Desk
 Saigon Merchants Co. · +84 28 3915 4410`,
     replies: [
-      { label: 'Confirmed: net flat zero — the 1,200 t sold PTBF stay hedged until the roaster fixes.', delta: 0, feedback: 'Risk signs off. The sold-but-unfixed line is exactly why the hedge is 220 lots, not 100.' },
-      { label: 'We look over-hedged — the 1,200 t are already SOLD. Cut 120 lots.', delta: -12000, feedback: 'You lifted 120 lots at the open; London added $10 before the desk head made you reinstate. −$12,000. A PTBF-unfixed sale floats with London — sold is not fixed.' },
-      { label: 'Looks fine, no time to check — local market is opening.', delta: -1000, feedback: 'Risk escalates the unconfirmed book to the desk head. You spend the afternoon in a meeting that one reply would have avoided. −$1,000 in lost trading time.' },
+      { label: 'Confirmed: net flat zero — the 1,200 t sold PTBF stay hedged until the roaster fixes.',
+        full: `Hi Linh,\n\nConfirmed — book reads net flat zero. The 1,200 t sold PTBF are unfixed, so they stay hedged with the short until the roaster fixes: that is exactly why we run 220 lots and not 100.\n\nSigned off, watching the open.\n\nThanks,`,
+        delta: 0, feedback: 'Risk signs off. The sold-but-unfixed line is exactly why the hedge is 220 lots, not 100.' },
+      { label: 'We look over-hedged — the 1,200 t are already SOLD. Cut 120 lots.',
+        full: `Linh — we look over-hedged: the 1,200 t are SOLD, so I'll lift 120 lots to bring the short back to 100.\n\nDoing it now.`,
+        delta: -12000, feedback: 'You lifted 120 lots at the open; London added $10 before the desk head made you reinstate. −$12,000. A PTBF-unfixed sale floats with London — sold is not fixed.' },
+      { label: 'Looks fine, no time to check — local market is opening.',
+        full: `Linh — looks fine at a glance, local market's opening, I'll check the detail later.`,
+        delta: -1000, feedback: 'Risk escalates the unconfirmed book to the desk head. You spend the afternoon in a meeting that one reply would have avoided. −$1,000 in lost trading time.' },
     ],
   },
   {
@@ -52,9 +60,15 @@ Marc Keller
 Group CFO
 Saigon Merchants Co. — Geneva · +41 22 715 8800`,
     replies: [
-      { label: 'The physical gained the same $95/t on paper — margin is the cash cost of zero price risk. Confirm headroom for another $400/t.', delta: 0, feedback: 'The CFO confirms $880k of headroom. This conversation, had early, is what keeps the hedge alive in a squeeze.' },
-      { label: 'Agreed, it’s bleeding — lift 100 lots until the market calms down.', delta: -15000, feedback: 'You lifted into the rally; London added $15 before you re-hedged. −$15,000, and the book ran naked flat risk all morning. The margin call was never a loss — this is.' },
-      { label: 'Ignore it — the cash comes back at expiry.', delta: -2000, feedback: 'Treasury freezes the credit line pending review. You spend the day trading with one hand tied. −$2,000.' },
+      { label: 'The physical gained the same $95/t on paper — margin is the cash cost of zero price risk. Confirm headroom for another $400/t.',
+        full: `Dear Marc,\n\nIt is not a loss — it is timing. Our physical stock gained the same $95/t the futures lost; variation margin is simply the cash side of a hedge that is working exactly as designed.\n\nWhat I need from you: confirm the revolver has headroom for another ~$400/t of adverse move, so we are never forced to lift the hedge in a squeeze.\n\nBest regards,`,
+        delta: 0, feedback: 'The CFO confirms $880k of headroom. This conversation, had early, is what keeps the hedge alive in a squeeze.' },
+      { label: 'Agreed, it’s bleeding — lift 100 lots until the market calms down.',
+        full: `Marc — agreed, the cash bleed is ugly. I'll lift 100 lots of the short to stop it until the market calms down.`,
+        delta: -15000, feedback: 'You lifted into the rally; London added $15 before you re-hedged. −$15,000, and the book ran naked flat risk all morning. The margin call was never a loss — this is.' },
+      { label: 'Ignore it — the cash comes back at expiry.',
+        full: `Marc — nothing to worry about, the margin comes back to us at expiry. Ignore it.`,
+        delta: -2000, feedback: 'Treasury freezes the credit line pending review. You spend the day trading with one hand tied. −$2,000.' },
     ],
   },
   {
@@ -72,9 +86,15 @@ Duc Tran
 Farmer collector — Dak Lak
 +84 90 345 2211`,
     replies: [
-      { label: 'Counter at 119,500 — settle at 120,200 VND/kg.', delta: 0, feedback: 'Settled 120,200 = $4,714/t = implied Jan −86. Against the FOB bid at −60 that is a +$26/t origination margin on 200 t: +$5,200 booked into today’s P&L.' },
-      { label: 'Accept 121,000 — good coffee is scarce this morning.', delta: -6200, feedback: '121,000 = $4,745/t = implied −55, against an FOB market at −60. You bought ABOVE the market: −$5/t, versus +$26/t available with one counter. −$6,200 against the day.' },
-      { label: 'Decline — the book is full enough.', delta: -5200, feedback: 'Duc sells to your competitor at 120,300. The +$5,200 origination that anchored today’s P&L goes to their book instead.' },
+      { label: 'Counter at 119,500 — settle at 120,200 VND/kg.',
+        full: `Chao anh Duc,\n\nThank you. 121,000 is above my level — I can work at 119,500 to start, and I expect we settle around 120,200 VND/kg.\n\nAt 120,200 (= $4,714/t, implied Jan −86 against the FOB bid at −60) the parcel makes sense for us. Confirm and it's done.\n\nCam on,`,
+        delta: 0, feedback: 'Settled 120,200 = $4,714/t = implied Jan −86. Against the FOB bid at −60 that is a +$26/t origination margin on 200 t: +$5,200 booked into today’s P&L.' },
+      { label: 'Accept 121,000 — good coffee is scarce this morning.',
+        full: `Chao anh Duc — agreed at 121,000 VND/kg, good coffee is tight this week. Booked. Cam on,`,
+        delta: -6200, feedback: '121,000 = $4,745/t = implied −55, against an FOB market at −60. You bought ABOVE the market: −$5/t, versus +$26/t available with one counter. −$6,200 against the day.' },
+      { label: 'Decline — the book is full enough.',
+        full: `Chao anh Duc — thank you, but the book is full enough today. Next time. Cam on,`,
+        delta: -5200, feedback: 'Duc sells to your competitor at 120,300. The +$5,200 origination that anchored today’s P&L goes to their book instead.' },
     ],
   },
   {
@@ -90,9 +110,15 @@ S.
 Sarah Nguyen · Head of Desk, Asia
 sent from mobile`,
     replies: [
-      { label: 'Selling 20 lots Jan now at the pre-open.', delta: 0, feedback: 'Done at 4,800. Book fully hedged again: short 240 lots against 2,400 t of priced-but-unfixed length. Flat risk lived for four minutes.' },
-      { label: 'Holding — the dry-weather story should add another $50 by the close.', delta: -6000, feedback: 'London faded $30 into the London open before you capitulated. −$6,000. The desk rule exists because views belong in the spec book, not the hedge book.' },
-      { label: 'Hedging half, keeping 100 t for the rally.', delta: -3000, feedback: 'The unhedged half cost $30/t: −$3,000. Half a discipline is still a position.' },
+      { label: 'Selling 20 lots Jan now at the pre-open.',
+        full: `Sarah,\n\nHedging it now — selling 20 lots Jan at the pre-open against the 200 t. Book goes flat again: short 240 lots against 2,400 t priced-but-unfixed.\n\nThe long lived four minutes.\n\nDone,`,
+        delta: 0, feedback: 'Done at 4,800. Book fully hedged again: short 240 lots against 2,400 t of priced-but-unfixed length. Flat risk lived for four minutes.' },
+      { label: 'Holding — the dry-weather story should add another $50 by the close.',
+        full: `Sarah — holding the 200 t unhedged for now, the dry-weather story should add ~$50 into the close. I'll hedge higher.`,
+        delta: -6000, feedback: 'London faded $30 into the London open before you capitulated. −$6,000. The desk rule exists because views belong in the spec book, not the hedge book.' },
+      { label: 'Hedging half, keeping 100 t for the rally.',
+        full: `Sarah — compromise: hedging 100 t now, keeping 100 t long for the rally.`,
+        delta: -3000, feedback: 'The unhedged half cost $30/t: −$3,000. Half a discipline is still a position.' },
     ],
   },
   {
@@ -110,9 +136,15 @@ Head of Green Coffee Buying
 Brandt & Söhne Kaffeerösterei GmbH · Hamburg
 T +49 40 3609 7100`,
     replies: [
-      { label: 'EFP at 4,760 — one registered transaction, 30 of my short lots transfer to you.', delta: 0, feedback: 'Invoice fixes at 4,760 + diff; your hedge drops to 210 lots against 2,100 t unfixed — the hedge tracks unfixed length tonne for tonne. Zero slippage.' },
-      { label: 'I’ll buy my futures back on screen, you fix separately.', delta: -2400, feedback: 'The market ticked $8 between your buy-back and their fixing. −$2,400 — exactly the legging gap the EFP exists to remove.' },
-      { label: 'Let’s do the paperwork later this week.', delta: -1500, feedback: 'The fixing deadline squeezed the execution and annoyed a good counterparty: −$1,500 and a colder phone line next season.' },
+      { label: 'EFP at 4,760 — one registered transaction, 30 of my short lots transfer to you.',
+        full: `Dear Mr Brandt,\n\nWe will fix your 300 t via an EFP at 4,760: one registered exchange-for-physical transaction, 30 of our short lots transfer to you against the physical.\n\nYour invoice fixes at 4,760 + the agreed differential; our hedge steps down to 210 lots. No legging, no slippage.\n\nBest regards,`,
+        delta: 0, feedback: 'Invoice fixes at 4,760 + diff; your hedge drops to 210 lots against 2,100 t unfixed — the hedge tracks unfixed length tonne for tonne. Zero slippage.' },
+      { label: 'I’ll buy my futures back on screen, you fix separately.',
+        full: `Dear Mr Brandt — I'll buy my 30 lots back on the screen and you fix your 300 t separately on your side. Best regards,`,
+        delta: -2400, feedback: 'The market ticked $8 between your buy-back and their fixing. −$2,400 — exactly the legging gap the EFP exists to remove.' },
+      { label: 'Let’s do the paperwork later this week.',
+        full: `Dear Mr Brandt — no problem, let's handle the fixing paperwork later this week when things are calmer. Best regards,`,
+        delta: -1500, feedback: 'The fixing deadline squeezed the execution and annoyed a good counterparty: −$1,500 and a colder phone line next season.' },
     ],
   },
   {
@@ -133,9 +165,15 @@ Pieter Janssens
 Sales & Operations — Antwerp office
 Saigon Merchants Europe BV`,
     replies: [
-      { label: 'Offer 200 t at +130 — and book the freight NOW while the offer works.', delta: 0, feedback: 'The +130 offer trades before the close (+$43/t landed) and the freight is locked at $72. An unbooked freight quote is an open position — you closed it.' },
-      { label: 'Offer at +130, hold the freight — rates might ease after Tet.', delta: -2400, feedback: 'The offer traded, but next week the box costs $84. −$12/t on 200 t = −$2,400: you earned the diff and gave a third of it back to the forwarder.' },
-      { label: 'Hit the +125 bid now, sort freight tomorrow.', delta: -3400, feedback: 'You left $5/t on the table (−$1,000) and tomorrow’s freight costs $12 more (−$2,400). Speed is not the same thing as execution.' },
+      { label: 'Offer 200 t at +130 — and book the freight NOW while the offer works.',
+        full: `Pieter,\n\nTwo instructions:\n1. Offer the 200 t instore Antwerp at +130 (the buyer is at +125, we lift a touch).\n2. Book the $72 freight NOW, today, while the quote is live — an unbooked freight quote is an open position.\n\nLock both. Cheers,`,
+        delta: 0, feedback: 'The +130 offer trades before the close (+$43/t landed) and the freight is locked at $72. An unbooked freight quote is an open position — you closed it.' },
+      { label: 'Offer at +130, hold the freight — rates might ease after Tet.',
+        full: `Pieter — offer the 200 t at +130. Hold off booking the freight though; box rates may ease after Tet. Cheers,`,
+        delta: -2400, feedback: 'The offer traded, but next week the box costs $84. −$12/t on 200 t = −$2,400: you earned the diff and gave a third of it back to the forwarder.' },
+      { label: 'Hit the +125 bid now, sort freight tomorrow.',
+        full: `Pieter — just hit the +125 bid now to lock the sale; we'll sort the freight tomorrow. Cheers,`,
+        delta: -3400, feedback: 'You left $5/t on the table (−$1,000) and tomorrow’s freight costs $12 more (−$2,400). Speed is not the same thing as execution.' },
     ],
   },
   {
@@ -151,9 +189,15 @@ Linh Pham
 Risk & Product Control — HCM Desk
 Saigon Merchants Co.`,
     replies: [
-      { label: 'Flat $0 (fully hedged) · basis +$2,000 (diff −60→−58 on 1,000 t open) · origination +$5,200 · costs −$2,900 → +$4,300.', delta: 0, feedback: 'Signed. The flat line reads zero BY DESIGN — every dollar today came from differentials. That decomposition is what this desk is paid for.' },
-      { label: 'Book +$209,000 — the stock gained on the rally.', delta: -2000, feedback: 'Risk unwinds it in five minutes: the stock’s gain is offset by the hedge, that’s the point. Misreporting flat P&L on a hedged book earns you a warning letter. −$2,000 (compliance review).' },
-      { label: 'P&L is up, details tomorrow — catching my ride.', delta: -1000, feedback: 'The report is the product. Risk files a late-report note; your limit request next month just got harder. −$1,000.' },
+      { label: 'Flat $0 (fully hedged) · basis +$2,000 (diff −60→−58 on 1,000 t open) · origination +$5,200 · costs −$2,900 → +$4,300.',
+        full: `Linh — EOD P&L, decomposed:\n\n· Flat (fully hedged):   $0\n· Basis:                +$2,000  (diff −60 → −58 on 1,000 t open)\n· Origination:          +$5,200  (the Dak Lak parcel)\n· Costs:                −$2,900\n─────────────────────────────\n· NET:                  +$4,300\n\nThe flat line is zero BY DESIGN — every dollar came from differentials. Positions within limits. Signing off.\n\nThanks,`,
+        delta: 0, feedback: 'Signed. The flat line reads zero BY DESIGN — every dollar today came from differentials. That decomposition is what this desk is paid for.' },
+      { label: 'Book +$209,000 — the stock gained on the rally.',
+        full: `Linh — great day: booking +$209,000, the stock gained $95/t on the rally. Report attached.`,
+        delta: -2000, feedback: 'Risk unwinds it in five minutes: the stock’s gain is offset by the hedge, that’s the point. Misreporting flat P&L on a hedged book earns you a warning letter. −$2,000 (compliance review).' },
+      { label: 'P&L is up, details tomorrow — catching my ride.',
+        full: `Linh — P&L's up on the day, I'll send the full decomposition first thing tomorrow. Catching my ride.`,
+        delta: -1000, feedback: 'The report is the product. Risk files a late-report note; your limit request next month just got harder. −$1,000.' },
     ],
   },
 ]
@@ -241,8 +285,8 @@ export function InboxSim({ emails, base, header, baseLine, grades }: {
           ) : (
             <div className="mt-4 space-y-2">
               <div className={`rounded-lg border p-2.5 text-xs ${email.replies[answer].delta === 0 ? 'border-emerald-500/30 bg-emerald-500/[0.05]' : 'border-rose-500/30 bg-rose-500/[0.05]'}`}>
-                <span className="font-mono text-[10px] text-slate-500">You replied: </span>
-                <span className="text-slate-200">{email.replies[answer].label}</span>
+                <div className="mb-1 font-mono text-[10px] text-slate-500">You replied:</div>
+                <div className="whitespace-pre-line leading-relaxed text-slate-200">{email.replies[answer].full ?? email.replies[answer].label}</div>
               </div>
               <div className="rounded-lg border border-white/10 bg-white/[0.02] p-2.5 text-xs leading-relaxed text-slate-400">
                 <span className={`font-mono font-bold ${email.replies[answer].delta === 0 ? 'text-emerald-300' : 'text-rose-300'}`}>

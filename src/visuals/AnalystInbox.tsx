@@ -1,152 +1,341 @@
 'use client'
 
 import { InboxSim, type Email, type InboxGrade } from './TraderInbox'
+import { robustaContracts, cashAndCarry, CC, addDays, addMonths, longDate, shortDate, type Rc } from '@/lib/robustaCalendar'
 
-// Module 1's "Day in the Life": the JUNIOR's first day. No hedging yet —
-// every email tests a concept taught in this module: margin & the clearing
-// house, the order book, news lags & flash traps, cash-and-carry structure,
-// who the players are, stocks-to-use convexity, and what a deliverable
-// contract really means. A clean day banks the small speculative book's
-// +$2,000; every wrong reply costs what it would really cost.
+// Module 1's "Day in the Life": the junior's first day, one real trading day
+// from the opening bell to the close. The contract months and shipment dates
+// adapt to whenever the class is run (see robustaCalendar), so students can
+// picture themselves at the desk today. Every email is a Module 1 concept in
+// work clothes; the day builds to a cash-and-carry rescue of a losing
+// speculative position. A clean day banks +$2,000 (the rescue's gain).
 const BASE_PNL = 2000
 
-const EMAILS: Email[] = [
-  {
-    time: '06:45', from: 'Linh Pham', dept: 'Risk', subject: 'Overnight margin call — confirm the wire',
-    body: `Morning,
+function buildEmails(now: Date): Email[] {
+  const [front, second, third] = robustaContracts(now, 3)
+  const cc = cashAndCarry()
+  const ship1 = shortDate(addDays(now, 15))
+  const ship2 = shortDate(addMonths(now, 1))
+  const ship3 = shortDate(addMonths(now, 2))
+  const today = longDate(now)
 
-Welcome aboard. First job of the day.
+  return [
+    // ── 1. Pre-market: the position you inherit ──────────────────────────
+    {
+      time: '06:30', from: 'Linh Pham', dept: 'Risk', subject: `Position sheet — ${today}`,
+      body: `Morning, and welcome to the desk.
 
-The training book you inherited is SHORT 20 lots of London (200 t) from Friday. Overnight the market rallied $150/t on dry-weather headlines.
+Here is the book you are watching today. Pre-market is quiet — a whisker of contango on the curve, nothing dramatic.
 
-The clearing bank has called variation margin this morning. Please confirm the amount so treasury can wire before 09:00.
+We hold 1,000 t of Robusta in stock, ALL hedged and ALL already sold forward — so there is no open price risk on the physical. The three shipment tranches:
+
+· 50 t — ship prompt, by ${ship1} · hedged on ${front.label}
+· 500 t — ship next month, around ${ship2} · hedged on ${second.label}
+· 450 t — ship in two months, around ${ship3} · hedged on ${third.label}
+
+Please confirm you have read the book before the market opens.
 
 Best regards,
 Linh Pham
 Risk & Product Control — HCM Desk
 Saigon Merchants Co. · +84 28 3915 4410`,
-    replies: [
-      { label: 'Wire $30,000 — 20 lots × 10 t × $150 against our short.', delta: 0, feedback: 'Correct: 20 lots × 10 t/lot × $150/t = $30,000 of variation margin. Cash leaves today; it comes back if the market does. Margin is the price of a guaranteed promise.' },
-      { label: 'Wire $3,000 — 20 lots × $150.', delta: -1500, feedback: 'You forgot the lot size: a lot is 10 TONNES. Treasury wired short, the clearer issued a default warning, and Risk spent the morning fixing your arithmetic. −$1,500 in credibility (and fees).' },
-      { label: 'Nothing to pay — the clearing house guarantees the trade, that’s their problem.', delta: -2500, feedback: 'The guarantee works BECAUSE both sides post margin — that is the 1865 invention. Refusing a margin call is a default. The broker liquidated 5 of your lots before Risk intervened. −$2,500.' },
-    ],
-  },
-  {
-    time: '08:10', from: 'David Okafor', dept: 'Broker — London', subject: 'Fill report: your 40 lots came back at three prices',
-    body: `Hi,
+      replies: [
+        {
+          label: 'Confirmed — book is fully hedged and sold, zero open price risk. Nothing to do.',
+          full: `Hi Linh,
 
-Your market order this morning: BUY 40 lots.
+Read and confirmed. All 1,000 t are hedged and pre-sold, so the flat-price column nets to ZERO — we own the basis, not the price. Tranches noted: 50 t prompt on ${front.short}, 500 t on ${second.short}, 450 t on ${third.short}.
 
-Fill: 10 lots @ 4,800 · 20 lots @ 4,805 · 10 lots @ 4,810. Average 4,805.
+No action required. Watching the screen from the open.
 
-Your desk head asked me to have you explain the three prices before lunch. His words, not mine.
+Thanks,`,
+          delta: 0,
+          feedback: 'Correct: a hedged-and-sold book carries no flat-price risk. The only directional risk on this desk today is whatever YOU put on — remember that this afternoon.',
+        },
+        {
+          label: 'We look exposed long 1,000 t — should we sell futures to cover?',
+          full: `Hi Linh,
+
+We are long 1,000 t of physical — shouldn't we sell 100 lots of futures to hedge the exposure before the open?
+
+Let me know,`,
+          delta: -2000,
+          feedback: `The book is ALREADY hedged and sold — selling another 100 lots would make you net SHORT 1,000 t, a brand-new naked position. You misread "hedged" as "unhedged." Risk unwinds it, but not before the open moved. −$2,000.`,
+        },
+        {
+          label: 'Skim it — a position sheet is just back-office paperwork.',
+          full: `Linh — got it, will look properly later. Chasing the open.`,
+          delta: -800,
+          feedback: 'The position sheet is the one document that tells you what you can and cannot do all day. Skip it and you will misjudge the afternoon’s decision. Risk flags the unconfirmed book to the desk head. −$800.',
+        },
+      ],
+    },
+
+    // ── 2. Pre-market: the margin call ───────────────────────────────────
+    {
+      time: '07:10', from: 'David Okafor', dept: 'Broker — London', subject: 'Variation margin call — yesterday’s rally',
+      body: `Good morning,
+
+London settled up $150/t yesterday. Against your SHORT hedge of 100 lots, that is a variation-margin call this morning.
+
+Please confirm the amount with your treasury so we can debit before the 09:00 cut-off.
 
 Regards,
 David Okafor
 Execution Desk
 Marlowe & Cie — London · +44 20 7488 3200`,
-    replies: [
-      { label: 'A 40-lot market order WALKS the book: 4,800 had 10 lots of depth, the rest filled deeper. Next time I work it in clips or use a limit.', delta: 0, feedback: 'Exactly. The screen price is the price of the FIRST lot only — size pays for immediacy. The desk head nods and moves on.' },
-      { label: 'Dispute the fill — the screen showed 4,800 when I clicked.', delta: -1200, feedback: 'The broker sends the order-book snapshot: 10 lots bid at 4,800, that is all you were owed at that price. You disputed your own market order. −$1,200 in review time and a colder line to London.' },
-      { label: 'It must be the exchange fee added per clip.', delta: -800, feedback: 'Fees are billed separately and are cents, not dollars. Confusing depth with fees in front of the desk head costs you the afternoon and −$800 of his patience.' },
-    ],
-  },
-  {
-    time: '10:20', from: 'Sarah Nguyen', dept: 'Desk head', subject: 'FROST tweet — screen +300 in 40 seconds. Doing anything?',
-    body: `Screen just spiked $300 on a frost alert going around — one unverified account, no agency confirmation, no met-office data.
+      replies: [
+        {
+          label: 'Wire $150,000 — 100 lots × 10 t × $150. It is offset by the physical gain.',
+          full: `David,
 
-You are flat. Doing anything?
+Confirmed: 100 lots × 10 t/lot × $150/t = $150,000 variation margin — treasury will wire before the cut-off.
 
-S.
-—
-Sarah Nguyen · Head of Desk, Asia
-sent from mobile`,
-    replies: [
-      { label: 'Nothing yet — unconfirmed flashes revert. If the met office confirms, the price will DRIFT and HOLD, and there will be time to act.', delta: 0, feedback: 'The spike retraced fully in a minute — position-driven, not news-driven. Real news is absorbed with a lag and holds its new level; traps spike and revert. You kept your capital and your credibility.' },
-      { label: 'Buying 20 lots NOW — frost is bullish and I refuse to miss it.', delta: -4000, feedback: 'You bought the top of a fake. The tweet was deleted, the spike fully retraced, and you stopped out −$20/t on 200 t. −$4,000. The tape punishes positions taken before thinking.' },
-      { label: 'Selling short — spikes always come back down.', delta: -1000, feedback: 'It worked this time — and Sarah made you close it immediately: "always" is not a risk framework, and if the frost had been REAL you would have been short a limit-up market. Fined a symbolic −$1,000 for the right result with the wrong reasoning.' },
-    ],
-  },
-  {
-    time: '11:45', from: 'Anke Vermeulen', dept: 'C. Steinweg — Warehousing', subject: 'Updated Antwerp tariff: coffee warehousing $10/t/month',
-    body: `Dear all,
+To be clear for the file: this is NOT a loss. The physical stock gained the same $150/t on paper; margin is simply the cash timing of a hedge that is working. We have the funding line for it.
 
-Please find our updated Antwerp tariff for green coffee, effective the 1st:
+Thanks,`,
+          delta: 0,
+          feedback: 'Correct: 100 × 10 × 150 = $150,000. And the key point stated — the hedge losing on the futures leg means the physical is winning by the same amount. Margin is a cash-flow event, not a P&L event.',
+        },
+        {
+          label: 'Wire $15,000 — 100 lots × $150.',
+          full: `David — please debit $15,000 (100 lots × $150). Thanks,`,
+          delta: -1500,
+          feedback: 'You dropped the lot size: a lot is 10 TONNES, so the call is $150,000, not $15,000. Treasury wired short, the clearer issued a shortfall notice, and Risk spent the morning on the phone. −$1,500 in fees and credibility.',
+        },
+        {
+          label: 'Push back — a hedged book should not be bleeding cash, cut the hedge.',
+          full: `David — hold on. Why is a HEDGED book costing us margin? I would rather lift some of the short than keep wiring cash.
 
-· Storage, handling & insurance, all-in: USD 10.00 per tonne per month
-· Certified (exchange-approved) space currently AVAILABLE
-· Weighbridge, sampling and re-bagging on request
+Let me think about it.`,
+          delta: -3000,
+          feedback: 'Lifting the hedge into the rally is exactly the Ashanti mistake: you would turn a cash-flow event into a real naked loss, and the physical it protected is still sitting in the warehouse. The desk head vetoes it. −$3,000.',
+        },
+      ],
+    },
 
-We remain at your disposal for any delivery or storage programme.
+    // ── 3. Morning: the warehouse tariff ─────────────────────────────────
+    {
+      time: '08:15', from: 'Anke Vermeulen', dept: 'C. Steinweg — Warehousing', subject: 'Rate card — valid 6 months',
+      body: `Dear all,
+
+Our rates for the coming six months, green coffee:
+
+· Storage, handling & insurance (instore, exchange-approved): USD 5.00 per tonne per month
+· Ocean logistics FOB Ho Chi Minh City → instore Antwerp: USD 180 per tonne · transit time 60 days
+· Certified delivery space currently AVAILABLE
+
+At your disposal for any storage or delivery programme.
 
 Met vriendelijke groet,
 Anke Vermeulen
 Commercial Desk
 C. Steinweg Group — Antwerp · +32 3 545 8800`,
-    replies: [
-      { label: 'File the rate and reply with thanks — carry numbers decide delivery questions, and one may land today.', delta: 0, feedback: 'Filed: $10/t/month, all-in, certified space available. A warehouse tariff is never junk mail on a futures desk — storage + finance against the spread IS market structure, with an invoice attached.' },
-      { label: 'Ignore — we trade futures, this is warehouse spam.', delta: -500, feedback: 'Deleted at 11:46. At 17:15 a delivery question landed that needed exactly this number, and you asked Steinweg to resend the tariff after their Antwerp office had closed. −$500 of scrambling.' },
-      { label: 'Reply asking for a discount before we have any business to store.', delta: -300, feedback: 'Steinweg politely points out the tariff is already the group rate. Negotiating with nothing to store weakens the call you will need to make when you DO have tonnage. −$300 of goodwill.' },
-    ],
-  },
-  {
-    time: '13:30', from: 'Duc Tran', dept: 'Supplier — Dak Lak', subject: 'Question from my cooperative',
-    body: `Chao anh,
+      replies: [
+        {
+          label: 'File both numbers — storage $5/t/mo and the $180/t re-ship cost decide two calls today.',
+          full: `Dear Anke,
 
-My cooperative asks: the roasters in Europe hedge on London, your company hedges on London. Why do we farmers not hedge? Should we?
+Received with thanks and filed:
+· Storage $5/t/month, instore, certified space available
+· FOB HCMC → instore Antwerp $180/t, 60-day transit
 
-I want to give them a serious answer.
+Both noted for the desk. We may call on the certified space shortly.
 
-Cam on,
-Duc Tran
-Farmer collector — Dak Lak
-+84 90 345 2211`,
-    replies: [
-      { label: 'Honestly: a 10 t lot size, USD margin calls and a futures account are out of reach for a 2-hectare farm — that is exactly the gap trade houses and cooperatives bridge, by hedging in size on your behalf.', delta: 0, feedback: 'The honest structural answer. Smallholders cannot post daily USD variation margin on their crop; intermediaries aggregate, hedge and pass a firmer price back. Duc reads it to the cooperative — the relationship deepens.' },
-      { label: 'Farmers should not hedge — prices always recover eventually.', delta: -1500, feedback: 'Tell that to anyone who sold the 2019 lows. "It recovers eventually" is not a treasury plan when the school fees are due at harvest. Duc expected better; the answer travels round the province. −$1,500 in origination goodwill.' },
-      { label: 'They can just download a trading app and short one lot each.', delta: -1000, feedback: 'One lot is 10 t — most of a smallholder’s crop — and the margin account needs USD liquidity they do not have. The cooperative tried, got margin-called in week two, and Duc’s phone rang. −$1,000.' },
-    ],
-  },
-  {
-    time: '15:05', from: 'Sophie Laurent', dept: 'Research', subject: 'Stocks-to-use revision: 28% → 16%',
-    body: `Second note today, more important.
+Best regards,`,
+          delta: 0,
+          feedback: 'Exactly right to keep BOTH. The $5/t/month storage will price a cash-and-carry this afternoon; the $180/t re-ship cost will decide what to do with a rejected parcel at 11:05. A rate card is live ammunition on a physical desk.',
+        },
+        {
+          label: 'Ignore — we trade futures, warehouse rates are not our problem.',
+          full: `Anke — thanks, will keep on file. (Deleted.)`,
+          delta: -600,
+          feedback: 'Deleted at 08:16. By 11:05 and again at 16:50 you needed exactly these numbers and had to ask Steinweg to resend after Antwerp had closed. On a physical desk, carry costs ARE the market. −$600 of scrambling.',
+        },
+        {
+          label: 'Reply haggling for a discount before we have anything to store.',
+          full: `Anke — these look high. Can you do $3/t/month? We move a lot of volume.
 
-Our balance sheet revision puts world robusta stocks-to-use at 16% for next season, down from 28%.
+Regards,`,
+          delta: -300,
+          feedback: 'Steinweg notes the card is already the group rate, and you have spent goodwill you will want intact when you DO need certified space this afternoon. −$300.',
+        },
+      ],
+    },
 
-Management asks: same size of weather shock next year — same size of price move?
+    // ── 4. ~11:00: quality rejection at Le Havre ─────────────────────────
+    {
+      time: '11:05', from: 'Isabelle Moreau', dept: 'Customer QC — Le Havre', subject: 'REJECTION: 100 t, quality out of spec',
+      body: `Dear Sirs,
 
-Sophie Laurent
-Research & Analytics
-Saigon Merchants Co. — Geneva`,
-    replies: [
-      { label: 'No — price response is CONVEX in tightness: at 16% there is no buffer, so the same shock moves price far more. Flag the regime change to the desk.', delta: 0, feedback: 'The scatter you studied says exactly this: below ~20% stocks-to-use, price sensitivity explodes. Same news, thinner cushion, bigger move. The desk raises its risk numbers before the market teaches it the hard way.' },
-      { label: 'Same shock, same move — supply and demand are linear.', delta: -2000, feedback: 'They are not. With no inventory buffer, demand must be rationed by PRICE, and rationing is violent. The desk kept old volatility assumptions and got caught by the first weather scare. −$2,000.' },
-      { label: 'Lower stocks mean lower prices — less to sell, less business.', delta: -1500, feedback: 'Backwards: scarce stocks make what remains MORE valuable, not less. Research quietly forwards you the S&D slides again. −$1,500.' },
-    ],
-  },
-  {
-    time: '17:15', from: 'Linh Pham', dept: 'Risk', subject: 'DECISION NEEDED: long Jan lots entering the delivery period',
-    body: `Before you leave — this cannot wait until tomorrow.
+On inspection at Le Havre, 100 t of your delivery fails our contractual quality spec (excess moisture / defect count). We are rejecting the parcel.
 
-The training book is LONG 10 January lots (100 t) and January enters its delivery period soon. This contract is PHYSICALLY DELIVERABLE. Three ways out — pick one:
+The coffee is landed at Le Havre and is now yours to dispose of. Please advise your instructions to the port.
 
-1. TAKE DELIVERY — pay full value, receive certified warrants in an exchange warehouse.
-2. ROLL to March — the structure is a $80/t CONTANGO to the next contract (sell Jan, buy Mar above it). The bank charges 8% p.a. on the initial margin we keep posting.
-3. CLOSE — sell the lots now and realize the open profit of about +$10/t.
+Regards,
+Isabelle Moreau
+Quality Assurance
+(customer — Le Havre)`,
+      replies: [
+        {
+          label: `Grade it and TENDER it into the expiring ${front.short} contract at Le Havre — take the tender loss, it beats shipping it home.`,
+          full: `To operations, cc risk:
 
-Your screen: Jan 4,800 · Mar 4,880. I believe a warehouse tariff circulated this morning.
+The 100 t rejected at Le Havre — do NOT ship it back. Le Havre is an exchange delivery port and ${front.short} is about to enter its delivery period.
 
-Thanks,
-Linh Pham
-Risk & Product Control — HCM Desk
-Saigon Merchants Co.`,
-    replies: [
-      { label: 'Take delivery AND sell March against it — cash and carry: earn the $80 contango, pay 2 × $10 Steinweg storage and ~$8 of 8% financing ≈ +$52/t locked, whatever prices do.', delta: 0, feedback: 'The morning email was the clue: with storage at $10/t/month, the $80 contango pays the carry roughly twice over. You take warrants, sell Mar at 4,880, redeliver in March — ≈ +$52/t locked on 100 t versus +$10/t for closing. Risk signs with a note: "read his mail before lunch."' },
-      { label: 'Roll to March — stay long, the trend is our friend.', delta: -2500, feedback: 'You PAID the $80/t contango to keep the position, and the bank keeps charging 8% on the margin — you paid the very carry the warehouse would have PAID YOU to collect. The desk head circles the two emails, 11:45 and 17:15, and staples them together. −$2,500.' },
-      { label: 'Close for +$10/t — never hold a deliverable contract into the notice period.', delta: -1500, feedback: 'Safe, clean — and ≈ $42/t light. "Never take delivery" is a rule for desks with no warehouse tariff in their inbox; you had one since 11:45. Banking +$10 while the structure pays +$52 is how carry desks eat speculators. −$1,500.' },
-    ],
-  },
-]
+Instructions: have the parcel graded at Le Havre and TENDER it into ${front.short}. We will take a modest loss to the tender price, but that is far cheaper than the $180/t re-ship home plus re-handling. The exchange is the buyer of last resort — use it.
+
+Please action today.`,
+          delta: 0,
+          feedback: 'The exact "buyer of last resort" lesson in the wild: the coffee is already at a delivery port with a contract expiring, so grade it and deliver it into the exchange. The tender price is below what we hoped, but re-shipping home at $180/t would cost far more. Minimise the loss, do not chase the lost sale.',
+        },
+        {
+          label: 'Ship the 100 t back to origin and re-sell it there.',
+          full: `To operations:
+
+Book freight to send the rejected 100 t back to Ho Chi Minh City; we will re-sell it into the local market.
+
+Thanks,`,
+          delta: -3000,
+          feedback: 'Re-shipping is the expensive option: ~$180/t ocean freight home plus re-handling and weeks of delay — on coffee you would sell at a discount anyway. Tendering it into the expiring contract at Le Havre would have capped the loss. −$3,000 of avoidable cost.',
+        },
+        {
+          label: 'Leave it on the quay and argue the rejection with the customer.',
+          full: `Isabelle — we dispute this rejection and will revert once we have reviewed the inspection certificate.
+
+Regards,`,
+          delta: -1500,
+          feedback: 'Fighting a documented quality rejection rarely wins, and every day the parcel sits on the quay bleeds demurrage while the deliverable contract ticks toward expiry. You lose the tender window. −$1,500.',
+        },
+      ],
+    },
+
+    // ── 5. Market open: the speculative order ────────────────────────────
+    {
+      time: '15:45', from: 'Marco Rossi', dept: 'Trader — prop', subject: 'Buy 10 lots for me at market',
+      body: `London just opened. I want a small directional long — buy me 10 lots at market, on the MOST NEARBY contract (best liquidity for a quick in-and-out).
+
+Just execute and confirm which contract you hit.
+
+Marco`,
+      replies: [
+        {
+          label: `Bought 10 lots ${front.label} at market — the front, most nearby.`,
+          full: `Marco,
+
+Done: bought 10 lots of ${front.label} at market — the front month, as asked. Fill confirmed, position booked and stamped.
+
+Heads up: ${front.short} is close to its delivery period, so this is a short-fuse long.
+
+Confirmed,`,
+          delta: 0,
+          feedback: `Correct instrument: "most nearby" = the front contract, ${front.short}. You executed exactly the order and flagged that the front is near delivery — which is about to matter.`,
+        },
+        {
+          label: `Bought 10 lots ${second.label} — more room before expiry, safer.`,
+          full: `Marco — bought you 10 lots of ${second.label} instead; the front is close to delivery so I gave it more room.
+
+Marco did not ask for this.`,
+          delta: -800,
+          feedback: `You second-guessed the order. Marco asked for the MOST NEARBY contract (${front.short}) for its liquidity; you put him in ${second.short}, a different instrument with a different basis. Execute the order given, then raise concerns. −$800.`,
+        },
+        {
+          label: `Bought 10 lots ${third.label} — furthest out, least delivery risk.`,
+          full: `Marco — went with ${third.label} to keep well clear of any delivery period.
+
+Confirmed.`,
+          delta: -800,
+          feedback: `Not the order. "Most nearby" is the front (${front.short}); ${third.short} is a deferred contract Marco never asked for, with its own liquidity and basis. −$800 for mis-execution.`,
+        },
+      ],
+    },
+
+    // ── 6. Risk warning: neutralise the directional risk ─────────────────
+    {
+      time: '16:20', from: 'Linh Pham', dept: 'Risk', subject: `${front.short} entering delivery — neutralise the directional risk`,
+      body: `Flagging: the 10 lots Marco just bought are on ${front.short}, which is entering its delivery period shortly. We do NOT want a naked directional position running into the notice period — that is how a speculative long turns into an accidental delivery.
+
+Please find the cleanest way OUT of the directional risk before the close. Options exist that are better than a straight cut. Come back to me.
+
+Linh`,
+      replies: [
+        {
+          label: 'On it — I will find the cheapest exit rather than just cutting blindly.',
+          full: `Linh,
+
+Understood — I will not carry a naked long into ${front.short}'s notice period. Before I hit the bid, let me check the structure: if the front→second spread has moved, there may be a carry trade that beats a straight cut. Back to you in a few minutes.`,
+          delta: 0,
+          feedback: 'The right instinct: acknowledge the delivery risk, but do not panic-cut before checking whether the curve offers a better exit. That check is about to pay off.',
+        },
+        {
+          label: 'Ignore it — futures cash-settle, we will just let it expire.',
+          full: `Linh — it's only 10 lots, London futures settle in cash at expiry. I'll leave it.
+
+Marco`,
+          delta: -2500,
+          feedback: 'Robusta is PHYSICALLY deliverable. Left into the notice period, a long can be assigned delivery — 100 t of coffee and a warehouse invoice you never planned for. Never let a deliverable long drift. −$2,500.',
+        },
+        {
+          label: 'Cut all 10 lots at market right now, whatever the price.',
+          full: `Linh — cutting the 10 lots at market immediately to kill the risk.`,
+          delta: -1500,
+          feedback: 'Cutting kills the risk but throws away the option. Risk asked for the CHEAPEST exit, not the fastest — and the curve is about to offer a far better one. Panic-cutting locks the loss you were about to escape. −$1,500.',
+        },
+      ],
+    },
+
+    // ── 7. The spread blows out: cash-and-carry rescue ───────────────────
+    {
+      time: '16:50', from: 'Marco Rossi', dept: 'Trader — prop', subject: `My ${front.short} long is under water — what do we do?`,
+      body: `The tape just moved against me. ${front.short} is DOWN $${CC.drop}/t from where you bought it — I'm sitting on about −$${Math.abs(cc.cutLossTotal).toLocaleString('en-US')} on the 10 lots.
+
+But look at the curve: ${second.short} JUMPED $70/t. The front→second spread has blown out to $${CC.spread}/t.
+
+Risk wants me flat before the close. Do I just eat the loss? You have the desk's numbers — what's the play?
+
+Marco`,
+      replies: [
+        {
+          label: `Cash-and-carry: take delivery of ${front.short}, sell ${second.short} at +$${CC.spread}, store & finance 2 months → net +$${cc.netPerT}/t (+$${cc.netTotal.toLocaleString('en-US')}). Turns the loss into a gain.`,
+          full: `Marco,
+
+Don't eat it — carry it. The blown-out spread is an opportunity:
+
+· Take delivery of your 10 long ${front.short} lots (100 t) — we have certified space at Steinweg.
+· Sell 10 lots of ${second.short} at the +$${CC.spread}/t spread, and deliver the physical into it in two months.
+
+The maths, on the desk's real numbers:
+  spread captured        +$${CC.spread}/t
+  less our nearby loss   −$${CC.drop}/t
+  less storage (2×$5)    −$${cc.storage}/t
+  less financing (8%,2mo) −$${cc.financing}/t
+  ─────────────────────────────
+  NET                    +$${cc.netPerT}/t  =  +$${cc.netTotal.toLocaleString('en-US')} on 100 t
+
+So instead of crystallising −$${Math.abs(cc.cutLossTotal).toLocaleString('en-US')}, we lock +$${cc.netTotal.toLocaleString('en-US')} — risk-free, and the position is FLAT into the notice period. Executing now.`,
+          delta: 0,
+          feedback: `The rescue. The contango ($${CC.spread}) more than pays the carry ($${cc.storage} storage + $${cc.financing} financing) plus the $${CC.drop} already lost — net +$${cc.netPerT}/t. You take delivery of the long, sell the second contract, and deliver into it: a −$${Math.abs(cc.cutLossTotal).toLocaleString('en-US')} loss becomes a +$${cc.netTotal.toLocaleString('en-US')} gain, and the book is flat. This is what "carry" means with an invoice attached.`,
+        },
+        {
+          label: `Just cut the 10 lots and take the −$${Math.abs(cc.cutLossTotal).toLocaleString('en-US')}.`,
+          full: `Marco — simplest is cleanest. Cutting the 10 lots at market, taking the −$${Math.abs(cc.cutLossTotal).toLocaleString('en-US')}. At least we're flat.
+
+Done.`,
+          delta: -4000,
+          feedback: `Flat, yes — but you crystallised −$${Math.abs(cc.cutLossTotal).toLocaleString('en-US')} when the curve was handing you +$${cc.netTotal.toLocaleString('en-US')} for the same flat outcome. The cash-and-carry was risk-free money left on the table. Swing versus the right answer: −$4,000.`,
+        },
+        {
+          label: 'Keep the long and add a made-up physical short to "offset" it.',
+          full: `Marco — let's hold the long and I'll book an offsetting physical short against it so we're covered.
+
+Marco`,
+          delta: -5000,
+          feedback: `There is no physical short to book — inventing one is a fictional hedge that leaves you actually still long, naked, into ${front.short}'s notice period. The exchange assigns you delivery; operations scrambles for 100 t of storage you did not plan. The worst of every option. −$5,000.`,
+        },
+      ],
+    },
+  ]
+}
 
 function gradeAnalyst(total: number, base: number): InboxGrade {
   if (total >= base) return { label: 'Clean first day — the desk head asks Risk where they found you', cls: 'text-emerald-300', box: 'border-emerald-500/30 bg-emerald-500/[0.08]' }
@@ -154,63 +343,60 @@ function gradeAnalyst(total: number, base: number): InboxGrade {
   return { label: 'Day one ended in Risk’s office — the concepts are in Module 1, all of them', cls: 'text-rose-300', box: 'border-rose-500/40 bg-rose-500/[0.10]' }
 }
 
-// The screen above the inbox: the next five London contracts. The prices
-// carry the CONTANGO the 17:15 email will ask you to price ($80 to March),
-// and the open interest has already rolled out of the nearby — the
-// delivery period is knocking.
-const CURVE = [
-  { m: 'Jan', px: 4800, oi: 1850, nearby: true },
-  { m: 'Mar', px: 4880, oi: 61400, nearby: false },
-  { m: 'May', px: 4940, oi: 32800, nearby: false },
-  { m: 'Jul', px: 4990, oi: 19600, nearby: false },
-  { m: 'Sep', px: 5030, oi: 9200, nearby: false },
-]
-const MAX_OI = Math.max(...CURVE.map(c => c.oi))
+// The screen above the inbox: the next five London contracts, date-adaptive.
+// A near-flat curve (a whisker of contango) at the open; open interest has
+// already drained out of the front — its delivery period is knocking.
+const OI_SHAPE = [1900, 58000, 31000, 18000, 9000]
 
-function MarketStrip() {
+function MarketStrip({ contracts }: { contracts: Rc[] }) {
+  const curve = contracts.map((c, i) => ({ c, px: CC.entry + i * 10, oi: OI_SHAPE[i] ?? 5000, nearby: i === 0 }))
+  const maxOi = Math.max(...curve.map(r => r.oi))
   return (
     <div className="glass mt-5 p-4 text-white">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <div className="eyebrow">London Robusta — the screen at 06:30 · next 5 contracts</div>
+        <div className="eyebrow">London Robusta — the screen at the open · next 5 contracts</div>
         <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-0.5 font-mono text-[10px] font-bold text-emerald-300"
-          title="Each later month trades ABOVE the previous one — a carry structure. The 17:15 email will make you price it against storage and financing.">
-          CONTANGO — each month dearer than the last
+          title="A whisker of contango pre-market. Watch the front→second spread this afternoon.">
+          LIGHT CONTANGO — near-flat at the open
         </span>
       </div>
       <div className="grid grid-cols-5 gap-1.5">
-        {CURVE.map((c, i) => (
-          <div key={c.m} className={`rounded-xl border p-2 text-center ${c.nearby ? 'border-rose-500/40 bg-rose-500/[0.05]' : 'border-white/10 bg-white/[0.03]'}`}>
-            <div className="font-mono text-[10px] font-bold text-slate-400">{c.m}</div>
-            <div className="font-mono text-sm font-bold tabular-nums text-white">{c.px.toLocaleString('en-US')}</div>
+        {curve.map((r, i) => (
+          <div key={r.c.code} className={`rounded-xl border p-2 text-center ${r.nearby ? 'border-rose-500/40 bg-rose-500/[0.05]' : 'border-white/10 bg-white/[0.03]'}`}>
+            <div className="font-mono text-[10px] font-bold text-slate-400">{r.c.short} <span className="text-slate-500">({r.c.code})</span></div>
+            <div className="font-mono text-sm font-bold tabular-nums text-white">{r.px.toLocaleString('en-US')}</div>
             <div className="font-mono text-[9px] tabular-nums text-slate-500">
-              {i === 0 ? 'nearby' : <span className="text-emerald-300">+{c.px - CURVE[i - 1].px} vs {CURVE[i - 1].m}</span>}
+              {i === 0 ? 'front' : <span className="text-emerald-300">+{r.px - curve[i - 1].px} vs {curve[i - 1].c.short}</span>}
             </div>
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/[0.06]" title={`Open interest: ${c.oi.toLocaleString('en-US')} lots`}>
-              <div className={`h-full rounded-full ${c.nearby ? 'bg-rose-500' : 'bg-brand-cyan/70'}`} style={{ width: `${Math.max(2, (c.oi / MAX_OI) * 100)}%` }} />
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/[0.06]" title={`Open interest: ${r.oi.toLocaleString('en-US')} lots`}>
+              <div className={`h-full rounded-full ${r.nearby ? 'bg-rose-500' : 'bg-brand-cyan/70'}`} style={{ width: `${Math.max(2, (r.oi / maxOi) * 100)}%` }} />
             </div>
-            <div className={`mt-0.5 font-mono text-[9px] tabular-nums ${c.nearby ? 'font-bold text-rose-300' : 'text-slate-500'}`}>
-              OI {c.oi.toLocaleString('en-US')}
+            <div className={`mt-0.5 font-mono text-[9px] tabular-nums ${r.nearby ? 'font-bold text-rose-300' : 'text-slate-500'}`}>
+              OI {r.oi.toLocaleString('en-US')}
             </div>
-            {c.nearby && <div className="font-mono text-[8px] font-bold text-rose-300">delivery period approaching</div>}
+            {r.nearby && <div className="font-mono text-[8px] font-bold text-rose-300">delivery period approaching</div>}
           </div>
         ))}
       </div>
       <p className="mt-2 font-mono text-[10px] text-slate-500">
-        Open interest has rolled out of Jan into Mar — holders who do NOT want to deliver (or take delivery) are leaving. Whoever is still long Jan needs a plan. Check the book you inherited.
+        Open interest has drained out of {curve[0].c.short} into {curve[1].c.short} — holders who do not want delivery have rolled on. Anyone still long the front needs a plan. The dates and contract months adjust to today.
       </p>
     </div>
   )
 }
 
 export default function AnalystInbox() {
+  const now = new Date()
+  const emails = buildEmails(now)
+  const contracts = robustaContracts(now, 5)
   return (
     <>
-      <MarketStrip />
+      <MarketStrip contracts={contracts} />
       <InboxSim
-        emails={EMAILS}
+        emails={emails}
         base={BASE_PNL}
         header="Inbox — your first day · junior analyst, HCM desk"
-        baseLine="The training book’s clean day (small speculative gains, no mistakes)"
+        baseLine="The training book’s clean day (the cash-and-carry rescue banked)"
         grades={gradeAnalyst}
       />
     </>
