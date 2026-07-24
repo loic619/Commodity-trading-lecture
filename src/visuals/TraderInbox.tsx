@@ -207,12 +207,19 @@ const fmt = (n: number) => `${n < 0 ? '−' : '+'}$${Math.abs(n).toLocaleString(
 // Generic inbox simulation — the whole inbox is readable from the start,
 // replies land in any order, every answer prints its consequence. The
 // Module 1 (AnalystInbox) and Module 2 (TraderInbox) days both run on this.
-export function InboxSim({ emails, base, header, baseLine, grades }: {
+// Optional phased reveal: the first `visibleCount` emails are unlocked; the
+// rest stay locked behind a "market open" gate the instructor triggers after
+// the coffee break (Module 1). Omit both props and the whole inbox is open
+// from the start (Module 2, unchanged).
+export function InboxSim({ emails, base, header, baseLine, grades, visibleCount, gate }: {
   emails: Email[]; base: number; header: string; baseLine: string
   grades: (total: number, base: number) => InboxGrade
+  visibleCount?: number
+  gate?: { atIndex: number; label: string; note: string; onOpen: () => void; onReset?: () => void }
 }) {
   const EMAILS = emails
   const BASE_PNL = base
+  const visN = visibleCount ?? EMAILS.length
   const [answers, setAnswers] = useState<(number | null)[]>(Array(EMAILS.length).fill(null))
   const [selected, setSelected] = useState(0)
 
@@ -224,7 +231,9 @@ export function InboxSim({ emails, base, header, baseLine, grades }: {
 
   const email = EMAILS[selected]
   const answer = answers[selected]
-  const nextUnanswered = answers.findIndex((a, i) => a === null && i !== selected)
+  // Advance only to an unlocked, unanswered email.
+  const nextUnanswered = answers.findIndex((a, i) => a === null && i !== selected && i < visN)
+  const marketClosed = gate !== undefined && visN <= gate.atIndex
 
   function reply(ri: number) {
     // Stay on this email so the consequence is read before moving on.
@@ -236,29 +245,51 @@ export function InboxSim({ emails, base, header, baseLine, grades }: {
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="eyebrow">{header}</div>
         <span className="chip !py-0.5 font-mono text-slate-300">
-          {done ? 'day complete' : `${answeredCount}/${EMAILS.length} handled`} · decisions {fmt(impact)}
+          {done ? 'day complete' : `${answeredCount}/${EMAILS.length} handled`}{marketClosed ? ' · market closed' : ''} · decisions {fmt(impact)}
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[230px_1fr] gap-4">
-        {/* Inbox list — everything readable, unanswered marked unread */}
+        {/* Inbox list — everything readable, unanswered marked unread. With a
+            gate, the post-open emails stay locked until the market opens. */}
         <div className="space-y-1">
           {EMAILS.map((e, i) => {
             const isAnswered = answers[i] !== null
+            const locked = i >= visN
+            const gateHere = gate !== undefined && i === gate.atIndex && marketClosed
             return (
-              <button key={i}
-                onClick={() => setSelected(i)}
-                className={`w-full rounded-lg border p-2 text-left transition-all ${
-                  selected === i ? 'border-brand-blue/50 bg-brand-blue/10'
-                  : 'border-white/10 bg-white/[0.03] hover:border-white/25'
-                }`}>
-                <div className="flex items-center justify-between font-mono text-[10px]">
-                  <span className="text-slate-500">{e.time}</span>
-                  <span>{isAnswered ? <span className="text-emerald-400">✓</span> : <span className="h-1.5 w-1.5 inline-block rounded-full bg-brand-cyan" title="awaiting your reply" />}</span>
-                </div>
-                <div className={`truncate font-mono text-[11px] ${isAnswered ? 'text-slate-400' : 'font-bold text-slate-200'}`}>{e.dept}</div>
-                <div className={`truncate text-[11px] ${isAnswered ? 'text-slate-500' : 'text-slate-400'}`}>{e.subject}</div>
-              </button>
+              <div key={i}>
+                {gateHere && (
+                  <button type="button" onClick={gate!.onOpen} aria-label={gate!.label}
+                    className="mb-1 w-full rounded-lg border border-amber-500/50 bg-amber-500/[0.10] p-2.5 text-center transition-all hover:bg-amber-500/20">
+                    <div className="font-mono text-[11px] font-bold text-amber-200">☕ {gate!.label}</div>
+                    <div className="mt-0.5 font-mono text-[9px] leading-snug text-amber-300/80">{gate!.note}</div>
+                  </button>
+                )}
+                {locked ? (
+                  <div className="w-full rounded-lg border border-white/5 bg-white/[0.01] p-2 opacity-50" title="Opens when the market opens">
+                    <div className="flex items-center justify-between font-mono text-[10px]">
+                      <span className="text-slate-600">🔒 —:—</span>
+                    </div>
+                    <div className="truncate font-mono text-[11px] text-slate-600">Locked until the market opens</div>
+                    <div className="truncate text-[11px] text-slate-700">···</div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setSelected(i)}
+                    className={`w-full rounded-lg border p-2 text-left transition-all ${
+                      selected === i ? 'border-brand-blue/50 bg-brand-blue/10'
+                      : 'border-white/10 bg-white/[0.03] hover:border-white/25'
+                    }`}>
+                    <div className="flex items-center justify-between font-mono text-[10px]">
+                      <span className="text-slate-500">{e.time}</span>
+                      <span>{isAnswered ? <span className="text-emerald-400">✓</span> : <span className="h-1.5 w-1.5 inline-block rounded-full bg-brand-cyan" title="awaiting your reply" />}</span>
+                    </div>
+                    <div className={`truncate font-mono text-[11px] ${isAnswered ? 'text-slate-400' : 'font-bold text-slate-200'}`}>{e.dept}</div>
+                    <div className={`truncate text-[11px] ${isAnswered ? 'text-slate-500' : 'text-slate-400'}`}>{e.subject}</div>
+                  </button>
+                )}
+              </div>
             )
           })}
         </div>
@@ -294,12 +325,16 @@ export function InboxSim({ emails, base, header, baseLine, grades }: {
                 </span>{' '}
                 — {email.replies[answer].feedback}
               </div>
-              {nextUnanswered !== -1 && (
+              {nextUnanswered !== -1 ? (
                 <button onClick={() => setSelected(nextUnanswered)}
                   className="btn-primary !px-3 !py-1.5 text-xs">
                   Open next email ({EMAILS[nextUnanswered].time}) →
                 </button>
-              )}
+              ) : marketClosed && gate ? (
+                <button onClick={gate.onOpen} className="btn-primary !px-3 !py-1.5 text-xs">
+                  ☕ {gate.label} →
+                </button>
+              ) : null}
             </div>
           )}
         </div>
@@ -315,7 +350,7 @@ export function InboxSim({ emails, base, header, baseLine, grades }: {
             <div className="flex justify-between border-t border-white/15 pt-1.5"><span className="font-bold text-white">Day P&L</span><span className={`text-base font-bold ${total >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>{fmt(total)}</span></div>
           </div>
           <div className={`mt-2 font-bold ${g.cls}`}>{g.label}</div>
-          <button onClick={() => { setAnswers(Array(EMAILS.length).fill(null)); setSelected(0) }} className="btn-ghost mt-3 !px-3 !py-1.5 text-xs">Run the day again</button>
+          <button onClick={() => { setAnswers(Array(EMAILS.length).fill(null)); setSelected(0); gate?.onReset?.() }} className="btn-ghost mt-3 !px-3 !py-1.5 text-xs">Run the day again</button>
         </div>
       )}
     </div>

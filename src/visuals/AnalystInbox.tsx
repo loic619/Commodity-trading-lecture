@@ -1,7 +1,11 @@
 'use client'
 
+import { useMemo, useState } from 'react'
 import { InboxSim, type Email, type InboxGrade } from './TraderInbox'
-import { robustaContracts, cashAndCarry, CC, addDays, addMonths, longDate, shortDate, type Rc } from '@/lib/robustaCalendar'
+import {
+  robustaContracts, cashAndCarry, CC, addDays, addMonths, longDate, shortDate,
+  MARKET_FILL, fillSummary, STRIP_PRE, STRIP_POST, type Rc,
+} from '@/lib/robustaCalendar'
 
 // Module 1's "Day in the Life": the junior's first day, one real trading day
 // from the opening bell to the close. The contract months and shipment dates
@@ -14,6 +18,8 @@ const BASE_PNL = 2000
 function buildEmails(now: Date): Email[] {
   const [front, second, third] = robustaContracts(now, 3)
   const cc = cashAndCarry()
+  const fill = fillSummary()
+  const fillLines = MARKET_FILL.map(f => `  ${f.lots} lots @ ${f.px.toLocaleString('en-US')}`).join('\n')
   const ship1 = shortDate(addDays(now, 15))
   const ship2 = shortDate(addMonths(now, 1))
   const ship3 = shortDate(addMonths(now, 2))
@@ -220,16 +226,20 @@ Just execute and confirm which contract you hit.
 Marco`,
       replies: [
         {
-          label: `Bought 10 lots ${front.label} at market — the front, most nearby.`,
+          label: `Bought 10 lots ${front.label} at market — the front, most nearby. Filled at several prices, avg ${fill.avg.toLocaleString('en-US')}.`,
           full: `Marco,
 
-Done: bought 10 lots of ${front.label} at market — the front month, as asked. Fill confirmed, position booked and stamped.
+Done: 10 lots of ${front.label} (the front, as asked), bought AT MARKET. Note it did not fill at one price — a market order walks the offer ladder:
 
-Heads up: ${front.short} is close to its delivery period, so this is a short-fuse long.
+${fillLines}
+  ─────────────────────
+  10 lots · average ${fill.avg.toLocaleString('en-US')} (best offer was ${fill.best.toLocaleString('en-US')}, so ${'$'}${fill.slip}/t of slippage)
+
+Position booked and stamped at the ${fill.avg.toLocaleString('en-US')} average. Heads up: ${front.short} is close to its delivery period — short-fuse long.
 
 Confirmed,`,
           delta: 0,
-          feedback: `Correct instrument: "most nearby" = the front contract, ${front.short}. You executed exactly the order and flagged that the front is near delivery — which is about to matter.`,
+          feedback: `Correct instrument (the front, ${front.short}) — and you understood the fill: a MARKET order takes the best offer, then the next, then the next until it is done, so 10 lots came back at ${MARKET_FILL.map(f => f.px.toLocaleString('en-US')).join(' / ')}, averaging ${fill.avg.toLocaleString('en-US')}. Size pays for immediacy; only the first lot trades at the screen price.`,
         },
         {
           label: `Bought 10 lots ${second.label} — more room before expiry, safer.`,
@@ -343,61 +353,93 @@ function gradeAnalyst(total: number, base: number): InboxGrade {
   return { label: 'Day one ended in Risk’s office — the concepts are in Module 1, all of them', cls: 'text-rose-300', box: 'border-rose-500/40 bg-rose-500/[0.10]' }
 }
 
-// The screen above the inbox: the next five London contracts, date-adaptive.
-// A near-flat curve (a whisker of contango) at the open; open interest has
-// already drained out of the front — its delivery period is knocking.
-const OI_SHAPE = [1900, 58000, 31000, 18000, 9000]
+// The screen above the inbox: the next five London contracts, date-adaptive,
+// with TWO states. Pre-open: a near-flat curve (a whisker of contango), OI
+// already drained from the front. Post-open (after the coffee break): the
+// nearby fell $20 and the second jumped $70 — the front→second spread has
+// blown out to $90, the cash-and-carry opportunity the afternoon turns on.
+const OI_PRE = [1900, 58000, 31000, 18000, 9000]
+const OI_POST = [700, 61000, 30000, 17000, 9000]
 
-function MarketStrip({ contracts }: { contracts: Rc[] }) {
-  const curve = contracts.map((c, i) => ({ c, px: CC.entry + i * 10, oi: OI_SHAPE[i] ?? 5000, nearby: i === 0 }))
+function MarketStrip({ contracts, open }: { contracts: Rc[]; open: boolean }) {
+  const px = open ? STRIP_POST : STRIP_PRE
+  const oiArr = open ? OI_POST : OI_PRE
+  const curve = contracts.map((c, i) => ({
+    c, px: px[i] ?? CC.entry, pre: STRIP_PRE[i] ?? CC.entry, oi: oiArr[i] ?? 5000, nearby: i === 0,
+  }))
   const maxOi = Math.max(...curve.map(r => r.oi))
   return (
     <div className="glass mt-5 p-4 text-white">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <div className="eyebrow">London Robusta — the screen at the open · next 5 contracts</div>
-        <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-0.5 font-mono text-[10px] font-bold text-emerald-300"
-          title="A whisker of contango pre-market. Watch the front→second spread this afternoon.">
-          LIGHT CONTANGO — near-flat at the open
-        </span>
+        <div className="eyebrow">London Robusta — {open ? 'MARKET OPEN · the tape has moved' : 'pre-market · the screen at the open'} · next 5 contracts</div>
+        {open ? (
+          <span className="rounded-full border border-rose-500/50 bg-rose-500/[0.12] px-2.5 py-0.5 font-mono text-[10px] font-bold text-rose-200"
+            title="The nearby fell $20 and the second jumped $70 — the front→second spread is now $90, well over the cost of carry.">
+            SPREAD BLOWN OUT — {curve[0].c.short}→{curve[1].c.short} +${curve[1].px - curve[0].px}/t
+          </span>
+        ) : (
+          <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-0.5 font-mono text-[10px] font-bold text-emerald-300"
+            title="A whisker of contango pre-market. Watch the front→second spread once the market opens.">
+            LIGHT CONTANGO — near-flat at the open
+          </span>
+        )}
       </div>
       <div className="grid grid-cols-5 gap-1.5">
-        {curve.map((r, i) => (
-          <div key={r.c.code} className={`rounded-xl border p-2 text-center ${r.nearby ? 'border-rose-500/40 bg-rose-500/[0.05]' : 'border-white/10 bg-white/[0.03]'}`}>
-            <div className="font-mono text-[10px] font-bold text-slate-400">{r.c.short} <span className="text-slate-500">({r.c.code})</span></div>
-            <div className="font-mono text-sm font-bold tabular-nums text-white">{r.px.toLocaleString('en-US')}</div>
-            <div className="font-mono text-[9px] tabular-nums text-slate-500">
-              {i === 0 ? 'front' : <span className="text-emerald-300">+{r.px - curve[i - 1].px} vs {curve[i - 1].c.short}</span>}
+        {curve.map((r, i) => {
+          const chg = r.px - r.pre
+          return (
+            <div key={r.c.code} className={`rounded-xl border p-2 text-center ${r.nearby ? 'border-rose-500/40 bg-rose-500/[0.05]' : 'border-white/10 bg-white/[0.03]'}`}>
+              <div className="font-mono text-[10px] font-bold text-slate-400">{r.c.short} <span className="text-slate-500">({r.c.code})</span></div>
+              <div className="font-mono text-sm font-bold tabular-nums text-white">{r.px.toLocaleString('en-US')}</div>
+              <div className="font-mono text-[9px] tabular-nums">
+                {open && chg !== 0
+                  ? <span className={chg > 0 ? 'text-emerald-300 font-bold' : 'text-rose-300 font-bold'}>{chg > 0 ? '+' : '−'}{Math.abs(chg)} on the day</span>
+                  : i === 0 ? <span className="text-slate-500">front</span> : <span className="text-emerald-300">+{r.px - curve[i - 1].px} vs {curve[i - 1].c.short}</span>}
+              </div>
+              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/[0.06]" title={`Open interest: ${r.oi.toLocaleString('en-US')} lots`}>
+                <div className={`h-full rounded-full ${r.nearby ? 'bg-rose-500' : 'bg-brand-cyan/70'}`} style={{ width: `${Math.max(2, (r.oi / maxOi) * 100)}%` }} />
+              </div>
+              <div className={`mt-0.5 font-mono text-[9px] tabular-nums ${r.nearby ? 'font-bold text-rose-300' : 'text-slate-500'}`}>
+                OI {r.oi.toLocaleString('en-US')}
+              </div>
+              {r.nearby && <div className="font-mono text-[8px] font-bold text-rose-300">delivery period approaching</div>}
             </div>
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/[0.06]" title={`Open interest: ${r.oi.toLocaleString('en-US')} lots`}>
-              <div className={`h-full rounded-full ${r.nearby ? 'bg-rose-500' : 'bg-brand-cyan/70'}`} style={{ width: `${Math.max(2, (r.oi / maxOi) * 100)}%` }} />
-            </div>
-            <div className={`mt-0.5 font-mono text-[9px] tabular-nums ${r.nearby ? 'font-bold text-rose-300' : 'text-slate-500'}`}>
-              OI {r.oi.toLocaleString('en-US')}
-            </div>
-            {r.nearby && <div className="font-mono text-[8px] font-bold text-rose-300">delivery period approaching</div>}
-          </div>
-        ))}
+          )
+        })}
       </div>
       <p className="mt-2 font-mono text-[10px] text-slate-500">
-        Open interest has drained out of {curve[0].c.short} into {curve[1].c.short} — holders who do not want delivery have rolled on. Anyone still long the front needs a plan. The dates and contract months adjust to today.
+        {open
+          ? `The nearby ${curve[0].c.short} sold off into its delivery period while ${curve[1].c.short} spiked — the spread pays a carry trade. Read the 16:50 email.`
+          : `Open interest has drained out of ${curve[0].c.short} into ${curve[1].c.short} — holders who do not want delivery have rolled on. The dates and contract months adjust to today. The market opens after the break.`}
       </p>
     </div>
   )
 }
 
 export default function AnalystInbox() {
-  const now = new Date()
-  const emails = buildEmails(now)
-  const contracts = robustaContracts(now, 5)
+  const now = useMemo(() => new Date(), [])
+  const emails = useMemo(() => buildEmails(now), [now])
+  const contracts = useMemo(() => robustaContracts(now, 5), [now])
+  const [open, setOpen] = useState(false)
+  const PRE_MARKET = 4 // emails 0–3 are pre-open; 4–6 open with the market
+
   return (
     <>
-      <MarketStrip contracts={contracts} />
+      <MarketStrip contracts={contracts} open={open} />
       <InboxSim
         emails={emails}
         base={BASE_PNL}
         header="Inbox — your first day · junior analyst, HCM desk"
         baseLine="The training book’s clean day (the cash-and-carry rescue banked)"
         grades={gradeAnalyst}
+        visibleCount={open ? emails.length : PRE_MARKET}
+        gate={{
+          atIndex: PRE_MARKET,
+          label: 'Open the market',
+          note: 'Coffee break over — the London session opens. Prices move and the trading emails arrive.',
+          onOpen: () => setOpen(true),
+          onReset: () => setOpen(false),
+        }}
       />
     </>
   )
