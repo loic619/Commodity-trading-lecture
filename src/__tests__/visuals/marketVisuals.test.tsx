@@ -713,12 +713,26 @@ test('buildPdfString produces a valid single-font PDF from the report text', () 
   expect(raw).toContain('%%EOF')
 })
 
-test('module 1 quiz has 10 questions and follows the market-structure topic', () => {
+test('module 1 has ONE merged 18-question checkpoint after the market-structure topic', () => {
   const m1 = modules[0]
   const ids = m1.topics.map(t => t.id)
+  // Exactly one quiz in the module now (the old keyconcept quiz is gone)
+  expect(m1.topics.filter(t => t.type === 'quiz')).toHaveLength(1)
+  expect(ids).not.toContain('02b-keyconcept-quiz')
   const quizIdx = ids.indexOf('01b-panorama-quiz')
   const structureIdx = ids.indexOf('03-market-structure')
   expect(quizIdx).toBeGreaterThan(structureIdx)
   const quiz = m1.topics[quizIdx]
-  expect(quiz.quiz?.questions).toHaveLength(10)
+  expect(quiz.quiz?.questions).toHaveLength(18)
+  // The merged quiz covers instruments too (lot size, swaps, EFP)
+  const qtext = JSON.stringify(quiz.quiz?.questions)
+  expect(qtext).toContain('Robusta Coffee futures lot')
+  expect(qtext).toContain('EFP')
+})
+
+test('the two-benefits (PTBF) section moved out of module 1 into the module 2 PTBF case study', () => {
+  const m1SectionIds = modules[0].topics.flatMap(t => t.sections?.map(s => s.id) ?? [])
+  expect(m1SectionIds).not.toContain('market-benefits')
+  const ptbf = modules[1].topics.find(t => t.id === '06-ptbf-trading')
+  expect(ptbf?.sections?.map(s => s.id)).toContain('market-benefits')
 })
