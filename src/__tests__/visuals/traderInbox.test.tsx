@@ -7,6 +7,12 @@ import { EditModeProvider } from '@/lib/editMode'
 // edits never leak into another.
 afterEach(() => window.localStorage.clear())
 
+// A reply is a TWO-step action now: select it, then press Send.
+function pick(name: RegExp | string) {
+  fireEvent.click(screen.getByRole('button', { name }))
+  fireEvent.click(screen.getByRole('button', { name: /Send reply/ }))
+}
+
 const best = [
   /Confirmed: net flat zero/,
   /margin is the cash cost of zero price risk/,
@@ -28,7 +34,7 @@ test('a perfectly handled day closes at +$4,300', () => {
   // Emails read like emails: signatures included
   expect(container.textContent).toContain('Risk & Product Control — HCM Desk')
   best.forEach((r, i) => {
-    fireEvent.click(screen.getByRole('button', { name: r }))
+    pick(r)
     if (i < best.length - 1) fireEvent.click(screen.getByRole('button', { name: /Open next email/ }))
   })
   const text = container.textContent ?? ''
@@ -37,10 +43,21 @@ test('a perfectly handled day closes at +$4,300', () => {
   expect(text).toContain('Clean day')
 })
 
+test('a reply must be selected then SENT — one click never commits it', () => {
+  const { container } = render(<TraderInbox />)
+  // Selecting a reply does NOT reveal the feedback yet
+  fireEvent.click(screen.getByRole('button', { name: /Cut 120 lots/ }))
+  expect(container.textContent).not.toContain('sold is not fixed')
+  expect(screen.getByRole('button', { name: /Send reply/ })).toBeEnabled()
+  // Only Send commits it
+  fireEvent.click(screen.getByRole('button', { name: /Send reply/ }))
+  expect(container.textContent).toContain('sold is not fixed')
+})
+
 test('wrong replies cost money and show their feedback', () => {
   const { container } = render(<TraderInbox />)
   // Cut the hedge on email 1 — the classic PTBF-unfixed mistake
-  fireEvent.click(screen.getByRole('button', { name: /Cut 120 lots/ }))
+  pick(/Cut 120 lots/)
   const text = container.textContent ?? ''
   expect(text).toContain('−$12,000')
   expect(text).toContain('sold is not fixed')
@@ -49,7 +66,7 @@ test('wrong replies cost money and show their feedback', () => {
 
 test('answered emails can be revisited from the inbox list', () => {
   const { container } = render(<TraderInbox />)
-  fireEvent.click(screen.getByRole('button', { name: /Confirmed: net flat zero/ }))
+  pick(/Confirmed: net flat zero/)
   // Move on to email 2, then revisit email 1 from the list
   fireEvent.click(screen.getByRole('button', { name: /Open next email/ }))
   expect(container.textContent).toContain('URGENT')
@@ -86,7 +103,7 @@ test('AnalystInbox: pre-market first, coffee break, then the market opens and re
 
   // Answer the four pre-market emails
   analystBest.slice(0, 4).forEach((r, i) => {
-    fireEvent.click(screen.getByRole('button', { name: r }))
+    pick(r)
     if (i < 3) fireEvent.click(screen.getByRole('button', { name: /Open next email/ }))
   })
   // Coffee break over — open the market (button appears in the list and the pane)
@@ -99,7 +116,7 @@ test('AnalystInbox: pre-market first, coffee break, then the market opens and re
   // Now the trading emails are answerable
   fireEvent.click(screen.getByRole('button', { name: /Open next email/ }))
   analystBest.slice(4).forEach((r, i, arr) => {
-    fireEvent.click(screen.getByRole('button', { name: r }))
+    pick(r)
     if (i < arr.length - 1) fireEvent.click(screen.getByRole('button', { name: /Open next email/ }))
   })
   const text = container.textContent ?? ''
@@ -112,7 +129,7 @@ test('AnalystInbox: a market order walks the ask ladder — 10 lots at several p
   const { container } = render(<AnalystInbox />)
   fireEvent.click(screen.getAllByRole('button', { name: /Open the market/ })[0])
   fireEvent.click(screen.getByRole('button', { name: /15:45/ }))
-  fireEvent.click(screen.getByRole('button', { name: /at market — the front, most nearby/ }))
+  pick(/at market — the front, most nearby/)
   const text = container.textContent ?? ''
   // The confirmation shows the walk up the offer ladder, not one clean price
   expect(text).toContain('4 lots @ 2,997')
@@ -126,7 +143,7 @@ test('AnalystInbox: formatted replies — the cash-and-carry maths is spelled ou
   // Open the market, then jump to the final decision email
   fireEvent.click(screen.getAllByRole('button', { name: /Open the market/ })[0])
   fireEvent.click(screen.getByRole('button', { name: /16:50/ }))
-  fireEvent.click(screen.getByRole('button', { name: /Cash-and-carry: take delivery/ }))
+  pick(/Cash-and-carry: take delivery/)
   const text = container.textContent ?? ''
   expect(text).toContain('spread captured')
   expect(text).toContain('less financing')
@@ -153,7 +170,7 @@ test('AnalystInbox edit mode: the instructor can rewrite an email and its answer
   expect(container.textContent).toContain('CUSTOM SUBJECT ✎')
   expect(container.textContent).toContain('Reset edits (2)')
   // Playing it through shows the edited feedback
-  fireEvent.click(screen.getByRole('button', { name: /Confirmed — book is fully hedged/ }))
+  pick(/Confirmed — book is fully hedged/)
   expect(container.textContent).toContain('My own explanation.')
   // Reset restores the defaults
   fireEvent.click(screen.getByRole('button', { name: /Reset edits/ }))
@@ -167,9 +184,9 @@ test('AnalystInbox: without edit mode there is no edit affordance', () => {
 
 test('AnalystInbox: the margin arithmetic mistake costs and explains the lot size', () => {
   const { container } = render(<AnalystInbox />)
-  // The margin call is a pre-market email — select it, then pick the wrong wire
+  // The margin call is a pre-market email — open it, then pick+send the wrong wire
   fireEvent.click(screen.getByRole('button', { name: /07:10/ }))
-  fireEvent.click(screen.getByRole('button', { name: /Wire \$15,000/ }))
+  pick(/Wire \$15,000/)
   const text = container.textContent ?? ''
   expect(text).toContain('−$1,500')
   expect(text).toContain('a lot is 10 TONNES')
