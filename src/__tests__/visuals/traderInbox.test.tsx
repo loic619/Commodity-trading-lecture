@@ -53,28 +53,33 @@ test('answered emails can be revisited from the inbox list', () => {
   expect(container.textContent).toContain('Risk signs off')
 })
 
-// ── Module 1's junior inbox — same engine, Module 1 concepts ──
+// ── Module 1's junior inbox — a full trading day, date-adaptive contracts ──
 
+// Correct replies, matched on the date-INDEPENDENT part of each label so the
+// test passes whatever contract months today resolves to.
 const analystBest = [
-  /Wire \$30,000/,
-  /WALKS the book/,
-  /unconfirmed flashes revert/i,
-  /File the rate/,
-  /trade houses and cooperatives bridge/,
-  /price response is CONVEX/,
-  /Take delivery AND sell March/,
+  /Confirmed — book is fully hedged/,
+  /Wire \$150,000/,
+  /File both numbers/,
+  /TENDER it into the expiring/,
+  /at market — the front, most nearby/,
+  /find the cheapest exit/,
+  /Cash-and-carry: take delivery/,
 ]
 
-test('AnalystInbox: a perfect first day banks the +$2,000 base', () => {
+test('AnalystInbox: a clean first day banks the +$2,000 cash-and-carry rescue', () => {
   const { container } = render(<AnalystInbox />)
   expect(container.textContent).toContain('junior analyst')
-  expect(container.textContent).toContain('Overnight margin call')
-  // The market strip above the inbox: 5 contracts, contango, OI drained from Jan
+  // The chronology is all there in the inbox list
+  expect(container.textContent).toContain('Position sheet')
+  expect(container.textContent).toContain('Variation margin call')
+  expect(container.textContent).toContain('REJECTION')
+  // The date-adaptive market strip: near-flat curve, OI drained from the front
   expect(container.textContent).toContain('next 5 contracts')
-  expect(container.textContent).toContain('CONTANGO')
-  expect(container.textContent).toContain('4,880')
-  expect(container.textContent).toContain('+80 vs Jan')
-  expect(container.textContent).toContain('OI 1,850')
+  expect(container.textContent).toContain('LIGHT CONTANGO')
+  expect(container.textContent).toContain('3,000')
+  expect(container.textContent).toContain('+10 vs')
+  expect(container.textContent).toContain('OI 1,900')
   expect(container.textContent).toContain('delivery period approaching')
   analystBest.forEach((r, i) => {
     fireEvent.click(screen.getByRole('button', { name: r }))
@@ -86,9 +91,24 @@ test('AnalystInbox: a perfect first day banks the +$2,000 base', () => {
   expect(text).toContain('Clean first day')
 })
 
+test('AnalystInbox: formatted replies — the cash-and-carry maths is spelled out', () => {
+  const { container } = render(<AnalystInbox />)
+  // Select the final decision email from the list, then read the model reply
+  fireEvent.click(screen.getByRole('button', { name: /16:50/ }))
+  fireEvent.click(screen.getByRole('button', { name: /Cash-and-carry: take delivery/ }))
+  const text = container.textContent ?? ''
+  // The sent email is a formatted draft that decomposes the trade
+  expect(text).toContain('spread captured')
+  expect(text).toContain('less financing')
+  expect(text).toContain('+$20/t')          // net per tonne
+  expect(text).toContain('+$2,000 on 100 t') // the rescue turns −$2,000 into +$2,000
+})
+
 test('AnalystInbox: the margin arithmetic mistake costs and explains the lot size', () => {
   const { container } = render(<AnalystInbox />)
-  fireEvent.click(screen.getByRole('button', { name: /Wire \$3,000/ }))
+  // The margin call is the second email — select it, then pick the wrong wire
+  fireEvent.click(screen.getByRole('button', { name: /07:10/ }))
+  fireEvent.click(screen.getByRole('button', { name: /Wire \$15,000/ }))
   const text = container.textContent ?? ''
   expect(text).toContain('−$1,500')
   expect(text).toContain('a lot is 10 TONNES')
