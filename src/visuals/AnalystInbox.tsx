@@ -432,6 +432,7 @@ export default function AnalystInbox() {
         header="Inbox — your first day · junior analyst, HCM desk"
         baseLine="The training book’s clean day (the cash-and-carry rescue banked)"
         grades={gradeAnalyst}
+        storageKey="analyst-inbox"
         visibleCount={open ? emails.length : PRE_MARKET}
         gate={{
           atIndex: PRE_MARKET,

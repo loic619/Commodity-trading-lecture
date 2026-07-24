@@ -11,6 +11,7 @@ import SlideEditor from './SlideEditor'
 import ExportPanel from './ExportPanel'
 import { visualRegistry, visualTextRegistry } from '@/visuals'
 import { VisualTextProvider } from '@/lib/visualText'
+import { EditModeProvider } from '@/lib/editMode'
 import {
   slideKey, loadOverrides, setOverride, clearOverride, clearAllOverrides,
   loadEditMode, saveEditMode, type OverrideMap,
@@ -310,9 +311,11 @@ export default function SectionReader({ sections, moduleId, topicTitle, topicId 
               {/* Visual / content */}
               <div className="flex-1 px-6 pb-6 sm:px-8">
                 {Visual ? (
-                  <VisualTextProvider value={visualTextOverrides}>
-                    <Visual />
-                  </VisualTextProvider>
+                  <EditModeProvider value={editMode}>
+                    <VisualTextProvider value={visualTextOverrides}>
+                      <Visual />
+                    </VisualTextProvider>
+                  </EditModeProvider>
                 ) : (
                   <div className={`${PROSE} prose-lg max-w-3xl`}>
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
