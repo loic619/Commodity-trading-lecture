@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 
-// One trade, every desk: a swimlane map of how a single deal — 200 t bought
-// PTBF plus its 20-lot hedge — travels through the house. Step through it
+// One trade, every desk: a swimlane map of how a single deal — 200 t of physical
+// coffee plus its 20-lot hedge — travels through the house. Step through it
 // and watch which office touches it, in what order, and why each touch is
 // a CONTROL, not bureaucracy.
 type LaneKey = 'exchange' | 'front' | 'ops' | 'middle' | 'back' | 'treasury'
@@ -20,7 +20,7 @@ const LANES: { key: LaneKey; label: string; color: string }[] = [
 const STEPS: { lane: LaneKey; also?: LaneKey; title: string; desc: string }[] = [
   {
     lane: 'front', title: 'Deal done',
-    desc: 'The trader buys 200 t PTBF from the supplier — by phone, in two minutes. On a desk, a deal is DONE at the word: everything that follows exists to make that word safe.',
+    desc: 'The trader buys 200 t of physical coffee from the supplier — by phone, in two minutes. On a desk, a deal is DONE at the word: everything that follows exists to make that word safe.',
   },
   {
     lane: 'front', also: 'exchange', title: 'Hedge executed',

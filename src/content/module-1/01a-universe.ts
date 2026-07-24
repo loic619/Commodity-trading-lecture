@@ -4,7 +4,7 @@ const topic: Topic = {
   id: '01a-universe',
   title: 'The Commodity Universe & the Players',
   type: 'lecture',
-  estimatedMinutes: 22,
+  estimatedMinutes: 18,
   sections: [
     {
       id: 'classification',
@@ -23,12 +23,6 @@ Understanding which tier a counterparty belongs to tells you immediately what th
       visual: 'parcel-journey',
     },
     {
-      id: 'market-benefits',
-      title: 'What the Market Buys You — Two Theoretical Benefits',
-      body: `You have now seen the chain and its risks. Before diving into the machinery, step back and see what having a liquid futures market **theoretically buys** every player on that chain.\n\n**1. A buyer can beat the market.** An outright buyer gets one price on one day — take it or leave it. But because the market lets you split a physical purchase into a **futures leg** and a **differential leg** (the *price-to-be-fixed* structure, built step by step later in the course), a roaster can fix each leg at *its own* low. The flat price and the differential tend to move **inversely** — a rally squeezes the diff, a break fattens it — so their lows land on different dates, and the combination can be **cheaper than any outright price the market ever quoted**. Try to find both lows in the simulator.\n\n**2. Volatility stops being existential.** Remember the olive-oil world: when price triples, suppliers walk away from old contracts; when it crashes, buyers do. With a hedge, the exporter's futures losses are matched by physical gains (and vice versa), so **performing the contract stays rational in both directions** — and the inverse-moving differential dampens what the physical counterparty actually pays. Volatility becomes cash-flow management, not bankruptcy or default.`,
-      visual: 'market-benefits',
-    },
-    {
       id: 'robusta-contract',
       title: 'Anatomy of a Futures Contract: ICE Robusta',
       body: `Before those players can trade with each other, they need the instrument itself. What does "standard-spec" actually mean? A futures contract standardises **everything except price** — that is what makes thousands of strangers able to trade it.\n\nThe **ICE Robusta Coffee (RC)** contract shows the machinery. Delivery runs through **ICE-registered warehouses**: physical coffee is turned into a **warrant**, sampled and **graded** against a quality ladder, and that warrant can then be delivered by a contract seller to settle their obligation — the full mechanics of futures positions come in the next topic.\n\nThe **quality ladder** is the bridge between an idealised contract and messy real-world coffee: Class 1 delivers at the contract price, better coffee earns a fixed premium, worse coffee a fixed discount. The differentials are set by the exchange — not negotiated — which is exactly what keeps delivery predictable.`,
@@ -37,7 +31,7 @@ Understanding which tier a counterparty belongs to tells you immediately what th
     {
       id: 'warrant-lifecycle',
       title: 'From Bags to Warrant: How Coffee Becomes Deliverable',
-      body: `The quality ladder needs a process behind it. This is the path every deliverable lot walks — from arrival at a licensed warehouse to the electronic **warrant** that can settle a short futures position. The exam in the middle (sampling + grading) is what makes 10 tonnes in Antwerp fungible with 10 tonnes in Hamburg \u2014 and it is exactly the machinery Vietnam's exporters used in the 2024\u201325 buyer-of-last-resort episode you will meet in the PTBF topic.`,
+      body: `The quality ladder needs a process behind it. This is the path every deliverable lot walks — from arrival at a licensed warehouse to the electronic **warrant** that can settle a short futures position. The exam in the middle (sampling + grading) is what makes 10 tonnes in Antwerp fungible with 10 tonnes in Hamburg \u2014 and it is exactly the machinery Vietnam's exporters used in the 2024\u201325 buyer-of-last-resort episode you will meet in Module 2.`,
       visual: 'warrant-lifecycle',
     },
   ],
