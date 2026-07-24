@@ -1,6 +1,11 @@
 import { render, fireEvent, screen } from '@testing-library/react'
 import TraderInbox from '@/visuals/TraderInbox'
 import AnalystInbox from '@/visuals/AnalystInbox'
+import { EditModeProvider } from '@/lib/editMode'
+
+// Inbox edits persist to localStorage — clear between tests so one test's
+// edits never leak into another.
+afterEach(() => window.localStorage.clear())
 
 const best = [
   /Confirmed: net flat zero/,
@@ -127,6 +132,37 @@ test('AnalystInbox: formatted replies — the cash-and-carry maths is spelled ou
   expect(text).toContain('less financing')
   expect(text).toContain('+$20/t')          // net per tonne
   expect(text).toContain('+$2,000 on 100 t') // the rescue turns −$2,000 into +$2,000
+})
+
+test('AnalystInbox edit mode: the instructor can rewrite an email and its answers', () => {
+  const { container } = render(
+    <EditModeProvider value={true}>
+      <AnalystInbox />
+    </EditModeProvider>,
+  )
+  // No edit affordance without edit mode → here it IS present
+  fireEvent.click(screen.getByRole('button', { name: /Edit emails/ }))
+  // Rewrite the first email's subject and see it in the inbox list
+  const subject = screen.getByDisplayValue(/^Position sheet/)
+  fireEvent.change(subject, { target: { value: 'CUSTOM SUBJECT ✎' } })
+  // Rewrite the model reply's feedback too
+  const feedback = screen.getByDisplayValue(/hedged-and-sold book carries no flat-price risk/)
+  fireEvent.change(feedback, { target: { value: 'My own explanation.' } })
+  fireEvent.click(screen.getByRole('button', { name: /Done editing/ }))
+  // The edits are live in the running inbox
+  expect(container.textContent).toContain('CUSTOM SUBJECT ✎')
+  expect(container.textContent).toContain('Reset edits (2)')
+  // Playing it through shows the edited feedback
+  fireEvent.click(screen.getByRole('button', { name: /Confirmed — book is fully hedged/ }))
+  expect(container.textContent).toContain('My own explanation.')
+  // Reset restores the defaults
+  fireEvent.click(screen.getByRole('button', { name: /Reset edits/ }))
+  expect(container.textContent).not.toContain('CUSTOM SUBJECT ✎')
+})
+
+test('AnalystInbox: without edit mode there is no edit affordance', () => {
+  render(<AnalystInbox />)
+  expect(screen.queryByRole('button', { name: /Edit emails/ })).toBeNull()
 })
 
 test('AnalystInbox: the margin arithmetic mistake costs and explains the lot size', () => {
