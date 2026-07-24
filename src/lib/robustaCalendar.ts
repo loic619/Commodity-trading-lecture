@@ -90,3 +90,30 @@ export function cashAndCarry() {
     cutLossTotal: -CC.drop * tonnes,     // −$2,000 (crystallise the drop)
   }
 }
+
+// A MARKET order for 10 lots does NOT fill at one price — it eats the ask
+// ladder, taking each price level's offered lots and walking UP until filled.
+// This ladder is built so the volume-weighted AVERAGE is exactly 3,000 (=CC.entry).
+export const MARKET_FILL: { lots: number; px: number }[] = [
+  { lots: 4, px: 2997 }, // best offer
+  { lots: 4, px: 3000 }, // next level up
+  { lots: 2, px: 3006 }, // the last 2 lots clear the top of the visible book
+]
+
+export function fillSummary() {
+  const lots = MARKET_FILL.reduce((s, f) => s + f.lots, 0)
+  const notional = MARKET_FILL.reduce((s, f) => s + f.lots * f.px, 0)
+  return {
+    lots,
+    avg: Math.round(notional / lots),                 // 3,000
+    best: MARKET_FILL[0].px,                           // 2,997
+    top: MARKET_FILL[MARKET_FILL.length - 1].px,       // 3,006
+    slip: Math.round(notional / lots) - MARKET_FILL[0].px, // 3 (avg − best)
+  }
+}
+
+// The five nearest contracts, priced pre-open (near-flat, a whisker of
+// contango down the curve) and post-open (front −20, second +70 → the
+// front→second spread blows out to CC.spread; deferreds drift up modestly).
+export const STRIP_PRE: number[] = [3000, 3000, 3010, 3020, 3030]
+export const STRIP_POST: number[] = [CC.nearbyNow, CC.forwardNow, 3020, 3028, 3036]

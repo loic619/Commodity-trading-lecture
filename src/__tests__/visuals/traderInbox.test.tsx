@@ -67,23 +67,35 @@ const analystBest = [
   /Cash-and-carry: take delivery/,
 ]
 
-test('AnalystInbox: a clean first day banks the +$2,000 cash-and-carry rescue', () => {
+test('AnalystInbox: pre-market first, coffee break, then the market opens and re-prices', () => {
   const { container } = render(<AnalystInbox />)
   expect(container.textContent).toContain('junior analyst')
-  // The chronology is all there in the inbox list
-  expect(container.textContent).toContain('Position sheet')
-  expect(container.textContent).toContain('Variation margin call')
-  expect(container.textContent).toContain('REJECTION')
-  // The date-adaptive market strip: near-flat curve, OI drained from the front
-  expect(container.textContent).toContain('next 5 contracts')
+  // Pre-market: the near-flat curve, OI drained from the front, market CLOSED
+  expect(container.textContent).toContain('pre-market')
   expect(container.textContent).toContain('LIGHT CONTANGO')
-  expect(container.textContent).toContain('3,000')
-  expect(container.textContent).toContain('+10 vs')
   expect(container.textContent).toContain('OI 1,900')
-  expect(container.textContent).toContain('delivery period approaching')
-  analystBest.forEach((r, i) => {
+  expect(container.textContent).toContain('market closed')
+  // The post-open emails are locked behind the gate
+  expect(container.textContent).toContain('Locked until the market opens')
+  expect(screen.queryByRole('button', { name: /16:50/ })).toBeNull()
+
+  // Answer the four pre-market emails
+  analystBest.slice(0, 4).forEach((r, i) => {
     fireEvent.click(screen.getByRole('button', { name: r }))
-    if (i < analystBest.length - 1) fireEvent.click(screen.getByRole('button', { name: /Open next email/ }))
+    if (i < 3) fireEvent.click(screen.getByRole('button', { name: /Open next email/ }))
+  })
+  // Coffee break over — open the market (button appears in the list and the pane)
+  fireEvent.click(screen.getAllByRole('button', { name: /Open the market/ })[0])
+  // The tape has moved: the spread blows out and the front sells off
+  expect(container.textContent).toContain('SPREAD BLOWN OUT')
+  expect(container.textContent).toContain('2,980')
+  expect(container.textContent).toContain('3,070')
+
+  // Now the trading emails are answerable
+  fireEvent.click(screen.getByRole('button', { name: /Open next email/ }))
+  analystBest.slice(4).forEach((r, i, arr) => {
+    fireEvent.click(screen.getByRole('button', { name: r }))
+    if (i < arr.length - 1) fireEvent.click(screen.getByRole('button', { name: /Open next email/ }))
   })
   const text = container.textContent ?? ''
   expect(text).toContain('day complete')
@@ -91,13 +103,26 @@ test('AnalystInbox: a clean first day banks the +$2,000 cash-and-carry rescue', 
   expect(text).toContain('Clean first day')
 })
 
+test('AnalystInbox: a market order walks the ask ladder — 10 lots at several prices', () => {
+  const { container } = render(<AnalystInbox />)
+  fireEvent.click(screen.getAllByRole('button', { name: /Open the market/ })[0])
+  fireEvent.click(screen.getByRole('button', { name: /15:45/ }))
+  fireEvent.click(screen.getByRole('button', { name: /at market — the front, most nearby/ }))
+  const text = container.textContent ?? ''
+  // The confirmation shows the walk up the offer ladder, not one clean price
+  expect(text).toContain('4 lots @ 2,997')
+  expect(text).toContain('2 lots @ 3,006')
+  expect(text).toContain('average 3,000')
+  expect(text).toContain('slippage')
+})
+
 test('AnalystInbox: formatted replies — the cash-and-carry maths is spelled out', () => {
   const { container } = render(<AnalystInbox />)
-  // Select the final decision email from the list, then read the model reply
+  // Open the market, then jump to the final decision email
+  fireEvent.click(screen.getAllByRole('button', { name: /Open the market/ })[0])
   fireEvent.click(screen.getByRole('button', { name: /16:50/ }))
   fireEvent.click(screen.getByRole('button', { name: /Cash-and-carry: take delivery/ }))
   const text = container.textContent ?? ''
-  // The sent email is a formatted draft that decomposes the trade
   expect(text).toContain('spread captured')
   expect(text).toContain('less financing')
   expect(text).toContain('+$20/t')          // net per tonne
@@ -106,7 +131,7 @@ test('AnalystInbox: formatted replies — the cash-and-carry maths is spelled ou
 
 test('AnalystInbox: the margin arithmetic mistake costs and explains the lot size', () => {
   const { container } = render(<AnalystInbox />)
-  // The margin call is the second email — select it, then pick the wrong wire
+  // The margin call is a pre-market email — select it, then pick the wrong wire
   fireEvent.click(screen.getByRole('button', { name: /07:10/ }))
   fireEvent.click(screen.getByRole('button', { name: /Wire \$15,000/ }))
   const text = container.textContent ?? ''
