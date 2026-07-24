@@ -318,6 +318,8 @@ export function InboxSim({ emails, base, header, baseLine, grades, visibleCount,
   const canEdit = useEditMode() && !!storageKey
   const [overrides, setOverrides] = useState<Overrides>({})
   const [editing, setEditing] = useState(false)
+  // A reply is SELECTED first, then SENT — one click never commits an answer.
+  const [pending, setPending] = useState<number | null>(null)
   // Hydrate saved edits on mount (client only)
   useEffect(() => { setOverrides(loadOverrides(storageKey)) }, [storageKey])
 
@@ -342,7 +344,10 @@ export function InboxSim({ emails, base, header, baseLine, grades, visibleCount,
   function reply(ri: number) {
     // Stay on this email so the consequence is read before moving on.
     setAnswers(a => a.map((v, i) => (i === selected ? ri : v)))
+    setPending(null)
   }
+  // Clear the pending selection whenever the open email changes.
+  useEffect(() => { setPending(null) }, [selected])
 
   // Set/clear one override field; prunes back to default when they match.
   function setField(path: string, value: string, original: string) {
@@ -447,13 +452,22 @@ export function InboxSim({ emails, base, header, baseLine, grades, visibleCount,
 
           {answer === null ? (
             <div className="mt-4 space-y-2">
-              <div className="eyebrow">Your reply</div>
+              <div className="eyebrow">Your reply — select one, then Send</div>
               {email.replies.map((r, ri) => (
-                <button key={ri} onClick={() => reply(ri)}
-                  className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-left text-xs font-medium text-slate-200 transition-all hover:border-brand-cyan/50 hover:bg-brand-cyan/10">
-                  ↳ {r.label}
+                <button key={ri} type="button" onClick={() => setPending(ri)} aria-pressed={pending === ri}
+                  className={`flex w-full items-start gap-2 rounded-lg border px-3 py-2.5 text-left text-xs font-medium transition-all ${
+                    pending === ri
+                      ? 'border-brand-cyan/70 bg-brand-cyan/15 text-white'
+                      : 'border-white/10 bg-white/[0.03] text-slate-200 hover:border-brand-cyan/50 hover:bg-brand-cyan/10'
+                  }`}>
+                  <span className={`mt-0.5 h-3 w-3 shrink-0 rounded-full border transition-colors ${pending === ri ? 'border-brand-cyan bg-brand-cyan' : 'border-slate-500'}`} />
+                  <span>{r.label}</span>
                 </button>
               ))}
+              <button type="button" onClick={() => { if (pending !== null) reply(pending) }} disabled={pending === null}
+                className="btn-primary !px-3 !py-1.5 text-xs disabled:cursor-not-allowed disabled:opacity-40">
+                Send reply →
+              </button>
             </div>
           ) : (
             <div className="mt-4 space-y-2">
