@@ -11,7 +11,7 @@ export const modules: Module[] = [
     title: 'Panorama & Vocabulary',
     objectives: [
       'Map the commodity universe — hard vs soft markets, the players (farmers, trade houses, roasters) and how a parcel travels from Dak Lak to the cup',
-      'Read a futures contract like a professional: standardisation, margin & clearing, swaps, and the EFP that links paper to physical',
+      'Read a futures contract like a professional: standardisation, order book, margin & clearing, and swaps',
       'Explain market structure — contango vs backwardation, the roll, and what the curve says about stocks',
       'Trade your first futures screen: buy and sell London Robusta against a live news tape — and feel the risk that hedgers pay to shed',
     ],
@@ -21,7 +21,7 @@ export const modules: Module[] = [
     id: 2,
     title: 'Operational Mechanics & Hedging',
     objectives: [
-      'Run the two PTBF trades — split any physical deal into a futures leg and a differential leg — and manage the basis: quality, freight, tenderable parity',
+      'Run the two PTBF trades — split any physical deal into a futures leg and a differential leg, fix it with an EFP, and manage the basis: quality, freight, tenderable parity',
       'Measure any book’s exposure (flat, basis, spread) and build the hedge that matches it',
       'Follow a cargo from FOB origin to CIF Antwerp: vessels, chartering, demurrage and every cost between quay and warehouse',
       'Trade the live floor: run a full book through news, margin calls and customer tenders — the course’s practical exam',

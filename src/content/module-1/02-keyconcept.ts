@@ -2,9 +2,9 @@ import type { Topic } from '@/types/content'
 
 const topic: Topic = {
   id: '02-keyconcept',
-  title: 'Key Instruments: Futures, Swaps, EFP/EFS',
+  title: 'Key Instruments: Futures, Margin & Swaps',
   type: 'lecture',
-  estimatedMinutes: 28,
+  estimatedMinutes: 24,
   sections: [
     {
       id: 'futures',
@@ -41,22 +41,6 @@ const topic: Topic = {
       title: 'A Swap in Real Life: Gasoline, a Major & a London Broker',
       body: `How does a swap actually get done? Not on a screen with a central order book — **by voice and instant message, through a broker**.\n\nBelow is the anatomy of a typical North-West-Europe gasoline swap: a refiner's trading desk (here **TotalEnergies' TOTSA** in Geneva) wants to lock the selling value of next month's production; a **London OTC broker** (here **PVM**, the classic name in oil brokerage) shouts the offer to the market; a fuel distributor who needs the opposite hedge lifts it. The broker matches, earns a commission from each side, and steps away — the swap itself is **bilateral between the two principals**, papered under their ISDA master agreement and settled in cash against the published monthly average.`,
       visual: 'gasoline-swap',
-    },
-    {
-      id: 'efp-efs',
-      title: 'EFP and EFS',
-      body: `**EFP (Exchange of Futures for Physical):** A privately negotiated transaction where a futures position is exchanged for a physical (cash) commodity position.\n\nExample: A coffee exporter has sold 100 lots of Robusta futures to hedge. When they execute the physical sale to a roaster, they do an EFP — the futures position moves to the buyer, and the physical transaction is confirmed.\n\n**EFS (Exchange of Futures for Swaps):** Same concept, but the futures position is exchanged for a swap position.\n\n**An EFP step by step, with prices:**\n\n1. *September:* exporter sells 100 t "Jan + \\$120, buyer's call" — a **PTBF sale** (*Price To Be Fixed*: the differential is agreed now, the futures leg is fixed later; the full mechanics are the subject of Module 2) — and hedges by **selling 10 lots of Jan futures at \\$4,500**\n2. *October:* the roaster hedges his side too — his purchase price is still floating, so he **buys 10 lots of Jan futures at \\$4,250**, locking an effective 4,250 + 120 = **\\$4,370/t** whatever the market does next\n3. *November:* the roaster calls the fix. Jan futures trade **\\$4,200**. Through a broker, the two parties register an **EFP at \\$4,200** with the exchange: the roaster's **long 10 lots transfer to the exporter and offset his short** — off-screen, at the agreed price — and the same number fixes the physical invoice\n4. Books after: **both are flat futures**. Exporter's invoice fixes at 4,200 + 120 = **\\$4,320/t** (plus the \\$300/t hedge gain = \\$4,620 net, as per PTBF); the roaster pays 4,320, loses \\$50/t on his 4,250 hedge → **\\$4,370/t effective — exactly his October lock**\n\nWhy not just cross on screen? Because on-screen you'd each **leg** the trade separately and risk the market moving between the two executions. The EFP prices *both* legs at one agreed number.\n\nKey point: EFPs/EFS are the plumbing that links the exchange to the physical market — they are how basis trading and PTBF fixings are executed in practice.`,
-    },
-    {
-      id: 'efp-diagram',
-      title: 'The Exchange, Drawn',
-      body: `Picture the EFP as **two counterparties' hedges meeting through a broker** — like the gasoline swap a few slides back, this is how it is actually executed. The exporter holds **100 t of physical robusta and a short hedge of 10 lots**; the roaster holds a **long hedge of 10 lots** protecting his unfixed PTBF purchase.\n\nFollow the price's journey in the drawing: ① the roaster calls the fix at the **screen price** (London Jan at 4,200); ② through the broker, his **long 10 lots are exchanged against the price fixation of the physical contract** — they transfer to the exporter and **offset his short**, in one exchange-registered transaction; ③ that same 4,200, plus the \\$120 differential agreed months ago, is **written into the contract document**: invoice \\$4,320/t, stamped fixed.\n\nBoth futures books go flat, and both sides keep exactly the economics they had locked with their hedges. Nobody crossed a screen, nobody legged anything — the positions simply changed owners at the agreed level. **EFS is the same picture with the paper leg being a swap** instead of futures.`,
-      visual: 'efp-diagram',
-    },
-    {
-      id: 'differential',
-      title: 'The Differential',
-      body: `**Physical price = Futures price + Differential**\n\nThe differential is expressed as a premium (+) or discount (−) to the nearby futures contract.\n\nFactors that affect the differential:\n- **Origin quality:** high-quality Yirgacheffe Arabica trades at a premium vs generic Brazil\n- **Logistics:** proximity to port, bagging quality\n- **Timing:** nearby supply tightness vs forward surplus\n- **Certifiability:** whether the physical coffee can be tendered against the exchange contract\n\nTrading the differential (basis trading) is where much of the commercial edge in physical trading lies.\n\n**Defining the differential is Module 1\u2019s job — *trading* it is Module 2\u2019s.**`,
     },
   ],
 }
