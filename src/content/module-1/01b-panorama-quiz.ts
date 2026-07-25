@@ -4,7 +4,7 @@ const topic: Topic = {
   id: '01b-panorama-quiz',
   title: 'Module 1 Checkpoint: Markets, Instruments & Structure',
   type: 'quiz',
-  estimatedMinutes: 17,
+  estimatedMinutes: 16,
   quiz: {
     questions: [
       {
@@ -185,18 +185,6 @@ const topic: Topic = {
         ],
         correctIndex: 1,
         explanation: 'The producer receives fixed − floating = 4,300 − 4,150 = +$150/t × 500 t = $75,000. Combined with selling their physical at the (low) market price, their effective price stays ~$4,300. Swaps are financially settled — no coffee moves.',
-      },
-      {
-        id: 'q18',
-        question: 'Two parties agree to transfer a futures position between them at one agreed price, tied to a physical trade. Why register it as an EFP rather than each trading on the screen?',
-        options: [
-          'EFPs avoid exchange fees entirely',
-          'On-screen trading is prohibited for commercial hedgers',
-          'The EFP moves the futures at one agreed price — no legging risk between two separate executions',
-          'EFPs settle in physical coffee instead of cash',
-        ],
-        correctIndex: 2,
-        explanation: 'An EFP (Exchange for Physical) is a privately negotiated, exchange-registered transfer of a futures position at an agreed price, done against a physical trade. Both legs crystallise simultaneously — neither party risks the market moving between two separate screen executions.',
       },
     ],
   },

@@ -4,7 +4,7 @@ const topic: Topic = {
   id: '03-market-structure',
   title: 'Market Structure: Contango & Backwardation',
   type: 'lecture',
-  estimatedMinutes: 22,
+  estimatedMinutes: 24,
   sections: [
     {
       id: 'term-structure',

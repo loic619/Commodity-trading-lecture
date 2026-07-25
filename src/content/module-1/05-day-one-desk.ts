@@ -4,7 +4,7 @@ const topic: Topic = {
   id: '05-day-one-desk',
   title: 'A Day in the Life: First Day on the Desk',
   type: 'case-study',
-  estimatedMinutes: 23,
+  estimatedMinutes: 26,
   sections: [
     {
       id: 'day-one-brief',

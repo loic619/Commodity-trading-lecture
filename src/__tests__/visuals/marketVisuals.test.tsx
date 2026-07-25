@@ -713,7 +713,7 @@ test('buildPdfString produces a valid single-font PDF from the report text', () 
   expect(raw).toContain('%%EOF')
 })
 
-test('module 1 has ONE merged 18-question checkpoint after the market-structure topic', () => {
+test('module 1 has ONE merged checkpoint after the market-structure topic', () => {
   const m1 = modules[0]
   const ids = m1.topics.map(t => t.id)
   // Exactly one quiz in the module now (the old keyconcept quiz is gone)
@@ -723,16 +723,26 @@ test('module 1 has ONE merged 18-question checkpoint after the market-structure 
   const structureIdx = ids.indexOf('03-market-structure')
   expect(quizIdx).toBeGreaterThan(structureIdx)
   const quiz = m1.topics[quizIdx]
-  expect(quiz.quiz?.questions).toHaveLength(18)
-  // The merged quiz covers instruments too (lot size, swaps, EFP)
+  expect(quiz.quiz?.questions).toHaveLength(17)
+  // The merged quiz covers instruments (lot size, swaps) but NOT EFP — that
+  // moved to Module 2 with the differential and PTBF content.
   const qtext = JSON.stringify(quiz.quiz?.questions)
   expect(qtext).toContain('Robusta Coffee futures lot')
-  expect(qtext).toContain('EFP')
+  expect(qtext).toContain('swap')
+  expect(qtext).not.toContain('EFP')
 })
 
-test('the two-benefits (PTBF) section moved out of module 1 into the module 2 PTBF case study', () => {
+test('the differential/EFP/PTBF content is out of module 1 and lives in module 2', () => {
   const m1SectionIds = modules[0].topics.flatMap(t => t.sections?.map(s => s.id) ?? [])
+  // The two-benefits, the differential and the EFP sections all left Module 1
   expect(m1SectionIds).not.toContain('market-benefits')
+  expect(m1SectionIds).not.toContain('differential')
+  expect(m1SectionIds).not.toContain('efp-efs')
+  expect(m1SectionIds).not.toContain('efp-diagram')
+  // …and the two-benefits + EFP sections now sit in the Module 2 PTBF case study
   const ptbf = modules[1].topics.find(t => t.id === '06-ptbf-trading')
-  expect(ptbf?.sections?.map(s => s.id)).toContain('market-benefits')
+  const ptbfSectionIds = ptbf?.sections?.map(s => s.id) ?? []
+  expect(ptbfSectionIds).toEqual(expect.arrayContaining(['market-benefits', 'efp-efs', 'efp-diagram']))
+  // The differential itself already has a dedicated Module 2 topic
+  expect(modules[1].topics.map(t => t.id)).toContain('01-differential')
 })
