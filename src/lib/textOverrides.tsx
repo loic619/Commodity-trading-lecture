@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode, type ElementType } from 'react'
 import { EditModeProvider, useEditMode } from './editMode'
-import { loadEditMode, saveEditMode } from './slideOverrides'
+import { loadEditMode, saveEditMode, requestEditUnlock } from './slideOverrides'
 
 // A global, localStorage-backed store for editable UI text that lives OUTSIDE
 // the slide reader — module names, objectives, any label wrapped in
@@ -58,7 +58,7 @@ export function EditRoot({ children }: { children: ReactNode }) {
               Reset text ({ctx.count})
             </button>
           )}
-          <button type="button" onClick={() => { const n = !edit; setEdit(n); saveEditMode(n) }}
+          <button type="button" onClick={() => { if (!edit && !requestEditUnlock()) return; const n = !edit; setEdit(n); saveEditMode(n) }}
             title="Toggle edit mode"
             className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-medium backdrop-blur transition-all ${
               edit ? 'border-amber-500/60 bg-amber-500/15 text-amber-200' : 'border-white/15 bg-[#070912]/80 text-slate-300 hover:border-white/30'

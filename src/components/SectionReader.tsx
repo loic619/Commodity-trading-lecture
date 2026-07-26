@@ -14,7 +14,7 @@ import { VisualTextProvider } from '@/lib/visualText'
 import { EditModeProvider } from '@/lib/editMode'
 import {
   slideKey, loadOverrides, setOverride, clearOverride, clearAllOverrides,
-  loadEditMode, saveEditMode, type OverrideMap,
+  loadEditMode, saveEditMode, requestEditUnlock, type OverrideMap,
 } from '@/lib/slideOverrides'
 import {
   topicKey, loadInserted, addInsertedSlide, updateInsertedSlide,
@@ -135,6 +135,8 @@ export default function SectionReader({ sections, moduleId, topicTitle, topicId 
 
   function toggleEditMode() {
     setEditMode(m => {
+      // Entering edit mode asks for the teacher password; leaving it never does.
+      if (!m && !requestEditUnlock()) return m
       const next = !m
       saveEditMode(next)
       if (!next) setEditing(false)
