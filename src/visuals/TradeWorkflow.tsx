@@ -1,59 +1,59 @@
 'use client'
 
 import { useState } from 'react'
+import { defineVisualText, useVisualText } from '@/lib/visualText'
 
 // One trade, every desk: a swimlane map of how a single deal — 200 t of physical
-// coffee plus its 20-lot hedge — travels through the house. Step through it
-// and watch which office touches it, in what order, and why each touch is
-// a CONTROL, not bureaucracy.
+// coffee plus its 20-lot hedge — travels through the house. Every lane name,
+// step title and narration is editable via the slide's Graphic-text panel.
 type LaneKey = 'exchange' | 'front' | 'ops' | 'middle' | 'back' | 'treasury'
 
-const LANES: { key: LaneKey; label: string; color: string }[] = [
-  { key: 'exchange', label: 'BROKER / EXCHANGE', color: '#8b5cf6' },
-  { key: 'front', label: 'FRONT OFFICE', color: '#22d3ee' },
-  { key: 'ops', label: 'OPERATIONS / LOGISTICS', color: '#3b82f6' },
-  { key: 'middle', label: 'MIDDLE OFFICE', color: '#f59e0b' },
-  { key: 'back', label: 'BACK OFFICE', color: '#34d399' },
-  { key: 'treasury', label: 'TREASURY', color: '#f43f5e' },
-]
+export const textDef = defineVisualText({
+  heading: { label: 'Heading', value: 'One trade, every desk — the workflow of a single deal' },
+  laneExchange: { label: 'Lane · exchange', value: 'BROKER / EXCHANGE' },
+  laneFront: { label: 'Lane · front', value: 'FRONT OFFICE' },
+  laneOps: { label: 'Lane · operations', value: 'OPERATIONS / LOGISTICS' },
+  laneMiddle: { label: 'Lane · middle', value: 'MIDDLE OFFICE' },
+  laneBack: { label: 'Lane · back', value: 'BACK OFFICE' },
+  laneTreasury: { label: 'Lane · treasury', value: 'TREASURY' },
+  t0: { label: 'Step 1 · title', value: 'Deal done' },
+  d0: { label: 'Step 1 · desc', multiline: true, value: 'The trader buys 200 t of physical coffee from the supplier — by phone, in two minutes. On a desk, a deal is DONE at the word: everything that follows exists to make that word safe.' },
+  t1: { label: 'Step 2 · title', value: 'Hedge executed' },
+  d1: { label: 'Step 2 · desc', multiline: true, value: 'Sell 20 lots through the broker; the clearing house steps between buyer and seller. The desk is flat before the coffee is even weighed.' },
+  t2: { label: 'Step 3 · title', value: 'Deal capture & limits' },
+  d2: { label: 'Step 3 · desc', multiline: true, value: 'Both legs are booked in the system within minutes and checked against position and credit limits. An unbooked trade is invisible risk — the first thing middle office hunts every day.' },
+  t3: { label: 'Step 4 · title', value: 'Confirmation matching' },
+  d3: { label: 'Step 4 · desc', multiline: true, value: 'The broker’s recap is matched line by line against the booked ticket; the supplier contract is confirmed in writing. A mismatch caught today costs nothing; caught at settlement, it costs real money.' },
+  t4: { label: 'Step 5 · title', value: 'Margin & financing' },
+  d4: { label: 'Step 5 · desc', multiline: true, value: 'Initial margin is wired to the clearing member, the variation-margin line is reserved, and the physical purchase is financed. No cash, no trade — treasury keeps the hedge alive.' },
+  t5: { label: 'Step 6 · title', value: 'Physical execution' },
+  d5: { label: 'Step 6 · desc', multiline: true, value: 'The execution & logistics desk turns the contract into a moving cargo: trucking from Dak Lak, container stuffing, vessel space HCM → Antwerp, the warehouse slot. This is the classic graduate entry point — and the desk trusts traders who have done it.' },
+  t6: { label: 'Step 7 · title', value: 'Contracts & documents' },
+  d6: { label: 'Step 7 · desc', multiline: true, value: 'From what operations executed, back office cuts the paper: shipping instructions, quality and phytosanitary certificates, the bill of lading, the invoice — the documents that get the desk paid.' },
+  t7: { label: 'Step 8 · title', value: 'EOD: P&L & position report' },
+  d7: { label: 'Step 8 · desc', multiline: true, value: 'The book is marked to market, decomposed flat / basis / costs, and signed off by the desk head against independent middle-office marks. The report is the product.' },
+  caption: { label: 'Closing caption', multiline: true, value: 'Eight touches, five departments, one trade — and only ONE of the eight is the part outsiders call “trading.” Every other touch is a paid role, an entry point, and a control: the desk head signs a P&L that middle office marked, on a cargo operations physically moved, against confirmations back office matched, funded by cash treasury moved.' },
+})
 
-const STEPS: { lane: LaneKey; also?: LaneKey; title: string; desc: string }[] = [
-  {
-    lane: 'front', title: 'Deal done',
-    desc: 'The trader buys 200 t of physical coffee from the supplier — by phone, in two minutes. On a desk, a deal is DONE at the word: everything that follows exists to make that word safe.',
-  },
-  {
-    lane: 'front', also: 'exchange', title: 'Hedge executed',
-    desc: 'Sell 20 lots through the broker; the clearing house steps between buyer and seller. The desk is flat before the coffee is even weighed.',
-  },
-  {
-    lane: 'middle', title: 'Deal capture & limits',
-    desc: 'Both legs are booked in the system within minutes and checked against position and credit limits. An unbooked trade is invisible risk — the first thing middle office hunts every day.',
-  },
-  {
-    lane: 'back', title: 'Confirmation matching',
-    desc: 'The broker’s recap is matched line by line against the booked ticket; the supplier contract is confirmed in writing. A mismatch caught today costs nothing; caught at settlement, it costs real money.',
-  },
-  {
-    lane: 'treasury', title: 'Margin & financing',
-    desc: 'Initial margin is wired to the clearing member, the variation-margin line is reserved, and the physical purchase is financed. No cash, no trade — treasury keeps the hedge alive.',
-  },
-  {
-    lane: 'ops', title: 'Physical execution',
-    desc: 'The execution & logistics desk turns the contract into a moving cargo: trucking from Dak Lak, container stuffing, vessel space HCM → Antwerp, the warehouse slot. This is the classic graduate entry point — and the desk trusts traders who have done it.',
-  },
-  {
-    lane: 'back', title: 'Contracts & documents',
-    desc: 'From what operations executed, back office cuts the paper: shipping instructions, quality and phytosanitary certificates, the bill of lading, the invoice — the documents that get the desk paid.',
-  },
-  {
-    lane: 'middle', also: 'front', title: 'EOD: P&L & position report',
-    desc: 'The book is marked to market, decomposed flat / basis / costs, and signed off by the desk head against independent middle-office marks. The report is the product.',
-  },
+const LANE_COLOR: Record<LaneKey, string> = {
+  exchange: '#8b5cf6', front: '#22d3ee', ops: '#3b82f6', middle: '#f59e0b', back: '#34d399', treasury: '#f43f5e',
+}
+const LANE_ORDER: LaneKey[] = ['exchange', 'front', 'ops', 'middle', 'back', 'treasury']
+const STEP_SPEC: { lane: LaneKey; also?: LaneKey }[] = [
+  { lane: 'front' }, { lane: 'front', also: 'exchange' }, { lane: 'middle' }, { lane: 'back' },
+  { lane: 'treasury' }, { lane: 'ops' }, { lane: 'back' }, { lane: 'middle', also: 'front' },
 ]
 
 export default function TradeWorkflow() {
+  const tx = useVisualText(textDef)
   const [step, setStep] = useState(0)
+
+  const laneLabel: Record<LaneKey, string> = {
+    exchange: tx('laneExchange'), front: tx('laneFront'), ops: tx('laneOps'),
+    middle: tx('laneMiddle'), back: tx('laneBack'), treasury: tx('laneTreasury'),
+  }
+  const LANES = LANE_ORDER.map(key => ({ key, label: laneLabel[key], color: LANE_COLOR[key] }))
+  const STEPS = STEP_SPEC.map((s, i) => ({ ...s, title: tx(`t${i}`), desc: tx(`d${i}`) }))
 
   const W = 560, H = 292, ml = 128, mr = 14, mt = 24
   const pw = W - ml - mr
@@ -64,7 +64,7 @@ export default function TradeWorkflow() {
   return (
     <div className="glass mt-5 p-5 text-white">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <div className="eyebrow text-brand-cyan">One trade, every desk — the workflow of a single deal</div>
+        <div className="eyebrow text-brand-cyan">{tx('heading')}</div>
         <div className="flex items-center gap-2">
           <button type="button" onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}
             className={`chip !py-0.5 font-mono text-xs ${step === 0 ? 'cursor-not-allowed opacity-40' : 'cursor-pointer hover:border-white/30'}`}>
@@ -142,12 +142,7 @@ export default function TradeWorkflow() {
         <p className="mt-1.5 text-xs leading-relaxed text-slate-300">{cur.desc}</p>
       </div>
 
-      <p className="mt-3 text-sm leading-relaxed text-slate-400">
-        Eight touches, five departments, one trade — and only ONE of the eight is the part outsiders call &ldquo;trading.&rdquo;
-        Every other touch is a paid role, an entry point, and a control: the desk head signs a P&L that middle office
-        marked, on a cargo operations physically moved, against confirmations back office matched, funded by cash
-        treasury moved.
-      </p>
+      <p className="mt-3 text-sm leading-relaxed text-slate-400">{tx('caption')}</p>
     </div>
   )
 }

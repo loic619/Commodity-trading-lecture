@@ -1,7 +1,17 @@
+'use client'
+
 import Link from 'next/link'
 import { modules } from '@/content'
+import { useTextOverride } from '@/lib/textOverrides'
+import { moduleTitleKey } from '@/lib/contentKeys'
 
 type Props = { activeId: number }
+
+// The tab label reads any edited module title (kept in sync with the hero).
+function TabTitle({ id, title }: { id: number; title: string }) {
+  const t = useTextOverride(moduleTitleKey(id), title)
+  return <span className="whitespace-nowrap text-[13px] font-medium tracking-tight">{t}</span>
+}
 
 export default function ModuleTabs({ activeId }: Props) {
   return (
@@ -27,7 +37,7 @@ export default function ModuleTabs({ activeId }: Props) {
               >
                 {mod.id}
               </span>
-              <span className="whitespace-nowrap text-[13px] font-medium tracking-tight">{mod.title}</span>
+              <TabTitle id={mod.id} title={mod.title} />
             </Link>
           )
         })}
