@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useEditMode } from '@/lib/editMode'
+import { useLiveSession } from '@/lib/liveSession'
 
 // Two PTBF trades on Robusta, now with real desk constraints:
 //  Exporter (4 steps): buy local VND (outright, choose the VOLUME in tonnes)
@@ -932,6 +934,33 @@ export default function PtbfMechanics() {
   const liveRound = roundAt(elapsed)
   const sessionOver = live && elapsed >= SESSION_SECONDS
 
+  // Teacher-launched broadcast: the instructor opens this floor for the whole
+  // class from their own (edit-mode) screen; every student screen plays the
+  // identical deterministic tape off the shared start timestamp — nobody clicks.
+  const teacher = useEditMode()
+  const session = useLiveSession('ptbf-floor')
+  const [syncedLive, setSyncedLive] = useState(false)
+
+  function beginLive(startMs: number) {
+    startRef.current = startMs
+    setElapsed(Math.max(0, Math.floor((Date.now() - startMs) / 1000)))
+    setDeal({})
+    setBookedAt(null)
+    setPins([])
+    setRiskTS(0)
+    setCommitments([])
+    setTenderFills({})
+    setPaused(false)
+    setLive(true)
+  }
+
+  useEffect(() => {
+    const at = session.clientStartAt
+    if (at != null && !syncedLive) { beginLive(at); setSyncedLive(true) }
+    else if (at == null && syncedLive) { setSyncedLive(false); setLive(false); setPaused(false) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.clientStartAt])
+
   useEffect(() => {
     if (!live || paused) return
     const t = setInterval(() => setElapsed(Math.floor((Date.now() - startRef.current) / 1000)), 1000)
@@ -967,16 +996,7 @@ export default function PtbfMechanics() {
 
   function toggleLive() {
     if (live) { setLive(false); setPaused(false); return }
-    startRef.current = Date.now()
-    setElapsed(0)
-    setDeal({})
-    setBookedAt(null)
-    setPins([])
-    setRiskTS(0)
-    setCommitments([])
-    setTenderFills({})
-    setPaused(false)
-    setLive(true)
+    beginLive(Date.now())
   }
 
   // ── The BOOK: clip trading — buy and sell little by little. Prices in the
@@ -1645,18 +1665,32 @@ export default function PtbfMechanics() {
               className="w-28 rounded-lg border border-white/15 bg-white/[0.05] px-2 py-1 text-xs text-white outline-none placeholder:text-slate-600 focus:border-brand-blue" />
           </>
         )}
-        <button onClick={toggleLive}
-          className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-            live ? 'border-brand-cyan/60 bg-brand-cyan/15 text-cyan-100' : 'border-white/10 text-slate-400 hover:border-white/25 hover:text-white'
-          }`}>
-          {live ? '■ Stop live market' : '▶ Live market (45 months · 20 s/month ≈ 15 min)'}
-        </button>
-        {live && (
+        {syncedLive ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-500/50 bg-rose-500/[0.12] px-3 py-1.5 font-mono text-[11px] font-bold text-rose-200">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-rose-400" /> LIVE — launched by your instructor
+          </span>
+        ) : (
+          <button onClick={toggleLive}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+              live ? 'border-brand-cyan/60 bg-brand-cyan/15 text-cyan-100' : 'border-white/10 text-slate-400 hover:border-white/25 hover:text-white'
+            }`}>
+            {live ? '■ Stop live market' : '▶ Live market (45 months · 20 s/month ≈ 15 min)'}
+          </button>
+        )}
+        {live && !syncedLive && (
           <button onClick={togglePause}
             className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
               paused ? 'border-amber-500/60 bg-amber-500/15 text-amber-100' : 'border-white/10 text-slate-400 hover:border-white/25 hover:text-white'
             }`}>
             {paused ? '▶ Resume' : '⏸ Pause'}
+          </button>
+        )}
+        {teacher && session.configured && (
+          <button onClick={() => (syncedLive ? session.stop() : session.launch())}
+            className={`rounded-full border px-3 py-1.5 text-xs font-bold transition-all ${
+              syncedLive ? 'border-rose-500/60 bg-rose-500/15 text-rose-100' : 'border-emerald-500/60 bg-emerald-500/15 text-emerald-100'
+            }`}>
+            {syncedLive ? '■ End broadcast' : '📡 Launch for class'}
           </button>
         )}
         {/* No round counter, no next-news countdown: when the next news lands
@@ -2282,6 +2316,29 @@ export function FuturesOnlySim() {
   const liveRound = m1RoundAt(elapsed)
   const sessionOver = live && elapsed >= SESSION_SECONDS
 
+  // Teacher-launched broadcast: the instructor (edit mode) opens the market for
+  // the whole class from their own screen; every student screen then plays the
+  // identical deterministic tape off the shared start timestamp — nobody clicks.
+  const teacher = useEditMode()
+  const session = useLiveSession('futures-screen')
+  const [syncedLive, setSyncedLive] = useState(false)
+
+  function beginLive(startMs: number) {
+    startRef.current = startMs
+    setElapsed(Math.max(0, Math.floor((Date.now() - startMs) / 1000)))
+    setPos(0); setAvg(0); setRealized(0); setExecs([])
+    setMaxDD(0); peakRef.current = 0
+    setPaused(false); setLive(true)
+  }
+
+  // React to the broadcast: start synced when a session appears, stop when it clears.
+  useEffect(() => {
+    const at = session.clientStartAt
+    if (at != null && !syncedLive) { beginLive(at); setSyncedLive(true) }
+    else if (at == null && syncedLive) { setSyncedLive(false); setLive(false); setPaused(false) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.clientStartAt])
+
   useEffect(() => {
     if (!live || paused) return
     const t = setInterval(() => setElapsed(Math.floor((Date.now() - startRef.current) / 1000)), 1000)
@@ -2308,10 +2365,7 @@ export function FuturesOnlySim() {
   }
   function toggleLive() {
     if (live) { setLive(false); setPaused(false); return }
-    startRef.current = Date.now()
-    setElapsed(0); setPos(0); setAvg(0); setRealized(0); setExecs([])
-    setMaxDD(0); peakRef.current = 0
-    setPaused(false); setLive(true)
+    beginLive(Date.now())
   }
 
   const unrealized = pos !== 0 ? (fut - avg) * Math.sign(pos) * Math.abs(pos) * LOT_T : 0
@@ -2406,18 +2460,32 @@ export function FuturesOnlySim() {
           <input type="text" value={trader} onChange={e => setTrader(e.target.value)} aria-label="Trader name" placeholder="Trader name"
             className="w-32 rounded-lg border border-white/15 bg-white/[0.05] px-2 py-1 text-xs text-white outline-none placeholder:text-slate-600 focus:border-brand-blue" />
         )}
-        <button onClick={toggleLive}
-          className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-            live ? 'border-brand-cyan/60 bg-brand-cyan/15 text-cyan-100' : 'border-white/10 text-slate-400 hover:border-white/25 hover:text-white'
-          }`}>
-          {live ? '■ Stop live market' : '▶ Live market (45 months · 20 s/month ≈ 15 min)'}
-        </button>
-        {live && (
+        {syncedLive ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-500/50 bg-rose-500/[0.12] px-3 py-1.5 font-mono text-[11px] font-bold text-rose-200">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-rose-400" /> LIVE — launched by your instructor
+          </span>
+        ) : (
+          <button onClick={toggleLive}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+              live ? 'border-brand-cyan/60 bg-brand-cyan/15 text-cyan-100' : 'border-white/10 text-slate-400 hover:border-white/25 hover:text-white'
+            }`}>
+            {live ? '■ Stop live market' : '▶ Live market (45 months · 20 s/month ≈ 15 min)'}
+          </button>
+        )}
+        {live && !syncedLive && (
           <button onClick={togglePause}
             className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
               paused ? 'border-amber-500/60 bg-amber-500/15 text-amber-100' : 'border-white/10 text-slate-400 hover:border-white/25 hover:text-white'
             }`}>
             {paused ? '▶ Resume' : '⏸ Pause'}
+          </button>
+        )}
+        {teacher && session.configured && (
+          <button onClick={() => (syncedLive ? session.stop() : session.launch())}
+            className={`rounded-full border px-3 py-1.5 text-xs font-bold transition-all ${
+              syncedLive ? 'border-rose-500/60 bg-rose-500/15 text-rose-100' : 'border-emerald-500/60 bg-emerald-500/15 text-emerald-100'
+            }`}>
+            {syncedLive ? '■ End broadcast' : '📡 Launch for class'}
           </button>
         )}
       </div>
