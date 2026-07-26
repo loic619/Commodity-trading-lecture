@@ -8,7 +8,7 @@ import ExportPanel from '@/components/ExportPanel'
 import Breadcrumb from '@/components/Breadcrumb'
 import ProgressBar from '@/components/ProgressBar'
 import type { Question } from '@/types/content'
-import { loadEditMode, saveEditMode } from '@/lib/slideOverrides'
+import { loadEditMode, saveEditMode, requestEditUnlock } from '@/lib/slideOverrides'
 import {
   quizKey, loadQuizOverrides, setQuizOverride, clearQuizOverride, clearAllQuizOverrides,
   applyQuizOverride, type QuizOverrideMap,
@@ -52,6 +52,7 @@ export default function QuizRunner({ questions, moduleId, topicTitle, topicId = 
 
   function toggleEditMode() {
     setEditMode(m => {
+      if (!m && !requestEditUnlock()) return m
       const next = !m
       saveEditMode(next)
       if (!next) setEditing(false)

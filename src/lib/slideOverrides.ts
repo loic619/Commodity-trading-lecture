@@ -62,3 +62,36 @@ export function saveEditMode(on: boolean): void {
     /* ignore */
   }
 }
+
+// ── Edit-mode password ──
+// Edit mode is a teacher-only affordance (it turns the whole app into an
+// editable surface), so entering it asks for a password. This is UX safety —
+// stopping a student from wandering into edit mode — not a real secret: the
+// class password gate is the actual access control. Once unlocked we remember
+// it for the browser session so the teacher isn't re-prompted on every toggle.
+const EDIT_PASSWORD = 'loicssss'
+const EDIT_UNLOCK_KEY = 'slide-edit-unlocked'
+
+export function editUnlocked(): boolean {
+  if (typeof window === 'undefined') return false
+  try {
+    return window.sessionStorage.getItem(EDIT_UNLOCK_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+// Prompts for the password when needed. Returns true if edit mode may be
+// enabled (already unlocked this session, or the right password was entered).
+export function requestEditUnlock(): boolean {
+  if (typeof window === 'undefined') return false
+  if (editUnlocked()) return true
+  const entry = window.prompt('Enter the edit-mode password')
+  if (entry == null) return false
+  if (entry === EDIT_PASSWORD) {
+    try { window.sessionStorage.setItem(EDIT_UNLOCK_KEY, '1') } catch { /* ignore */ }
+    return true
+  }
+  window.alert('Wrong password.')
+  return false
+}
