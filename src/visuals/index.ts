@@ -68,8 +68,8 @@ import ParcelJourney from './ParcelJourney'
 import MarketBenefits from './MarketBenefits'
 import FuturesContractDoc, { textDef as futuresContractDocText } from './FuturesContractDoc'
 import DeskOrganisation from './DeskOrganisation'
-import TradeWorkflow from './TradeWorkflow'
-import PhysicalFlow from './PhysicalFlow'
+import TradeWorkflow, { textDef as tradeWorkflowText } from './TradeWorkflow'
+import PhysicalFlow, { textDef as physicalFlowText } from './PhysicalFlow'
 
 export const visualRegistry: Record<string, ComponentType> = {
   'three-laws': ThreeLaws,
@@ -176,6 +176,8 @@ export const visualTextRegistry: Record<string, VisualTextDef> = {
   'gasoline-swap': gasolineSwapText,
   'efp-diagram': efpDiagramText,
   'network-explosion': networkExplosionText,
+  'trade-workflow': tradeWorkflowText,
+  'physical-flow': physicalFlowText,
   'volume-oi-flow': volumeOiFlowText,
   'rolling-oi': rollingOiWaveText,
   'unhedgeable-markets': unhedgeableMarketsText,

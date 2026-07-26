@@ -4,6 +4,8 @@ import ModuleTabs from '@/components/ModuleTabs'
 import TopicCard from '@/components/TopicCard'
 import SiteHeader from '@/components/SiteHeader'
 import ModuleGate from '@/components/ModuleGate'
+import { EditRoot, EditableText } from '@/lib/textOverrides'
+import { moduleTitleKey, moduleObjectiveKey } from '@/lib/contentKeys'
 
 type Props = { params: { id: string } }
 
@@ -21,6 +23,7 @@ export default function ModulePage({ params }: Props) {
   return (
     <div className="min-h-screen">
       <SiteHeader />
+      <EditRoot>
       <ModuleTabs activeId={moduleId} />
 
       <ModuleGate moduleId={moduleId} returnTo={`/module/${moduleId}`}>
@@ -31,7 +34,8 @@ export default function ModulePage({ params }: Props) {
             <span className="chip text-slate-300">Module {mod.id}</span>
           </div>
           <h2 className="mt-4 max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl">
-            <span className="text-gradient">{mod.title}</span>
+            <EditableText id={moduleTitleKey(mod.id)} value={mod.title} as="span" className="text-gradient"
+              editClassName="w-full rounded-lg border border-amber-400/40 bg-amber-500/[0.06] px-2 py-1 text-4xl font-bold text-white outline-none focus:border-brand-blue sm:text-5xl" />
           </h2>
           <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-400">
             {topics.length} sessions · {Math.round(totalMin / 60 * 10) / 10} hours of material. Work through lectures,
@@ -55,7 +59,9 @@ export default function ModulePage({ params }: Props) {
                 >
                   Objective {i + 1}
                 </span>
-                <p className="mt-2 text-[13px] leading-relaxed text-slate-300">{obj}</p>
+                <EditableText id={moduleObjectiveKey(mod.id, i)} value={obj} as="p" multiline rows={4}
+                  className="mt-2 text-[13px] leading-relaxed text-slate-300"
+                  editClassName="mt-2 w-full rounded-lg border border-amber-400/40 bg-amber-500/[0.06] px-2 py-1 text-[13px] leading-relaxed text-slate-100 outline-none focus:border-brand-blue" />
               </div>
             ))}
           </div>
@@ -75,6 +81,7 @@ export default function ModulePage({ params }: Props) {
         </section>
       </main>
       </ModuleGate>
+      </EditRoot>
     </div>
   )
 }
