@@ -54,6 +54,24 @@ To add a new topic to Module 1:
 3. Add environment variable: `CLASS_PASSWORD` = your chosen password
 4. Deploy — done
 
+## Teacher-launched live simulators (optional)
+
+The two timed simulators — the **Module 1 Futures Screen** and the **Module 2
+PTBF floor** — can be launched by the instructor for the whole class from a
+single screen: click **📡 Launch for class** (visible only while you are in
+**Edit mode**) and every student's screen goes live in sync, playing the exact
+same deterministic tape. No student clicks anything. Click **■ End broadcast**
+to stop.
+
+This needs a tiny shared store to hold one timestamp per simulator. In Vercel:
+
+1. Storage → create a **KV** (Upstash Redis) database and connect it to the
+   project. Vercel auto-adds `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
+2. Redeploy.
+
+If those env vars are absent the feature simply hides the launch button and the
+simulators fall back to the local **▶ Live market** control — nothing breaks.
+
 ## Running Tests
 
 ```bash
