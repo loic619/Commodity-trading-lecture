@@ -8,18 +8,18 @@
 // module — announce it at the start of the session):
 //   1 · saigon   — Panorama & Vocabulary (the HCM desk)
 //   2 · antwerp  — Operational Mechanics & Hedging (the warehouse port)
-//   3 · geneva   — Strategies, ESG & Data (the trading houses)
+//   3 · hamburg  — Strategies, ESG & Data (the roaster city)
 //   4 · houston  — Crude Oil: Market Analysis & Refining
-//   5 · shetland — Crude Oil: The Brent Complex (Sullom Voe terminal)
+//   5 · london   — Crude Oil: The Brent Complex (ICE / the trading hub)
 //
 // This module is imported ONLY by server code (server action + server
 // components), so the codes never reach the client bundle.
 const DEFAULT_CODES: Record<number, string> = {
   1: 'saigon',
   2: 'antwerp',
-  3: 'geneva',
+  3: 'hamburg',
   4: 'houston',
-  5: 'shetland',
+  5: 'london',
 }
 
 export function moduleCode(moduleId: number): string {
