@@ -4,7 +4,7 @@ const topic: Topic = {
   id: '01a-universe',
   title: 'The Commodity Universe & the Players',
   type: 'lecture',
-  estimatedMinutes: 18,
+  estimatedMinutes: 13,
   sections: [
     {
       id: 'classification',
@@ -19,8 +19,7 @@ const topic: Topic = {
 
 **Key insight:** Only Tiers 1–3 interact with the physical commodity. Tier 4 trades paper — they provide liquidity and price signals but never take delivery.
 
-Understanding which tier a counterparty belongs to tells you immediately what their incentives and constraints are. At the trade-house tier sit the giants of agricultural trading — the **"ABCD"**: **A**rcher Daniels Midland, **B**unge, **C**argill and Louis **D**reyfus — alongside the coffee specialists (Neumann, Volcafe, Sucafina, Olam).\n\nNow follow **one 100 t parcel** through the chain below — watch the price form mutate and the risk tiles flip at every hop.`,
-      visual: 'parcel-journey',
+Understanding which tier a counterparty belongs to tells you immediately what their incentives and constraints are. At the trade-house tier sit the giants of agricultural trading — the **"ABCD"**: **A**rcher Daniels Midland, **B**unge, **C**argill and Louis **D**reyfus — alongside the coffee specialists (Neumann, Volcafe, Sucafina, Olam).\n\nHold on to this five-tier picture. In **Module 2**, once you have the hedging vocabulary, you will walk **one 100 t parcel** all the way down this chain — farm gate to roastery — and watch the price form mutate and each desk's risk tiles flip. For now, just fix the shape: who touches the physical, who trades only paper, and where the money is made.`,
     },
     {
       id: 'robusta-contract',
