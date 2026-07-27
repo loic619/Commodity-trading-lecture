@@ -28,7 +28,7 @@ const topic: Topic = {
       },
       {
         id: 'q3',
-        question: 'On the live futures screen, a clearly bullish story breaks. What does the price typically do in the first seconds?',
+        question: 'A clearly bullish story breaks on a live futures market. What does the price typically do in the first seconds?',
         options: [
           'It jumps instantly to its new level — markets are efficient',
           'It keeps breathing at the old level for a few seconds, then DRIFTS to the new one',
@@ -52,7 +52,7 @@ const topic: Topic = {
       },
       {
         id: 'q5',
-        question: 'The screen spikes $300 in seconds on an UNCONFIRMED frost rumour, then fully retraces within a minute. The lesson?',
+        question: 'A futures screen spikes $300 in seconds on an UNCONFIRMED frost rumour, then fully retraces within a minute. The lesson?',
         options: [
           'Always chase momentum \u2014 the first move is the true one',
           'Unconfirmed flashes tend to REVERT \u2014 real news drifts to a new level and HOLDS it',
