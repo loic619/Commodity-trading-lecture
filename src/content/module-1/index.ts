@@ -9,18 +9,20 @@ import futuresFirst from './06-futures-first'
 import careersDesk from './07-careers-desk'
 import type { Topic } from '@/types/content'
 
-// Pedagogical order: what a market is → the universe & players → what moves
-// prices → what a futures contract is (order book, margin, swaps) → market structure
-// → trade futures against the news (speculation only) → ONE checkpoint quiz →
-// the desk day → careers. Hedging & PTBF live in Module 2.
+// Pedagogical order — practice is SPREAD through the session rather than piled
+// at the end: what a market is → the universe & players → what a futures
+// contract is (order book, margin, swaps) → market structure → a CHECKPOINT
+// quiz to consolidate the theory → what moves prices (supply & demand) → trade
+// futures against the news right after (the live screen) → the desk day (inbox)
+// → careers. Hedging & PTBF live in Module 2.
 export const topics: Topic[] = [
   panorama, // why markets exist: no-market world → crazy markets → CBOT → the answer
   universe, // hard vs soft, the players, the Robusta contract & the warrant
-  supplyDemand, // what moves these markets — read the news before pricing it
   keyconcept, // the instruments: futures, order book, margin & swaps
   marketStructure,
-  futuresFirst, // futures-only live screen: buy & sell against the news
-  checkpoint, // single 17-question checkpoint over the whole module
+  checkpoint, // single 17-question checkpoint over the theory so far — mid-session, not the end
+  supplyDemand, // what moves these markets — read the news before pricing it
+  futuresFirst, // futures-only live screen: buy & sell against the news — straight after S&D
   dayOneDesk, // the junior's inbox: every Module 1 concept in work clothes
   careersDesk, // the building, not the market: desk organisation as a career map
 ]
