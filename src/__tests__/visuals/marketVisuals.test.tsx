@@ -620,10 +620,10 @@ test('FuturesOnlySim live: its OWN tape — a different scenario from the Module
 })
 
 test('the PTBF case study now opens module 2, and module 1 trades futures only', () => {
-  expect(modules[1].topics[0].id).toBe('06-ptbf-trading')
+  expect(modules[1].topics[0].id).toBe('00-ptbf-trading')
   const m1Ids = modules[0].topics.map(t => t.id)
   expect(m1Ids).toContain('06-futures-first')
-  expect(m1Ids).not.toContain('06-ptbf-trading')
+  expect(m1Ids).not.toContain('00-ptbf-trading')
 })
 
 test('module 1 review: panorama split in two, junior inbox in module 1, trader day in module 2', () => {
@@ -632,8 +632,8 @@ test('module 1 review: panorama split in two, junior inbox in module 1, trader d
   expect(m1Ids.indexOf('01a-universe')).toBe(m1Ids.indexOf('01-panorama') + 1)
   // The day-in-the-life swap: junior inbox in module 1, hedged desk in module 2
   expect(m1Ids).toContain('05-day-one-desk')
-  expect(m1Ids).not.toContain('05-case-study-adayinlife')
-  expect(modules[1].topics[1].id).toBe('05-case-study-adayinlife')
+  expect(m1Ids).not.toContain('00b-day-in-life')
+  expect(modules[1].topics[1].id).toBe('00b-day-in-life')
 })
 
 test('FuturesOnlySim: the capital line caps the position — initial margin plus latent loss', () => {
@@ -740,7 +740,7 @@ test('the differential/EFP/PTBF content is out of module 1 and lives in module 2
   expect(m1SectionIds).not.toContain('efp-efs')
   expect(m1SectionIds).not.toContain('efp-diagram')
   // …and the two-benefits + EFP sections now sit in the Module 2 PTBF case study
-  const ptbf = modules[1].topics.find(t => t.id === '06-ptbf-trading')
+  const ptbf = modules[1].topics.find(t => t.id === '00-ptbf-trading')
   const ptbfSectionIds = ptbf?.sections?.map(s => s.id) ?? []
   expect(ptbfSectionIds).toEqual(expect.arrayContaining(['market-benefits', 'efp-efs', 'efp-diagram']))
   // The differential itself already has a dedicated Module 2 topic

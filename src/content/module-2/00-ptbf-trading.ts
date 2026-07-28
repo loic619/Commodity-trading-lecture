@@ -1,7 +1,7 @@
 import type { Topic } from '@/types/content'
 
 const topic: Topic = {
-  id: '06-ptbf-trading',
+  id: '00-ptbf-trading',
   title: 'PTBF & Trading the Differential',
   type: 'case-study',
   estimatedMinutes: 30,
@@ -20,7 +20,7 @@ const topic: Topic = {
     {
       id: 'efp-diagram',
       title: 'The Exchange, Drawn',
-      body: `Picture the EFP as **two counterparties' hedges meeting through a broker** — like the gasoline swap a few slides back, this is how it is actually executed. The exporter holds **100 t of physical robusta and a short hedge of 10 lots**; the roaster holds a **long hedge of 10 lots** protecting his unfixed PTBF purchase.\n\nFollow the price's journey in the drawing: ① the roaster calls the fix at the **screen price** (London Jan at 4,200); ② through the broker, his **long 10 lots are exchanged against the price fixation of the physical contract** — they transfer to the exporter and **offset his short**, in one exchange-registered transaction; ③ that same 4,200, plus the \\$120 differential agreed months ago, is **written into the contract document**: invoice \\$4,320/t, stamped fixed.\n\nBoth futures books go flat, and both sides keep exactly the economics they had locked with their hedges. Nobody crossed a screen, nobody legged anything — the positions simply changed owners at the agreed level. **EFS is the same picture with the paper leg being a swap** instead of futures.`,
+      body: `Picture the EFP as **two counterparties' hedges meeting through a broker** — like the gasoline swap from Module 1, this is how it is actually executed. The exporter holds **100 t of physical robusta and a short hedge of 10 lots**; the roaster holds a **long hedge of 10 lots** protecting his unfixed PTBF purchase.\n\nFollow the price's journey in the drawing: ① the roaster calls the fix at the **screen price** (London Jan at 4,200); ② through the broker, his **long 10 lots are exchanged against the price fixation of the physical contract** — they transfer to the exporter and **offset his short**, in one exchange-registered transaction; ③ that same 4,200, plus the \\$120 differential agreed months ago, is **written into the contract document**: invoice \\$4,320/t, stamped fixed.\n\nBoth futures books go flat, and both sides keep exactly the economics they had locked with their hedges. Nobody crossed a screen, nobody legged anything — the positions simply changed owners at the agreed level. **EFS is the same picture with the paper leg being a swap** instead of futures.`,
       visual: 'efp-diagram',
     },
     {
