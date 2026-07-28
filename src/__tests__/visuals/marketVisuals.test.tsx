@@ -626,6 +626,19 @@ test('the PTBF case study now opens module 2, and module 1 trades futures only',
   expect(m1Ids).not.toContain('00-ptbf-trading')
 })
 
+test('module themes cohere: each display module carries the topics its title promises', () => {
+  const ids = (m: number) => modules[m].topics.map(t => t.id)
+  // Module 3 (Strategies, Logistics, ESG & Data): options, shipping, ESG, S&D lab, group exercise
+  expect(ids(2)).toEqual(expect.arrayContaining(['01-options', '01c-shipping', '02-esg-eudr', '03-advancedsupply-demand', '04-cherry-to-terminal']))
+  // Module 4 (Market Analysis & Refining) is the ANALYSIS content…
+  expect(ids(3)).toEqual(expect.arrayContaining(['01-supply-demand', '02-value-chain-refining', '03-crude-quality']))
+  // …and Module 5 (Brent Complex & Hedging) is the HEDGING content — the
+  // directory/display mapping is straight, not crossed.
+  expect(ids(4)).toEqual(expect.arrayContaining(['01-exposure-hedging', '02-futures-hedge', '03-brent-complex', '04-swaps-cfds']))
+  // Every module states at least one objective per ~2 topics — the tiles readers see
+  for (const m of modules) expect(m.objectives.length).toBeGreaterThanOrEqual(4)
+})
+
 test('module 1 review: panorama split in two, junior inbox in module 1, trader day in module 2', () => {
   const m1Ids = modules[0].topics.map(t => t.id)
   // The panorama split: why-markets-exist, then the universe & the players

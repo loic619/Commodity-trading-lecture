@@ -1,16 +1,14 @@
-import supplyDemand from './01-supply-demand'
-import valueChainRefining from './02-value-chain-refining'
-import crudeQuality from './03-crude-quality'
-import benchmarksInformation from './04-benchmarks-information'
-import technicalPerspective from './05-technical-perspective'
-import analysisQuiz from './06-analysis-quiz'
+import exposureHedging from './01-exposure-hedging'
+import futuresHedge from './02-futures-hedge'
+import brentComplex from './03-brent-complex'
+import swapsCfds from './04-swaps-cfds'
+import brentQuiz from './05-brent-quiz'
 import type { Topic } from '@/types/content'
 
 export const topics: Topic[] = [
-  supplyDemand,
-  valueChainRefining,
-  crudeQuality,
-  benchmarksInformation,
-  technicalPerspective,
-  analysisQuiz,
+  exposureHedging,
+  futuresHedge,
+  brentComplex,
+  swapsCfds,
+  brentQuiz,
 ]

@@ -30,13 +30,14 @@ export const modules: Module[] = [
   },
   {
     id: 3,
-    title: 'Strategies, ESG & Data',
+    title: 'Strategies, Logistics, ESG & Data',
     objectives: [
       'Use options on futures: calls, puts, premiums — and when optionality beats a straight hedge',
       'Work the basis with numbers: quote, compare and arbitrate differentials with the calculator',
       'Move the cargo: vessels, chartering, Worldscale freight, laytime and demurrage — the operational layer under every physical trade',
       'Assess ESG & EUDR: what the regulatory revolution does to compliant vs non-compliant coffee — and to its price',
       'Model supply & demand like an analyst, from cherry on the tree to the terminal screen',
+      'Trade the season end-to-end in the group exercise: four desks, three rounds, one P&L decomposed flat / basis / costs',
     ],
     topics: module3Topics,
   },
@@ -44,12 +45,12 @@ export const modules: Module[] = [
     id: 4,
     title: 'Crude Oil: Market Analysis & Refining',
     objectives: [
-      'Analyse oil supply, demand and price: OPEC+, shale, inventories — the data that moves the barrel',
-      'Follow the value chain from wellhead to pump: refining, cracks and product slates',
-      'Grade a crude — API, sulphur, yields — and explain why quality sets its price against the benchmarks',
-      'Read the market’s information flow and its technicals: reports, curves and positioning',
+      'Analyse oil supply, demand and price: OPEC+, the call on OPEC, spare capacity and stocks — the data that moves the barrel',
+      'Follow the value chain from wellhead to pump: distillation, conversion units and refinery complexity tiers',
+      'Grade a crude — API, sulphur, yields — and price it to a refiner with the GPW & margin calculation',
+      'Read the market like an analyst: the three benchmarks, the information calendar, and the technical toolkit',
     ],
-    topics: module5Topics,
+    topics: module4Topics,
   },
   {
     id: 5,
@@ -60,6 +61,6 @@ export const modules: Module[] = [
       'Navigate the Brent complex: Dated, Cash BFOET, futures and how the world’s benchmark is actually built',
       'Use swaps and CFDs to hedge the gaps futures leave open',
     ],
-    topics: module4Topics,
+    topics: module5Topics,
   },
 ]

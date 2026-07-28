@@ -14,7 +14,7 @@ const topic: Topic = {
     {
       id: 'flow-east',
       title: 'Where Oil Is Produced vs Consumed',
-      body: `World supply (~98 mb/d) and demand (~102 mb/d) are both concentrated — but in **different places**. The Middle East and Russia produce far more than they burn; Asia-Pacific and Europe burn far more than they produce.\n\nThe consequence is the single most important fact in oil logistics: **crude must flow East.** It is the reason the tanker, pipeline and benchmark systems are shaped the way they are.`,
+      body: `World liquids supply and demand both balance around **~103 mb/d** — but they are concentrated in **different places**. The Middle East and Russia produce far more than they burn; Asia-Pacific and Europe burn far more than they produce.\n\nThe consequence is the single most important fact in oil logistics: **crude must flow East.** It is the reason the tanker, pipeline and benchmark systems are shaped the way they are.`,
       visual: 'supply-demand-region',
     },
     {
