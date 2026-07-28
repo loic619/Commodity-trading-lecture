@@ -8,7 +8,7 @@
 // module — announce it at the start of the session):
 //   1 · saigon   — Panorama & Vocabulary (the HCM desk)
 //   2 · antwerp  — Operational Mechanics & Hedging (the warehouse port)
-//   3 · hamburg  — Strategies, ESG & Data (the roaster city)
+//   3 · hamburg  — Strategies, Logistics, ESG & Data (the roaster city)
 //   4 · houston  — Crude Oil: Market Analysis & Refining
 //   5 · london   — Crude Oil: The Brent Complex (ICE / the trading hub)
 //
