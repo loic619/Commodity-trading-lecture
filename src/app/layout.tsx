@@ -18,8 +18,8 @@ const geistMono = localFont({
 })
 
 export const metadata: Metadata = {
-  title: 'Commodity Trading Masterclass',
-  description: 'Interactive lecture support for the commodity trading masterclass — Université Paris-Panthéon-Assas',
+  title: 'Commodity Trading Lecture',
+  description: 'Interactive lecture support for the commodity trading lecture — Université Paris-Panthéon-Assas',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -13,7 +13,7 @@ export default function SiteHeader() {
             </svg>
           </span>
           <div className="leading-tight">
-            <div className="eyebrow text-brand-cyan/90">Commodity Trading Masterclass</div>
+            <div className="eyebrow text-brand-cyan/90">Commodity Trading Lecture</div>
             <div className="text-[15px] font-semibold tracking-tight text-white">Université Paris-Panthéon-Assas</div>
           </div>
         </Link>
