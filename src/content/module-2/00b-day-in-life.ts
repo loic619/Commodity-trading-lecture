@@ -1,7 +1,7 @@
 import type { Topic } from '@/types/content'
 
 const topic: Topic = {
-  id: '05-case-study-adayinlife',
+  id: '00b-day-in-life',
   title: 'A Day in the Life of a Trader in Asia',
   type: 'case-study',
   estimatedMinutes: 45,
