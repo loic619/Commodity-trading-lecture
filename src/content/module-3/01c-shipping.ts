@@ -1,7 +1,7 @@
 import type { Topic } from '@/types/content'
 
 const topic: Topic = {
-  id: '04-shipping',
+  id: '01c-shipping',
   title: 'Shipping: Vessels, Chartering & Demurrage',
   type: 'lecture',
   estimatedMinutes: 45,

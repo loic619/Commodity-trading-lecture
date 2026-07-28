@@ -633,7 +633,11 @@ test('module 1 review: panorama split in two, junior inbox in module 1, trader d
   // The day-in-the-life swap: junior inbox in module 1, hedged desk in module 2
   expect(m1Ids).toContain('05-day-one-desk')
   expect(m1Ids).not.toContain('00b-day-in-life')
-  expect(modules[1].topics[1].id).toBe('00b-day-in-life')
+  // The hedged desk day lives in module 2 — relocated AFTER the hedging block
+  // (no longer the second topic), so it lands once the vocabulary is taught.
+  const m2Ids = modules[1].topics.map(t => t.id)
+  expect(m2Ids).toContain('00b-day-in-life')
+  expect(m2Ids.indexOf('00b-day-in-life')).toBeGreaterThan(m2Ids.indexOf('03b-hedging-quiz'))
 })
 
 test('FuturesOnlySim: the capital line caps the position — initial margin plus latent loss', () => {

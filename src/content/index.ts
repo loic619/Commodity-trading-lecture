@@ -22,8 +22,8 @@ export const modules: Module[] = [
     title: 'Operational Mechanics & Hedging',
     objectives: [
       'Run the two PTBF trades — split any physical deal into a futures leg and a differential leg, fix it with an EFP, and manage the basis: quality, freight, tenderable parity',
-      'Measure any book’s exposure (flat, basis, spread) and build the hedge that matches it',
-      'Follow a cargo from FOB origin to CIF Antwerp: vessels, chartering, demurrage and every cost between quay and warehouse',
+      'Measure any book’s exposure (flat, basis, spread) and build the hedge that matches it — from the coverage ratio to the minimum-variance cross-hedge',
+      'Work a fully hedged desk day and a full FOB→CIF trade: cost the cargo, hold the basis, and defend every decision against the news',
       'Trade the live floor: run a full book through news, margin calls and customer tenders — the course’s practical exam',
     ],
     topics: module2Topics,
@@ -34,6 +34,7 @@ export const modules: Module[] = [
     objectives: [
       'Use options on futures: calls, puts, premiums — and when optionality beats a straight hedge',
       'Work the basis with numbers: quote, compare and arbitrate differentials with the calculator',
+      'Move the cargo: vessels, chartering, Worldscale freight, laytime and demurrage — the operational layer under every physical trade',
       'Assess ESG & EUDR: what the regulatory revolution does to compliant vs non-compliant coffee — and to its price',
       'Model supply & demand like an analyst, from cherry on the tree to the terminal screen',
     ],
