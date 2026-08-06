@@ -30,6 +30,7 @@ const topic: Topic = {
       id: 'stowage-planning',
       title: 'Stowage & Cargo Planning — WVNS, Pump Stack, Slops, Reducers',
       body: `Before loading, the chief officer turns the nomination into a **stowage plan**, and operations must be able to read it:\n\n- **Segregations first** — which grades in which tanks, on which line systems, so that incompatible parcels never share steel or pipe; the **venting/vapour lineup (WVNS)** must respect the same segregation (a shared vent line can contaminate as surely as a shared pump)\n- **The pump stack** — discharge planning starts at loading: which pumps serve which tanks, what rate against what expected shore **back pressure**, which order of tanks keeps trim and stress inside limits as the ship empties\n- **Slop tanks** — reserved capacity for tank washings and line displacements; loading them with cargo buys tonnes today and sells them back with interest at the next grade switch\n- **Reducers & manifold plan** — ship flange sizes vs shore arms, WHICH manifold connections for WHICH grade, agreed before arrival\n- **Stress, trim & drafts** — the plan must sail within loadline limits (Module 1's exercise) at every intermediate stage, not just at completion\n\nThe commercial angle: a good stowage plan is CAPACITY. Poor planning strands tonnes ("cannot load your last parcel without breaking segregation") — and stranded tonnes are deadfreight, claims and a difficult conversation with the trader who sold the volume.`,
+      visual: 'tanker-cargo-system',
     },
   ],
 }

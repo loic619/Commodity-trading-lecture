@@ -26,6 +26,7 @@ const topic: Topic = {
       id: 'shipbroker',
       title: 'The Role of the Shipbroker — and Networking',
       body: `Almost every tanker fixture passes through **competitive shipbrokers** — the market-makers of freight:\n\n- **What they do:** circulate orders and positions, filter candidates (approvals, size, dates), carry the **negotiation** between principals, draft the **fixture recap**, and follow the voyage's claims afterwards (a good broker earns their commission twice over in the demurrage file).\n- **What they cost:** typically **1.25% of freight per broker**, paid by the owner, plus any **address commission** the charterer takes for itself — the "2.5% total" in the quote above.\n- **What they really sell: information.** A broker sees the whole market's flow; a principal sees their own. The broker's read on "what the last comparable cargo paid, and who is quietly working what" IS the market data.\n\nHence **networking** is not a soft skill here, it is infrastructure: the tanker market is a few thousand people worldwide, reputations persist for decades, and a principal known to honour their word "on subs" gets shown ships and cargoes a difficult one never sees. Your name is your credit line.`,
+      visual: 'broker-network',
     },
   ],
 }

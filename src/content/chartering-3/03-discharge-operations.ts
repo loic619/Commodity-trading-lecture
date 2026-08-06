@@ -20,6 +20,7 @@ const topic: Topic = {
       id: 'cargo-handling-discharge',
       title: 'Cargo Handling — Back Pressure and Notes of Protest',
       body: `Discharge physics inverts loading: now the SHIP does the work, her cargo pumps pushing against the terminal's **back pressure** (long shore lines, high tanks, restrictive manifolds all raise it, and rate falls as it rises).\n\nThat physical fact drives the classic tanker dispute. The CP carries a **pumping warranty** — discharge the full cargo within 24 hours, or maintain 100 psi at the ship's manifold throughout. Read it as an either/or: if the terminal restricts the rate, the ship demonstrates 100 psi at the manifold and the excess time becomes the CHARTERER'S problem; if the ship cannot hold the pressure, the excess discharge time is the OWNER'S. Every hour of a slow discharge is being silently allocated by a pressure gauge.\n\nHence the paper reflex — **notes of protest**, issued at the time, from either side: the Master protests shore restrictions ("terminal limited discharge to 4 bar — vessel maintained warranted pressure, time to charterer's account"); receivers protest slow pumping. The hourly **pumping log** (rates, manifold pressures, stoppages, signed by ship and preferably countersigned by the terminal) is the evidence that decides whose hours they were — Module 4 will settle the money, but the WINNING happens here, during the operation, in the log book.`,
+      visual: 'pumping-pressure',
     },
     {
       id: 'inspection-measurement-discharge',

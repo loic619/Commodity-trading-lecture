@@ -73,6 +73,16 @@ import PhysicalFlow, { textDef as physicalFlowText } from './PhysicalFlow'
 import TankerDimensions, { textDef as tankerDimensionsText } from './TankerDimensions'
 import DraftCapacityCalc from './DraftCapacityCalc'
 import VoyageEstimator from './VoyageEstimator'
+import TankerCargoSystem from './TankerCargoSystem'
+import TankerEquipment from './TankerEquipment'
+import CapacityDraftNotions from './CapacityDraftNotions'
+import VoyageParties from './VoyageParties'
+import FixtureRecapAnatomy from './FixtureRecapAnatomy'
+import BrokerNetwork from './BrokerNetwork'
+import LaycanTimeline from './LaycanTimeline'
+import PumpingPressure from './PumpingPressure'
+import DisputeLadder from './DisputeLadder'
+import TcTimeline from './TcTimeline'
 
 export const visualRegistry: Record<string, ComponentType> = {
   'three-laws': ThreeLaws,
@@ -93,6 +103,16 @@ export const visualRegistry: Record<string, ComponentType> = {
   'tanker-dimensions': TankerDimensions,
   'draft-capacity-calc': DraftCapacityCalc,
   'voyage-estimator': VoyageEstimator,
+  'tanker-cargo-system': TankerCargoSystem,
+  'tanker-equipment': TankerEquipment,
+  'capacity-draft-notions': CapacityDraftNotions,
+  'voyage-parties': VoyageParties,
+  'fixture-recap-anatomy': FixtureRecapAnatomy,
+  'broker-network': BrokerNetwork,
+  'laycan-timeline': LaycanTimeline,
+  'pumping-pressure': PumpingPressure,
+  'dispute-ladder': DisputeLadder,
+  'tc-timeline': TcTimeline,
   'worldscale-example': WorldscaleExample,
   'squeeze-simulator': SqueezeSimulator,
   'mandate-reveal': MandateReveal,
