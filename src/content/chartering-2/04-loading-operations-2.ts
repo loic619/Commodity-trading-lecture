@@ -10,6 +10,7 @@ const topic: Topic = {
       id: 'arrival-nor',
       title: 'Arrival & NOR — Laytime, Free Pratique and the 4 Ws',
       body: `The single most litigated moment of the voyage: **tendering Notice of Readiness**. NOR is the trigger that starts **laytime** — and an invalid NOR can mean the clock never started at all (ships have waited two weeks on an NOR tendered one hour too early, with every hour on the owner's account).\n\nA valid NOR must satisfy the **4 Ws**:\n\n- **WHERE** — the ship must be an "arrived ship" at the CP's agreed point: at the berth (berth charter) or within the port/customary anchorage (port charter). Read WHICH one you fixed.\n- **WHEN** — within laycan, and within any office-hours window the clause imposes; many CPs then add a **notice time** (e.g. laytime starts 6 hours after valid NOR or when loading commences, whichever first)\n- **WHAT** — genuinely ready in all respects: tanks inspected and accepted, IGS working, **free pratique** granted (or the CP says "whether granted or not" — WIFPON), customs cleared (or WICCON)\n- **WHOM** — tendered to the party the CP names (charterer/agent/terminal), in the form it requires\n\nOperator's discipline: tender NOR **on arrival, every time, and re-tender** after any event that could question validity (shifted anchorage, failed inspection later cured). A cascade of protective NORs costs nothing; a single invalid one can cost the whole waiting time.`,
+      visual: 'laycan-timeline',
     },
     {
       id: 'berthing-lightering',

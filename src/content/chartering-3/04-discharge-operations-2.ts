@@ -20,6 +20,7 @@ const topic: Topic = {
       id: 'pumping-warranties',
       title: 'Pumping — Warranties and Compensation',
       body: `Now settle the money the pressure gauge allocated:\n\n> **The warranty:** *"Vessel to discharge entire cargo within 24 hours, or maintain 100 psi at ship's manifold, provided shore facilities permit."*\n\nThe settlement logic, hour by hour from the pumping log:\n\n- Ship held ≥100 psi throughout, discharge took 30 hours → the extra 6 hours count as laytime/demurrage (**charterer/receiver pays** — the shore was the constraint, and the terminal's restriction letters prove it)\n- Ship could not hold pressure with no shore restriction → excess time is the **owner's**: deducted from laytime, and demurrage claims for those hours fail\n- Mixed picture (the usual) → the log is apportioned period by period: psi-hours to one account, restriction-hours to the other\n\n**Compensation flows both ways:** the owner recovers demurrage for shore-caused slow discharge; charterers/receivers counter-claim for ship-caused excess time — and an under-performed discharge that leaves **liquid ROB** on board becomes a shortage/cargo claim on top (unpumpable sludge, by contrast, is generally not a pumping failure). One habit decides most of these files: an hourly pumping log SIGNED by both sides beats a beautifully argued claim built on nothing.`,
+      visual: 'pumping-pressure',
     },
     {
       id: 'cow-marpol',

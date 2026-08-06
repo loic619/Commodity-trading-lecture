@@ -10,6 +10,7 @@ const topic: Topic = {
       id: 'early-late-arrival',
       title: 'Early / Late Arrival — What Each One Costs',
       body: `The **laycan** (layday/cancelling window) is the fixture's timing spine, and missing it in either direction has asymmetric consequences:\n\n**Early arrival.** The ship tenders NOR before the layday. Under most tanker CPs, laytime does **not** start before the layday (or starts only if the terminal chooses to berth her early). The owner has donated waiting time — but note the trap for the charterer: some CPs and terminals treat "berthed early at charterer's convenience" as **time counting**. Know which regime you fixed.\n\n**Late arrival.** The ship misses the cancelling date. The charterer gains the **option to cancel** — not damages, just the option: chartering's equivalent of a free put on the freight market. If the market has FALLEN since fixing, cancelling and re-fixing cheaper is pure gain; if it has risen, you keep the ship and say nothing. Most CPs oblige the owner, once late arrival is certain, to ask the charterer to **declare** the option in advance (the ShellVoy/BPVoy interpellation mechanism) — precisely so an owner does not steam a laden ballast leg toward a cancellation.\n\nEither way, the operator's job from Module 2's monitoring rhythm: see the laycan risk COMING, and renegotiate (extend the can, adjust the freight) while both sides still have options.`,
+      visual: 'laycan-timeline',
     },
     {
       id: 'delays',

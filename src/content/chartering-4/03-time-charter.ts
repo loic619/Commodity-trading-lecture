@@ -15,6 +15,7 @@ const topic: Topic = {
       id: 'hire-offhire',
       title: 'Hire, Off-hire — and Overtime',
       body: `**Hire** is payable in advance (typically per 15 days or per month), punctually — the classic tanker forms give the owner a **withdrawal right** for late payment (softened by anti-technicality notice clauses, but a missed hire payment in a rising market is still how charterers lose ships).\n\n**Off-hire** is the counterweight: when the SHIP fails the charterer — breakdown, drydocking, crew deficiency, PSC detention, failing a vetting inspection the CP warranted she would pass — hire **stops** for the time (and bunkers) lost. The clause is a list, read literally: an event not on it does not put the ship off-hire however inconvenient (congestion, charterer's own delays never do). Off-hire disputes are the time-charter's demurrage: same logbook discipline, same documents.\n\n**Overtime** — a small, telling clause: port labour and crew overtime worked to serve the CHARTERER'S operation (night loading ordered to catch a tide) is charged to the charterer; overtime for the SHIP'S own account (repairs) stays with the owner. A one-line clause that pays for the operator who reads logs carefully.`,
+      visual: 'tc-timeline',
     },
     {
       id: 'bunkers-sublet',
