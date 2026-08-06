@@ -10,7 +10,8 @@
 //   2 · antwerp  — Operational Mechanics & Hedging (the warehouse port)
 //   3 · hamburg  — Strategies, Logistics, ESG & Data (the roaster city)
 //   4 · houston  — Crude Oil: Market Analysis & Refining
-//   5 · london   — Crude Oil: The Brent Complex (ICE / the trading hub)
+//   5 · houston  — Crude Oil: The Brent Complex (same code as module 4 —
+//                  the two crude sessions run back to back)
 //   6–9 · rotterdam — Tanker Chartering & Voyage Management (the port of ports)
 //
 // This module is imported ONLY by server code (server action + server
@@ -20,7 +21,7 @@ const DEFAULT_CODES: Record<number, string> = {
   2: 'antwerp',
   3: 'hamburg',
   4: 'houston',
-  5: 'london',
+  5: 'houston',
   6: 'rotterdam',
   7: 'rotterdam',
   8: 'rotterdam',
