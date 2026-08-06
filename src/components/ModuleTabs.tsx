@@ -14,21 +14,22 @@ function TabTitle({ id, title }: { id: number; title: string }) {
   return <span className="whitespace-nowrap text-[13px] font-medium tracking-tight">{t}</span>
 }
 
-// The app hosts two lecture series; the tab bar groups modules under a small
-// course label, numbering each module within its own course.
+// The app hosts two lecture series — each gets its OWN ROW in the tab bar,
+// so the two courses read as clearly separate lectures. Modules number
+// within their own course.
 const COURSES = ['commodity', 'chartering'] as const
 
 export default function ModuleTabs({ activeId }: Props) {
   return (
     <nav className="sticky top-0 z-30 border-b border-white/[0.06] bg-[#070912]/70 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center gap-1.5 overflow-x-auto px-5 py-2.5">
+      <div className="mx-auto max-w-7xl px-5">
         {COURSES.map((course, ci) => {
           const mods = modules.filter(m => courseOf(m) === course)
           if (mods.length === 0) return null
           return (
-            <div key={course} className="flex shrink-0 items-center gap-1.5">
-              {ci > 0 && <span className="mx-2 h-6 w-px shrink-0 bg-white/10" />}
-              <span className="shrink-0 pr-1 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-slate-500">
+            <div key={course}
+              className={`flex items-center gap-1.5 overflow-x-auto py-2 ${ci > 0 ? 'border-t border-white/[0.05]' : ''}`}>
+              <span className="w-28 shrink-0 pr-1 font-mono text-[9px] font-bold uppercase leading-tight tracking-[0.16em] text-slate-500">
                 {COURSE_LABELS[course]}
               </span>
               {mods.map((mod, i) => {
