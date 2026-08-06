@@ -25,22 +25,29 @@ test('renders question and all 4 options', () => {
   expect(buttons[3]).toHaveTextContent('6')
 })
 
-test('calls onAnswer(true) when correct option clicked', () => {
-  jest.useFakeTimers()
+test('answering does NOT auto-advance — the Next button carries the result', () => {
   render(<QuizQuestion question={question} questionNumber={1} total={5} onAnswer={onAnswer} />)
-  fireEvent.click(screen.getAllByRole('button')[1]) // index 1 = "4" = correct
-  jest.runAllTimers()
+  fireEvent.click(screen.getAllByRole('button')[1]) // "4" = correct
+  // No auto-advance: onAnswer only fires on the explicit Next click
+  expect(onAnswer).not.toHaveBeenCalled()
+  expect(screen.getByText('Basic arithmetic: 2 + 2 = 4.')).toBeInTheDocument()
+  fireEvent.click(screen.getByRole('button', { name: 'Next question →' }))
   expect(onAnswer).toHaveBeenCalledWith(true)
-  jest.useRealTimers()
 })
 
-test('calls onAnswer(false) when wrong option clicked', () => {
-  jest.useFakeTimers()
+test('a wrong answer passes false on Next', () => {
   render(<QuizQuestion question={question} questionNumber={1} total={5} onAnswer={onAnswer} />)
-  fireEvent.click(screen.getAllByRole('button')[0]) // index 0 = "3" = wrong
-  jest.runAllTimers()
+  fireEvent.click(screen.getAllByRole('button')[0]) // "3" = wrong
+  fireEvent.click(screen.getByRole('button', { name: 'Next question →' }))
   expect(onAnswer).toHaveBeenCalledWith(false)
-  jest.useRealTimers()
+})
+
+test('the last question offers "See results" instead of "Next question"', () => {
+  render(<QuizQuestion question={question} questionNumber={5} total={5} onAnswer={onAnswer} />)
+  fireEvent.click(screen.getAllByRole('button')[1])
+  expect(screen.queryByRole('button', { name: 'Next question →' })).toBeNull()
+  fireEvent.click(screen.getByRole('button', { name: 'See results →' }))
+  expect(onAnswer).toHaveBeenCalledWith(true)
 })
 
 test('shows explanation after answering', () => {
@@ -49,10 +56,10 @@ test('shows explanation after answering', () => {
   expect(screen.getByText('Basic arithmetic: 2 + 2 = 4.')).toBeInTheDocument()
 })
 
-test('disables all buttons after answering', () => {
+test('disables the option buttons after answering (Next stays active)', () => {
   render(<QuizQuestion question={question} questionNumber={1} total={5} onAnswer={onAnswer} />)
-  fireEvent.click(screen.getAllByRole('button')[0])
-  screen.getAllByRole('button').forEach(btn => {
-    expect(btn).toBeDisabled()
-  })
+  const options = screen.getAllByRole('button')
+  fireEvent.click(options[0])
+  options.forEach(btn => expect(btn).toBeDisabled())
+  expect(screen.getByRole('button', { name: 'Next question →' })).toBeEnabled()
 })

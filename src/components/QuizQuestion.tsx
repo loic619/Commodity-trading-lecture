@@ -14,11 +14,13 @@ type Props = {
 export default function QuizQuestion({ question, questionNumber, total, onAnswer, edited = false }: Props) {
   const [selected, setSelected] = useState<number | null>(null)
   const answered = selected !== null
+  const isLast = questionNumber === total
 
+  // Selecting an answer only REVEALS the result and explanation — moving on
+  // is a manual step, so there is always time to read the "Why".
   function handleSelect(index: number) {
     if (answered) return
     setSelected(index)
-    setTimeout(() => onAnswer(index === question.correctIndex), 900)
   }
 
   return (
@@ -62,6 +64,17 @@ export default function QuizQuestion({ question, questionNumber, total, onAnswer
         <div className="mt-6 animate-fade-in rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
           <div className="eyebrow mb-2 text-brand-cyan/80">Why</div>
           <p className="text-sm leading-relaxed text-slate-300">{question.explanation}</p>
+        </div>
+      )}
+      {answered && (
+        <div className="mt-6 flex animate-fade-in justify-end">
+          <button
+            type="button"
+            onClick={() => onAnswer(selected === question.correctIndex)}
+            className="btn-primary !px-6 !py-2.5 text-sm"
+          >
+            {isLast ? 'See results →' : 'Next question →'}
+          </button>
         </div>
       )}
     </div>

@@ -12,6 +12,9 @@ test('every module has its own unlock code, checked case- and space-insensitivel
   expect(checkModuleCode(1, '')).toBe(false)
   // Each module stores its own cookie
   expect(moduleCookieName(3)).not.toBe(moduleCookieName(4))
+  // The two crude modules share one code (back-to-back sessions)
+  expect(checkModuleCode(4, 'houston')).toBe(true)
+  expect(checkModuleCode(5, 'houston')).toBe(true)
   // The chartering course (modules 6–9) shares one code: rotterdam
   for (let m = 6; m <= 9; m++) expect(checkModuleCode(m, 'Rotterdam')).toBe(true)
   expect(checkModuleCode(6, 'london')).toBe(false)
