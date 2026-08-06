@@ -16,13 +16,9 @@ export default function LoginPage({ searchParams }: Props) {
           </div>
           <div className="eyebrow text-brand-cyan/90">Université Paris-Panthéon-Assas</div>
           <h1 className="mt-3 text-4xl font-bold tracking-tight">
-            <span className="text-gradient">Commodity Trading</span>
+            <span className="text-gradient">Lectures</span>
           </h1>
-<<<<<<< HEAD
           <p className="mt-2 text-sm text-slate-400">Lectures · enter your access code</p>
-=======
-          <p className="mt-2 text-sm text-slate-400">Lecture · enter your access code</p>
->>>>>>> origin/main
         </div>
 
         <form action={authenticate} className="glass flex flex-col gap-3 p-6">
