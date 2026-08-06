@@ -1,23 +1,21 @@
-# Commodity Trading Lecture
+# Lectures
 
-Interactive lecture support web app for a commodity trading masterclass. Built for university students (Licence / M1 / M2 Spécialisé).
+Interactive lecture support web app hosting two university courses: **Commodity Trading** and **Tanker Chartering & Voyage Management**.
 
 ## Features
 
-- 3 module tabs (Panorama, Operational Mechanics, Strategies & ESG)
+- Two course parts in one app, grouped in the module tab bar
 - Guided section reader with keyboard navigation
 - MCQ quizzes with immediate feedback
-- Live calculators: hedging exposure, basis/differential
-- Password-protected (single shared class password)
+- Live calculators & simulators (hedging, basis, Worldscale, voyage estimating, draft & capacity…)
+- Password-protected (class password + per-module unlock codes)
 - Dark theme, desktop-first, Vercel-deployed
 
-## Modules
+## Courses & Modules
 
-| Module | Level | Topics |
-|--------|-------|--------|
-| 1 — Panorama & Vocabulary | Licence / M1 | Commodity types, trader archetypes, futures/swaps/EFP, market structure, S&D |
-| 2 — Operational Mechanics & Hedging | M1 / M2 | Differential, exposure, hedging strategies, incoterms, shipping |
-| 3 — Strategies, ESG & Data | M2 Spécialisé | Options, EUDR regulation, advanced S&D, data trading |
+**Commodity Trading** (modules 1–5): Panorama & Vocabulary · Operational Mechanics & Hedging · Strategies, Logistics, ESG & Data · Crude Oil: Market Analysis & Refining · Crude Oil: The Brent Complex & Hedging
+
+**Tanker Chartering & Voyage Management** (modules 6–9): Introduction — The Vessel, Worldscale & the Fixture · Pre-loading & Loading Operations · Laden Passage & Discharge Operations · Demurrage, the Time Charter & Disputes
 
 ## Tech Stack
 

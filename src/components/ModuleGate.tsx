@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { modules } from '@/content'
+import { COURSE_LABELS, courseOf } from '@/types/content'
 import { moduleCookieName } from '@/lib/moduleAccess'
 import { unlockModule } from '@/app/module/[id]/unlock'
 
@@ -18,6 +19,9 @@ export default function ModuleGate({ moduleId, returnTo, children }: {
   const failed = store.get('module-code-error')?.value === '1'
   const mod = modules[moduleId - 1]
   const action = unlockModule.bind(null, moduleId, returnTo)
+  // Course-local numbering ("Chartering & Voyage · Module 2")
+  const course = mod ? courseOf(mod) : 'commodity'
+  const localNo = mod ? modules.filter(m => courseOf(m) === course).findIndex(m => m.id === mod.id) + 1 : moduleId
 
   return (
     <main className="flex min-h-[70vh] items-center justify-center px-4 py-16">
@@ -30,7 +34,7 @@ export default function ModuleGate({ moduleId, returnTo, children }: {
               <path d="M8 11V7a4 4 0 0 1 8 0v4" />
             </svg>
           </div>
-          <div className="eyebrow text-brand-cyan/90">Module {moduleId}</div>
+          <div className="eyebrow text-brand-cyan/90">{COURSE_LABELS[course]} · Module {localNo}</div>
           <h1 className="mt-2 text-3xl font-bold tracking-tight">
             <span className="text-gradient">{mod?.title ?? 'Locked module'}</span>
           </h1>
@@ -55,7 +59,7 @@ export default function ModuleGate({ moduleId, returnTo, children }: {
             <p className="text-center font-mono text-xs text-rose-400">Incorrect module code</p>
           )}
           <button type="submit" className="btn-primary w-full py-3">
-            Unlock Module {moduleId} →
+            Unlock Module {localNo} →
           </button>
           <p className="text-center font-mono text-[10px] text-slate-600">
             one code per module · remembered on this device

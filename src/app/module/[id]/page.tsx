@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { modules } from '@/content'
+import { COURSE_LABELS, courseOf } from '@/types/content'
 import ModuleTabs from '@/components/ModuleTabs'
 import TopicCard from '@/components/TopicCard'
 import SiteHeader from '@/components/SiteHeader'
@@ -17,6 +18,11 @@ export default function ModulePage({ params }: Props) {
   const topics = mod.topics
   const totalMin = topics.reduce((s, t) => s + (t.estimatedMinutes || 0), 0)
 
+  // Modules number within their own course ("Chartering & Voyage · Module 2")
+  const course = courseOf(mod)
+  const courseMods = modules.filter(m => courseOf(m) === course)
+  const localNo = courseMods.findIndex(m => m.id === mod.id) + 1
+
   // One accent per objective tile — the house palette
   const objectiveColors = ['#3b82f6', '#22d3ee', '#8b5cf6', '#34d399']
 
@@ -31,7 +37,7 @@ export default function ModulePage({ params }: Props) {
         {/* Hero */}
         <section className="animate-fade-up">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="chip text-slate-300">Module {mod.id}</span>
+            <span className="chip text-slate-300">{COURSE_LABELS[course]} · Module {localNo}</span>
           </div>
           <h2 className="mt-4 max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl">
             <EditableText id={moduleTitleKey(mod.id)} value={mod.title} as="span" className="text-gradient"

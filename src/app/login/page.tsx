@@ -18,7 +18,7 @@ export default function LoginPage({ searchParams }: Props) {
           <h1 className="mt-3 text-4xl font-bold tracking-tight">
             <span className="text-gradient">Commodity Trading</span>
           </h1>
-          <p className="mt-2 text-sm text-slate-400">Lecture · enter your access code</p>
+          <p className="mt-2 text-sm text-slate-400">Lectures · enter your access code</p>
         </div>
 
         <form action={authenticate} className="glass flex flex-col gap-3 p-6">
