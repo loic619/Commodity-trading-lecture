@@ -42,6 +42,14 @@ export type ToolConfig = {
 export type Module = {
   id: number
   title: string
+  course?: 'commodity' | 'chartering' // which lecture series the module belongs to (default: commodity)
   objectives: string[] // what the student will know after this module (shown as the hero band)
   topics: Topic[]
 }
+
+// Course display metadata — the two lecture series the app hosts.
+export const COURSE_LABELS: Record<'commodity' | 'chartering', string> = {
+  commodity: 'Commodity Trading',
+  chartering: 'Chartering & Voyage',
+}
+export const courseOf = (m: Module): 'commodity' | 'chartering' => m.course ?? 'commodity'

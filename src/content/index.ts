@@ -3,6 +3,10 @@ import { topics as module2Topics } from './module-2'
 import { topics as module3Topics } from './module-3'
 import { topics as module4Topics } from './module-4'
 import { topics as module5Topics } from './module-5'
+import { topics as chartering1Topics } from './chartering-1'
+import { topics as chartering2Topics } from './chartering-2'
+import { topics as chartering3Topics } from './chartering-3'
+import { topics as chartering4Topics } from './chartering-4'
 import type { Module } from '@/types/content'
 
 export const modules: Module[] = [
@@ -62,5 +66,54 @@ export const modules: Module[] = [
       'Use swaps and CFDs to hedge the gaps futures leave open',
     ],
     topics: module5Topics,
+  },
+  // ── Tanker Chartering and Voyage Management — the second lecture series ──
+  {
+    id: 6,
+    title: 'Introduction — The Vessel, Worldscale & the Fixture',
+    course: 'chartering',
+    objectives: [
+      'Read a tanker like a terminal does: history and types, structure and dimensions, tanks and lines, equipment — and compute a real maximum lift from loadlines, salinity, charts and tides',
+      'Price freight in Worldscale: the elements of freight cost, the flat rate and the WS percentage, and where small tankers break the system',
+      'Run the commercial process: contract types, market research, quoting cargoes and vessels, and the shipbroker’s role in the network',
+      'Negotiate and close a single voyage fixture: offers and counters, freight and voyage estimates, the recap, and lifting subjects',
+    ],
+    topics: chartering1Topics,
+  },
+  {
+    id: 7,
+    title: 'Pre-loading & Loading Operations',
+    course: 'chartering',
+    objectives: [
+      'Build the pre-loading file: SIRE/CDI vetting, recap vs charter parties, port and terminal clearance, and the stowage plan (segregations, pump stack, slops, reducers)',
+      'Manage the laycan: early and late arrival, the cancelling option, and the delay families — weather, canals and passages',
+      'Run a load port end to end: the physical and administrative layers, cargo, customs and Marpol documentation, and progress monitoring',
+      'Master the loading clock: a valid NOR (the 4 Ws), berthing, STS and double-banking, cargo handling, inspection and the bill of lading',
+    ],
+    topics: chartering2Topics,
+  },
+  {
+    id: 8,
+    title: 'Laden Passage & Discharge Operations',
+    course: 'chartering',
+    objectives: [
+      'Track the laden voyage: positions and ETAs, onward orders, heating, weather routing — and the law of deviation',
+      'Navigate the limits: pilot charts, IWL/INL, SECAs, river transits, draft restrictions, detention and piracy',
+      'Keep the paper with the oil afloat: changing bills of lading, letters of indemnity, and discharge orders',
+      'Close the voyage at the discharge port: NOR to outturn, back pressure and pumping logs, quantity and quality claims, slops, COW and the Marpol pre-wash',
+    ],
+    topics: chartering3Topics,
+  },
+  {
+    id: 9,
+    title: 'Demurrage, the Time Charter & Disputes',
+    course: 'chartering',
+    objectives: [
+      'Write the claims file: demurrage (and why tankers pay no despatch), freight, deadfreight, detention, deviation and the smaller heads — inside their time bars, with the full document bundle',
+      'Calculate demurrage clause by clause: commencement, counting, exceptions, and “once on demurrage, always on demurrage” — through two worked examples and an exercise',
+      'Operate a time charter: delivery and redelivery, hire and off-hire, bunkers, sublet, performance warranties, the final voyage and dry docking',
+      'Resolve disputes proportionately: ENE, ENI, mediation, arbitration vs litigation, the New York Convention 1958, and what can (and cannot) be appealed',
+    ],
+    topics: chartering4Topics,
   },
 ]

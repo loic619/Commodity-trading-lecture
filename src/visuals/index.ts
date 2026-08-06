@@ -70,6 +70,9 @@ import FuturesContractDoc, { textDef as futuresContractDocText } from './Futures
 import DeskOrganisation from './DeskOrganisation'
 import TradeWorkflow, { textDef as tradeWorkflowText } from './TradeWorkflow'
 import PhysicalFlow, { textDef as physicalFlowText } from './PhysicalFlow'
+import TankerDimensions, { textDef as tankerDimensionsText } from './TankerDimensions'
+import DraftCapacityCalc from './DraftCapacityCalc'
+import VoyageEstimator from './VoyageEstimator'
 
 export const visualRegistry: Record<string, ComponentType> = {
   'three-laws': ThreeLaws,
@@ -87,6 +90,9 @@ export const visualRegistry: Record<string, ComponentType> = {
   'unit-conversions': UnitConversions,
   'price-factors-grid': PriceFactorsGrid,
   'tanker-types': TankerTypes,
+  'tanker-dimensions': TankerDimensions,
+  'draft-capacity-calc': DraftCapacityCalc,
+  'voyage-estimator': VoyageEstimator,
   'worldscale-example': WorldscaleExample,
   'squeeze-simulator': SqueezeSimulator,
   'mandate-reveal': MandateReveal,
@@ -154,6 +160,7 @@ export const visualTextRegistry: Record<string, VisualTextDef> = {
   'market-influences': marketInfluencesText,
   'price-factors-grid': priceFactorsGridText,
   'tanker-types': tankerTypesText,
+  'tanker-dimensions': tankerDimensionsText,
   'worldscale-example': worldscaleExampleText,
   'brent-triangle': brentTriangleText,
   'brent-basket': brentBasketText,

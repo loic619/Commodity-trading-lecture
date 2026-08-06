@@ -3,7 +3,7 @@
 // additionally lock EACH MODULE until the instructor reveals its code in
 // class, so sharing the link early spoils nothing.
 //
-// Override any code without a deploy by setting MODULE_1_CODE … MODULE_5_CODE
+// Override any code without a deploy by setting MODULE_1_CODE … MODULE_9_CODE
 // in the environment; otherwise the defaults below apply (one city per
 // module — announce it at the start of the session):
 //   1 · saigon   — Panorama & Vocabulary (the HCM desk)
@@ -11,6 +11,7 @@
 //   3 · hamburg  — Strategies, Logistics, ESG & Data (the roaster city)
 //   4 · houston  — Crude Oil: Market Analysis & Refining
 //   5 · london   — Crude Oil: The Brent Complex (ICE / the trading hub)
+//   6–9 · rotterdam — Tanker Chartering & Voyage Management (the port of ports)
 //
 // This module is imported ONLY by server code (server action + server
 // components), so the codes never reach the client bundle.
@@ -20,6 +21,10 @@ const DEFAULT_CODES: Record<number, string> = {
   3: 'hamburg',
   4: 'houston',
   5: 'london',
+  6: 'rotterdam',
+  7: 'rotterdam',
+  8: 'rotterdam',
+  9: 'rotterdam',
 }
 
 export function moduleCode(moduleId: number): string {
