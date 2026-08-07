@@ -27,18 +27,6 @@ const topic: Topic = {
         explanation: 'ABCD refers to Archer Daniels Midland, Bunge, Cargill, and Louis Dreyfus — the four largest agricultural commodity trading houses.',
       },
       {
-        id: 'q3',
-        question: 'A clearly bullish story breaks on a live futures market. What does the price typically do in the first seconds?',
-        options: [
-          'It jumps instantly to its new level — markets are efficient',
-          'It keeps breathing at the old level for a few seconds, then DRIFTS to the new one',
-          'Nothing happens until the next day\u2019s open',
-          'It falls first, because news is always priced in already',
-        ],
-        correctIndex: 1,
-        explanation: 'Markets absorb news with a LAG: traders must read, decide and execute. On the course\u2019s live screen the tape breathes for ~3 seconds, then drifts to the published level over up to 35 seconds \u2014 the fast readers position during the lag.',
-      },
-      {
         id: 'q4',
         question: 'A futures exchange provides three core functions the physical trade depends on. Which of the following is NOT one of them?',
         options: [
@@ -166,13 +154,13 @@ const topic: Topic = {
         id: 'q16',
         question: 'What is the main advantage of a swap over a futures contract for a commodity producer?',
         options: [
-          'No margin calls',
+          'Higher liquidity and a tighter bid/offer than the futures screen',
           'Exchange-guaranteed clearing eliminates credit risk',
           'Flexibility in size, tenor, and settlement terms',
           'Lower transaction costs',
         ],
         correctIndex: 2,
-        explanation: 'Swaps are OTC and can be customized in size, duration, and settlement — but unlike futures, they carry counterparty credit risk since there is no clearinghouse.',
+        explanation: 'Swaps are OTC and can be customized in size, duration, and settlement — that tailoring is the core advantage. A real second benefit: no daily exchange margin calls (a smoother cash-flow profile — though banks may still require collateral). The price of both is counterparty credit risk: there is no clearinghouse. Liquidity, tight spreads and clearing all favour FUTURES, not swaps.',
       },
       {
         id: 'q17',
