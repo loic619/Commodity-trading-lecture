@@ -740,7 +740,7 @@ test('module 1 has ONE merged checkpoint after the market-structure topic', () =
   const structureIdx = ids.indexOf('03-market-structure')
   expect(quizIdx).toBeGreaterThan(structureIdx)
   const quiz = m1.topics[quizIdx]
-  expect(quiz.quiz?.questions).toHaveLength(17)
+  expect(quiz.quiz?.questions).toHaveLength(16)
   // The merged quiz covers instruments (lot size, swaps) but NOT EFP — that
   // moved to Module 2 with the differential and PTBF content.
   const qtext = JSON.stringify(quiz.quiz?.questions)

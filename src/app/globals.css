@@ -34,6 +34,30 @@ html.day iframe {
   filter: invert(1) hue-rotate(180deg);
 }
 
+/* ============================================================
+   Visual legibility — classroom feedback: the writing inside the
+   charts is too small. Every SVG label and the tiny annotation
+   classes get a global ~20% bump here, preserving each chart's own
+   size hierarchy without touching sixty components.
+   SVG font-size set as a presentation attribute is overridden by
+   any CSS rule, so we map each authored size up.
+   ============================================================ */
+svg text[font-size='6'] { font-size: 7.5px; }
+svg text[font-size='6.5'] { font-size: 8px; }
+svg text[font-size='7'] { font-size: 8.5px; }
+svg text[font-size='7.5'] { font-size: 9px; }
+svg text[font-size='8'] { font-size: 9.5px; }
+svg text[font-size='8.5'] { font-size: 10px; }
+svg text[font-size='9'] { font-size: 10.5px; }
+svg text[font-size='9.5'] { font-size: 11px; }
+svg text[font-size='10'] { font-size: 11.5px; }
+svg text[font-size='11'] { font-size: 12.5px; }
+
+.text-\[8px\] { font-size: 9.5px; }
+.text-\[9px\] { font-size: 10.5px; }
+.text-\[10px\] { font-size: 11.5px; }
+.text-\[11px\] { font-size: 12.5px; }
+
 body {
   @apply text-slate-100 antialiased;
   background-color: var(--bg);
