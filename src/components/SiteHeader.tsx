@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import ThemeToggle from './ThemeToggle'
 
 export default function SiteHeader() {
   return (
@@ -17,8 +18,9 @@ export default function SiteHeader() {
             <div className="text-[15px] font-semibold tracking-tight text-white">Université Paris-Panthéon-Assas</div>
           </div>
         </Link>
-        <span className="hidden items-center gap-2 sm:flex">
-          <span className="chip text-emerald-300">
+        <span className="flex items-center gap-2">
+          <ThemeToggle />
+          <span className="chip hidden text-emerald-300 sm:flex">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 8px #34d399' }} />
             Live
           </span>
