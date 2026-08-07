@@ -17,6 +17,23 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ============================================================
+   Day theme — white background, black writing.
+   The whole app (including every SVG chart) is authored on the dark
+   palette, so day mode inverts the canvas at the root and rotates hue
+   180° to keep the accent colours (blues stay blue, ambers stay amber).
+   Media that must keep its true colours is double-inverted back.
+   Applied on <html> so position:fixed elements keep working.
+   ============================================================ */
+html.day {
+  filter: invert(1) hue-rotate(180deg);
+}
+html.day img,
+html.day video,
+html.day iframe {
+  filter: invert(1) hue-rotate(180deg);
+}
+
 body {
   @apply text-slate-100 antialiased;
   background-color: var(--bg);
