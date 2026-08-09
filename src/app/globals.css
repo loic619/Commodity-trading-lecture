@@ -33,6 +33,13 @@ html.day video,
 html.day iframe {
   filter: invert(1) hue-rotate(180deg);
 }
+/* Day background: not pure white — too aggressive on the eyes. This very
+   dark warm brown runs through the root invert + hue-rotate and comes out
+   as a soft cream / light yellow (≈ #f6f2e5). */
+html.day,
+html.day body {
+  background-color: #110d00;
+}
 
 /* ============================================================
    Visual legibility — classroom feedback: the writing inside the
