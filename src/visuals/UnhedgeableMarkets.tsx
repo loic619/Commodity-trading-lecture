@@ -4,6 +4,7 @@ import { defineVisualText, useVisualText } from '@/lib/visualText'
 
 export const textDef = defineVisualText({
   heading: { label: 'Heading', value: 'The markets that never got one' },
+  summaryTitle: { label: 'Summary tile · title', value: 'Summary — why volatility bites harder without a public price' },
   prob1: {
     label: 'Problem 1',
     multiline: true,
@@ -173,14 +174,17 @@ export default function UnhedgeableMarkets() {
         </div>
       </div>
 
-      {/* What importers face without an exchange */}
-      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {problems.map((text, i) => (
-          <div key={i} className="rounded-xl border border-white/10 bg-white/[0.04] p-3">
-            <span className="mb-2 inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: PROBLEM_DOTS[i] }} />
-            <p className="text-slate-300 text-xs leading-relaxed">{text}</p>
-          </div>
-        ))}
+      {/* What importers face without an exchange — one summary tile */}
+      <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.04] p-4">
+        <div className="mb-2 font-mono text-[11px] font-bold uppercase tracking-wide text-amber-300">{t('summaryTitle')}</div>
+        <ul className="space-y-1.5">
+          {problems.map((text, i) => (
+            <li key={i} className="flex items-baseline gap-2.5 text-xs leading-relaxed text-slate-300">
+              <span className="inline-block h-1.5 w-1.5 shrink-0 translate-y-[-1px] rounded-full" style={{ backgroundColor: PROBLEM_DOTS[i] }} />
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
       </div>
 
       <p className="mt-4 text-slate-400 text-sm leading-relaxed">{t('caption')}</p>
