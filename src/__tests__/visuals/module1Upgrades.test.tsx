@@ -235,8 +235,17 @@ test('StuScatter: the real 12.4% STU lands in the convexity zone', () => {
 
 test('CropCalendar and WarrantLifecycle render their content', () => {
   const cal = render(<CropCalendar />)
+  // Coffee is the default wheel
   expect(cal.container.textContent).toContain('Vietnam')
   expect(cal.container.textContent).toContain('harvest')
+  // The toggle switches to other crops' calendars
+  fireEvent.click(screen.getByRole('button', { name: 'Corn' }))
+  expect(cal.container.textContent).toContain('safrinha')
+  expect(cal.container.textContent).not.toContain('Vietnam')
+  fireEvent.click(screen.getByRole('button', { name: 'Orange juice' }))
+  expect(cal.container.textContent).toContain('Florida')
+  fireEvent.click(screen.getByRole('button', { name: 'Coffee' }))
+  expect(cal.container.textContent).toContain('Vietnam')
   const wl = render(<WarrantLifecycle />)
   expect(wl.container.textContent).toContain('Warrant')
   expect(wl.container.textContent).toContain('fungible')
