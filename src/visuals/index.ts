@@ -47,6 +47,7 @@ import PtbfMechanics, { FuturesOnlySim } from './PtbfMechanics'
 import OptionPayoff from './OptionPayoff'
 import BasisPnl from './BasisPnl'
 import SdScenario from './SdScenario'
+import SdBalanceSheet from './SdBalanceSheet'
 import GuidedTradeSim from './GuidedTradeSim'
 import TraderInbox from './TraderInbox'
 import AnalystInbox from './AnalystInbox'
@@ -146,6 +147,7 @@ export const visualRegistry: Record<string, ComponentType> = {
   'option-payoff': OptionPayoff,
   'basis-pnl': BasisPnl,
   'sd-scenario': SdScenario,
+  'sd-balance-sheet': SdBalanceSheet,
   'guided-trade-sim': GuidedTradeSim,
   'trader-inbox': TraderInbox,
   'analyst-inbox': AnalystInbox,

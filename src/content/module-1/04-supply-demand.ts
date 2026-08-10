@@ -8,8 +8,8 @@ const topic: Topic = {
   sections: [
     {
       id: 'supply-side',
-      title: 'The Supply Side',
-      body: `**What is supply?**\n\nIn commodity S&D models, "supply" is not simply production. The full picture:\n\n- **Production:** What is grown / extracted in a given crop year\n- **Beginning stocks:** Carryover inventory from the previous year\n- **Imports:** How much enters the market from external sources\n\n**Total supply = Production + Beginning stocks + Imports**\n\nKey insight: A bad harvest doesn't necessarily cause a price spike if stocks are abundant.`,
+      title: 'The Supply Side — How Many Tons of Coffee Are Available?',
+      body: `Supply is one question asked twice:\n\n**1. How much have we KEPT from previous years?** The carry-in — and it hides in three places: the **farmer's stock** at origin (do farmers *need* to sell — financing pressure — and do they *like* the price?), the **visible origin stocks** in exporters' warehouses, and the **destination stocks** already sitting in consuming countries.\n\n**2. How much have we PRODUCED?** Decompose it like an analyst — a multiplication of three factors, each with its own drivers:\n\n- **Hectares planted** — is land cheap? What is the **opportunity cost vs other crops** (expected profitability = cost of production against the benchmark price of the competing crop)?\n- **× Trees per hectare** — planting density, the **% of the hectare inter-cropped** (coffee sharing the field with pepper or avocado), and the **age profile** of the trees (young ones not yet bearing, old ones declining)\n- **× Yield per tree** — the season's variables: **weather** through flowering, **fertilizer** application, increasing usage of **irrigation**, the **genetic variety** planted, **disease and insect** damage — plus the harvest mechanics: the ripe-cherry ratio, the cherry→green **conversion ratio**, and an early or late harvest (early dry weather, or farmers matching the pre-harvest market price)\n\nYou can always drill one level deeper — that is the point: every supply headline on the futures screen is a sentence about ONE of these drivers, and knowing the tree tells you instantly how many tons the headline is really worth.`,
     },
     {
       id: 'seasonality',
@@ -19,24 +19,14 @@ const topic: Topic = {
     },
     {
       id: 'demand-side',
-      title: 'The Demand Side',
-      body: `**What is demand?**\n\nDemand in commodity markets is driven by:\n\n- **Consumption:** End-use by processors, manufacturers, households\n- **Exports:** Physical flow out of the producing country\n- **Ending stocks:** Inventory held at year-end (the residual)\n\n**Total demand = Consumption + Exports + Ending stocks**\n\nCritical question: What really drives demand for coffee?\n- Population growth in consuming countries\n- Per-capita income growth (coffee is a "luxury" in low-income markets)\n- Changing consumption patterns (capsule culture, specialty coffee boom)\n- Substitution (tea, other beverages)`,
+      title: 'The Demand Side — Where Do the Tons Go?',
+      body: `Demand is a multiplication too:\n\n**Consumption = population × cups per capita × grams per cup × the blend**\n\n- **Population growth** in consuming countries sets the floor\n- **Cups per capita** — the habit itself, growing fastest in origin countries and Asia\n- **Grams per cup** — espresso, filter, instant and capsules use very different quantities\n- **The blend / product mix** — how much robusta vs arabica goes into what is actually drunk\n\nAnd what bends those factors: **purchasing power** (inflation vs wages — coffee is a luxury in low-income markets, a staple in rich ones), the **coffee culture** (capsules, specialty, out-of-home), and **substitution** at the margin (tea, energy drinks).\n\nSplit the total in two: **destination consumption** (importing countries) and **origin consumption** — Brazil drinks a top-2 share of the world's coffee itself. Demand moves slowly and almost never backwards; supply does most of the price-setting.`,
     },
     {
-      id: 'balance',
-      title: 'The Balance: Stocks-to-Use Ratio',
-      body: `The single most important S&D indicator is the **stocks-to-use ratio (STU)**:\n\n**STU = Ending stocks ÷ Annual consumption × 100%**\n\nA high STU signals comfortable supply — prices tend to be low.\nA low STU signals tight supply — prices tend to be elevated.\n\nIllustrative bands (rules of thumb, not published thresholds — calibrate them per commodity against its own history):\n- STU > 25%: ample supply, weak price pressure\n- STU 15–25%: balanced market\n- STU < 15%: tightening — watch for backwardation and price spikes\n\nThe relationship is famously **non-linear**: below some critical STU, each further point of tightness produces a disproportionate price response. That convexity is why traders obsess over the stocks line of the balance sheet.`,
-    },
-    {
-      id: 'real-balance',
-      title: 'A Real Balance Sheet — Do the Numbers',
-      body: `Here is a real-world coffee balance (USDA FAS *Coffee: World Markets and Trade*, **December 2024 vintage**, million 60-kg bags — always pull the latest release before using in anger):\n\n| World coffee, 2024/25 | M bags |\n|---|---|\n| Beginning stocks | 14.1 |\n| Production | 174.9 |\n| — of which Brazil | 66.4 |\n| — of which Vietnam | 30.1 |\n| **Total supply** | **189.0** |\n| Consumption | 168.1 |\n| **Ending stocks** | **20.9** |\n\n**Now compute, before reading on:**\n\n1. **STU** = 20.9 ÷ 168.1 = **12.4%** — inside the "tight" band, among the lowest in decades\n2. **Concentration**: Brazil + Vietnam = 96.5 of 174.9 = **55% of world production**\n3. **Interpretation**: a 12.4% STU means the world carries about **45 days of consumption** in stock. Any Brazilian frost or Vietnamese drought hits a market with no cushion — which is precisely the backdrop of the 2024–25 price spike and the Vietnam buyer-of-last-resort case you will trade in Module 2.\n\nThis is the whole method in one table: build the balance, find the residual, divide, compare to history — *then* form the price view.`,
-    },
-    {
-      id: 'stu-convexity',
-      title: 'The Convexity: Why Tight Markets Explode',
-      body: `You computed STU = 12.4%. Now see what that *means*. The stocks-to-use \u2192 price relationship is not a line \u2014 it is a **hockey stick**. Above ~25% of annual use in stock, another million bags barely moves the price. Below ~15%, every point of tightness moves it disproportionately, and the uncertainty band around any forecast blows out with it.\n\nDrag this year's STU along the curve. At 12.4% \u2014 the real 2024/25 number \u2014 the market sits deep in the convexity zone: exactly why one drought headline out of Dak Lak was worth hundreds of dollars a tonne in the live-market exercise.`,
-      visual: 'stu-scatter',
+      id: 'balance-sheet',
+      title: 'The Balance Sheet: Sources & Uses of Coffee',
+      body: `Now assemble both sides the way an accountant would — a **balance sheet of tons**: sources on the left (carry-in + production), uses on the right (consumption + carry-out), and the two totals forced to equal.\n\n> **Beginning stocks + Production = Consumption + Ending stocks**\n\nThe sheet ALWAYS balances — the analysis is asking **which line does the adjusting**. Consumption barely moves year to year, production is what the weather made of it, so in a tight year the **ending stocks** take the hit: the carry-out shrinks, next year opens with no cushion, and every subsequent weather headline meets a market that cannot absorb it. That chain — thin carry-out → nervous market → outsized reaction to news — is precisely the 2024/25 backdrop behind the price spike you will trade on the live screen.\n\nWork the sheet below: click every line and walk its driver tree — the full interaction map from carry-in psychology (do farmers like the price?) down to fertilizer and inter-cropping. Build the balance, find the residual, compare it to history — *then* form the price view.`,
+      visual: 'sd-balance-sheet',
     },
     {
       id: 'sources',
