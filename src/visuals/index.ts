@@ -45,6 +45,7 @@ import RobustaContract, { textDef as robustaContractText } from './RobustaContra
 import VietnamCaseStudy, { textDef as vietnamCaseStudyText } from './VietnamCaseStudy'
 import PtbfMechanics, { FuturesOnlySim } from './PtbfMechanics'
 import OptionPayoff from './OptionPayoff'
+import OptionGreeks from './OptionGreeks'
 import BasisPnl from './BasisPnl'
 import SdScenario from './SdScenario'
 import SdBalanceSheet from './SdBalanceSheet'
@@ -145,6 +146,7 @@ export const visualRegistry: Record<string, ComponentType> = {
   'ptbf-mechanics': PtbfMechanics,
   'futures-ticker': FuturesOnlySim,
   'option-payoff': OptionPayoff,
+  'option-greeks': OptionGreeks,
   'basis-pnl': BasisPnl,
   'sd-scenario': SdScenario,
   'sd-balance-sheet': SdBalanceSheet,
