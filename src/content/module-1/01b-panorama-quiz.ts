@@ -4,7 +4,7 @@ const topic: Topic = {
   id: '01b-panorama-quiz',
   title: 'Module 1 Checkpoint: Markets, Instruments & Structure',
   type: 'quiz',
-  estimatedMinutes: 16,
+  estimatedMinutes: 15,
   quiz: {
     questions: [
       {
