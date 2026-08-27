@@ -78,6 +78,10 @@ import BackwardationChart from '@/visuals/BackwardationChart'
 import DeskOrganisation from '@/visuals/DeskOrganisation'
 import StuScatter from '@/visuals/StuScatter'
 import CropCalendar from '@/visuals/CropCalendar'
+import { modules } from '@/content'
+import TraderPillars from '@/visuals/TraderPillars'
+import EveryoneIsATrader from '@/visuals/EveryoneIsATrader'
+import PtbfInvention from '@/visuals/PtbfInvention'
 import WarrantLifecycle from '@/visuals/WarrantLifecycle'
 
 test('NetworkExplosion: quadratic bilateral links collapse to linear with the exchange', () => {
@@ -295,4 +299,54 @@ test('PhysicalFlow: goods forward, documents forward, money back — with owners
   expect(container.textContent).toContain('moved by TREASURY')
   fireEvent.click(screen.getByRole('button', { name: 'Show docs flow' }))
   expect(container.textContent).toContain('the paper IS the trade')
+})
+
+test('TraderPillars: three aspects, each opening its own detail', () => {
+  const { container } = render(<TraderPillars />)
+  expect(container.textContent).toContain('Commercial')
+  expect(container.textContent).toContain('Logistics')
+  expect(container.textContent).toContain('Financial')
+  // Commercial detail is open by default; clicking a satellite swaps it
+  expect(container.textContent).toContain('buy it and sell it at a margin')
+  fireEvent.click(screen.getByText('Financial'))
+  expect(container.textContent).toContain('will I be paid')
+  expect(container.textContent).toContain('Treasury, trade finance, credit & risk')
+})
+
+test('EveryoneIsATrader: the supermarket and the factory carry the trader’s risks', () => {
+  const { container } = render(<EveryoneIsATrader />)
+  // Trade house selected by default, with the full risk basket
+  expect(container.textContent).toContain('Counterparty risk')
+  fireEvent.click(screen.getByText('Supermarket'))
+  expect(container.textContent).toContain('GIANT trader')
+  fireEvent.click(screen.getByText('Factory'))
+  expect(container.textContent).toContain('A trader too')
+  // Risk chips explain how each is managed
+  fireEvent.click(screen.getByRole('button', { name: 'Quality risk' }))
+  expect(container.textContent).toContain('Pre-shipment inspection')
+})
+
+test('PtbfInvention: six steps ending on the flat→differential conversion', () => {
+  const { container } = render(<PtbfInvention />)
+  expect(container.textContent).toContain('step 1/6')
+  expect(container.textContent).toContain('The final consumer buys SPOT')
+  const next = screen.getByRole('button', { name: 'Next →' })
+  fireEvent.click(next); fireEvent.click(next)
+  expect(container.textContent).toContain('counterparty trap')
+  fireEvent.click(next); fireEvent.click(next)
+  expect(container.textContent).toContain('Price To Be Fixed')
+  fireEvent.click(next)
+  expect(container.textContent).toContain('step 6/6')
+  expect(container.textContent).toContain('flat-price risk in')
+})
+
+test('Module 1 opens on the introduction topic and still runs exactly 3 hours', () => {
+  const m1 = modules[0]
+  expect(m1.topics[0].id).toBe('00-introduction')
+  const intro = m1.topics[0]
+  const ids = intro.sections?.map(s => s.id) ?? []
+  expect(ids).toEqual(['three-aspects', 'what-we-trade', 'inventing-ptbf', 'the-other-end'])
+  expect(intro.sections?.[0].visual).toBe('trader-pillars')
+  const total = m1.topics.reduce((s, t) => s + t.estimatedMinutes, 0)
+  expect(total).toBe(180)
 })

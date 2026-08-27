@@ -72,6 +72,9 @@ import FuturesContractDoc, { textDef as futuresContractDocText } from './Futures
 import DeskOrganisation from './DeskOrganisation'
 import TradeWorkflow, { textDef as tradeWorkflowText } from './TradeWorkflow'
 import PhysicalFlow, { textDef as physicalFlowText } from './PhysicalFlow'
+import TraderPillars, { textDef as traderPillarsText } from './TraderPillars'
+import EveryoneIsATrader from './EveryoneIsATrader'
+import PtbfInvention from './PtbfInvention'
 import TankerDimensions, { textDef as tankerDimensionsText } from './TankerDimensions'
 import DraftCapacityCalc from './DraftCapacityCalc'
 import VoyageEstimator from './VoyageEstimator'
@@ -173,6 +176,9 @@ export const visualRegistry: Record<string, ComponentType> = {
   'desk-organisation': DeskOrganisation,
   'trade-workflow': TradeWorkflow,
   'physical-flow': PhysicalFlow,
+  'trader-pillars': TraderPillars,
+  'everyone-is-a-trader': EveryoneIsATrader,
+  'ptbf-invention': PtbfInvention,
 }
 
 // Visuals whose text is editable expose a VisualTextDef schema here.
@@ -209,6 +215,7 @@ export const visualTextRegistry: Record<string, VisualTextDef> = {
   'network-explosion': networkExplosionText,
   'trade-workflow': tradeWorkflowText,
   'physical-flow': physicalFlowText,
+  'trader-pillars': traderPillarsText,
   'volume-oi-flow': volumeOiFlowText,
   'rolling-oi': rollingOiWaveText,
   'unhedgeable-markets': unhedgeableMarketsText,
