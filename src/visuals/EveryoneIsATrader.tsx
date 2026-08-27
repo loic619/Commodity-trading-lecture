@@ -58,13 +58,20 @@ const RISKS: Record<string, { name: string; color: string; what: string; managed
   political: { name: 'Political / regulatory risk', color: '#e879f9',
     what: 'Export bans, tariffs, sanctions, FX controls, new compliance regimes (EUDR) — the rules change under an open position.',
     managed: 'Diversified origins, political-risk insurance, force-majeure drafting, and compliance screening before the trade, not after.' },
+  weather: { name: 'Weather / production risk', color: '#38bdf8',
+    what: 'The crop itself may not arrive: drought, frost, flood or disease between flowering and harvest — a risk on the VOLUME, not just the price.',
+    managed: 'Barely hedgeable, and the reason the producer’s position is the hardest in the chain: crop insurance where it exists, spreading varieties and plots, and selling only what is reasonably certain to be harvested.' },
 }
 
 export default function EveryoneIsATrader() {
   const [linkIdx, setLinkIdx] = useState(1)
   const [riskKey, setRiskKey] = useState('price')
   const link = CHAIN[linkIdx]
-  const risk = RISKS[riskKey]
+  // Always show a risk the SELECTED link actually carries: switching links
+  // keeps the current risk when it is in the new basket, otherwise falls back
+  // to that link's first one (and never to an unknown key).
+  const activeKey = link.risks.includes(riskKey) ? riskKey : link.risks[0]
+  const risk = activeKey ? RISKS[activeKey] : undefined
 
   return (
     <div className="glass mt-5 p-5 text-white">
@@ -98,12 +105,12 @@ export default function EveryoneIsATrader() {
         <p className="text-xs leading-relaxed text-slate-300"><span className="font-bold text-white">{link.name}: </span>{link.note}</p>
         {link.risks.length > 0 ? (
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {link.risks.map(k => (
+            {link.risks.filter(k => RISKS[k]).map(k => (
               <button key={k} type="button" onClick={() => setRiskKey(k)}
                 className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold transition-all ${
-                  riskKey === k ? 'bg-white/[0.08]' : 'text-slate-400 hover:text-slate-200'
+                  activeKey === k ? 'bg-white/[0.08]' : 'text-slate-400 hover:text-slate-200'
                 }`}
-                style={{ borderColor: riskKey === k ? RISKS[k].color : 'rgba(255,255,255,0.1)', color: riskKey === k ? RISKS[k].color : undefined }}>
+                style={{ borderColor: activeKey === k ? RISKS[k].color : 'rgba(255,255,255,0.1)', color: activeKey === k ? RISKS[k].color : undefined }}>
                 {RISKS[k].name}
               </button>
             ))}
@@ -114,11 +121,13 @@ export default function EveryoneIsATrader() {
       </div>
 
       {/* the selected risk */}
-      <div className="mt-2 rounded-xl border p-3" style={{ borderColor: risk.color + '55', backgroundColor: risk.color + '0d' }}>
-        <div className="font-mono text-xs font-bold" style={{ color: risk.color }}>{risk.name}</div>
-        <p className="mt-1 text-xs leading-relaxed text-slate-300">{risk.what}</p>
-        <p className="mt-1.5 text-xs leading-relaxed text-slate-400"><span className="font-bold text-slate-300">Managed by: </span>{risk.managed}</p>
-      </div>
+      {risk && (
+        <div className="mt-2 rounded-xl border p-3" style={{ borderColor: risk.color + '55', backgroundColor: risk.color + '0d' }}>
+          <div className="font-mono text-xs font-bold" style={{ color: risk.color }}>{risk.name}</div>
+          <p className="mt-1 text-xs leading-relaxed text-slate-300">{risk.what}</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-slate-400"><span className="font-bold text-slate-300">Managed by: </span>{risk.managed}</p>
+        </div>
+      )}
 
       <p className="mt-3 text-[11px] leading-relaxed text-slate-500">
         Notice what the chain says: the factory and the supermarket carry almost the same risk basket as the trade house.
