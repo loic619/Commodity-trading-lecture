@@ -313,6 +313,30 @@ test('TraderPillars: three aspects, each opening its own detail', () => {
   expect(container.textContent).toContain('Treasury, trade finance, credit & risk')
 })
 
+test('EveryoneIsATrader: every link in the chain renders — no missing risk entry', () => {
+  // Regression: the Producer listed a "weather" risk that had no dictionary
+  // entry, so selecting it crashed the page. Walk EVERY link and every one of
+  // its risk chips; any unknown key would throw here.
+  const { container } = render(<EveryoneIsATrader />)
+  for (const name of ['Producer', 'Commodity trader', 'Factory', 'Supermarket', 'Consumer']) {
+    fireEvent.click(screen.getByText(name))
+    expect(container.textContent).toContain(name)
+    const chips = screen.queryAllByRole('button').filter(b => /risk$/.test(b.textContent ?? ''))
+    for (const chip of chips) {
+      fireEvent.click(chip)
+      expect(container.textContent).toContain('Managed by:')
+    }
+  }
+  // The producer's weather risk now has real content
+  fireEvent.click(screen.getByText('Producer'))
+  fireEvent.click(screen.getByRole('button', { name: 'Weather / production risk' }))
+  expect(container.textContent).toContain('risk on the VOLUME')
+  // The consumer carries none — and the panel simply disappears
+  fireEvent.click(screen.getByText('Consumer'))
+  expect(container.textContent).toContain('carrying none of these')
+  expect(container.textContent).not.toContain('Managed by:')
+})
+
 test('EveryoneIsATrader: the supermarket and the factory carry the trader’s risks', () => {
   const { container } = render(<EveryoneIsATrader />)
   // Trade house selected by default, with the full risk basket
