@@ -313,7 +313,6 @@ test('TraderPillars: three aspects, each opening its own detail', () => {
   expect(container.textContent).toContain('Treasury, trade finance, credit & risk')
 })
 
-<<<<<<< HEAD
 test('EveryoneIsATrader: every link in the chain renders — no missing risk entry', () => {
   // Regression: the Producer listed a "weather" risk that had no dictionary
   // entry, so selecting it crashed the page. Walk EVERY link and every one of
@@ -338,8 +337,6 @@ test('EveryoneIsATrader: every link in the chain renders — no missing risk ent
   expect(container.textContent).not.toContain('Managed by:')
 })
 
-=======
->>>>>>> origin/main
 test('EveryoneIsATrader: the supermarket and the factory carry the trader’s risks', () => {
   const { container } = render(<EveryoneIsATrader />)
   // Trade house selected by default, with the full risk basket
