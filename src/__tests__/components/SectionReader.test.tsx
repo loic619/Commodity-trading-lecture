@@ -111,7 +111,11 @@ test('graphic-text fields edit the text rendered inside a visual', () => {
   fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
   // The visual now shows the edited text
   expect(screen.getByText('Clean Hands')).toBeInTheDocument()
-  expect(screen.queryByText('Absolute Ethics')).not.toBeInTheDocument()
+  // …and no longer the default. Scoped to the visual: the live-label panel
+  // legitimately lists label NAMES, so assert on the rendered visual only.
+  const visual = document.querySelector('[data-live-text-panel]')?.previousElementSibling
+  expect(visual?.textContent).toContain('Clean Hands')
+  expect(visual?.textContent).not.toContain('Absolute Ethics')
 })
 
 test('inserting a slide after the current one grows the deck and opens it for editing', () => {

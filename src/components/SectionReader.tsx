@@ -11,6 +11,7 @@ import SlideEditor from './SlideEditor'
 import ExportPanel from './ExportPanel'
 import { visualRegistry, visualTextRegistry } from '@/visuals'
 import { VisualTextProvider } from '@/lib/visualText'
+import { useLiveVisualText, LiveVisualTextPanel } from '@/lib/liveVisualText'
 import { EditModeProvider } from '@/lib/editMode'
 import {
   slideKey, loadOverrides, setOverride, clearOverride, clearAllOverrides,
@@ -77,6 +78,10 @@ export default function SectionReader({ sections, moduleId, topicTitle, topicId 
   const visualDef = section.visual ? visualTextRegistry[section.visual] : undefined
   const visualTextOverrides = { ...(section.visualText ?? {}), ...(ov?.visual ?? {}) }
   const visualValues = visualDef ? { ...visualDef.defaults, ...visualTextOverrides } : undefined
+
+  // Universal label editing: catches every string rendered by the visual,
+  // including those the component never declared via defineVisualText.
+  const liveText = useLiveVisualText(section.visual, editMode)
 
   // Hydrate overrides + inserted slides + edit-mode preference on mount (client only)
   useEffect(() => {
@@ -315,7 +320,19 @@ export default function SectionReader({ sections, moduleId, topicTitle, topicId 
                 {Visual ? (
                   <EditModeProvider value={editMode}>
                     <VisualTextProvider value={visualTextOverrides}>
-                      <Visual />
+                      {/* Wrapper ref: keeps label edits applied through the
+                          visual's own re-renders (see useLiveVisualText). */}
+                      <div ref={liveText.ref}>
+                        <Visual />
+                      </div>
+                      {editMode && (
+                        <LiveVisualTextPanel
+                          labels={liveText.labels}
+                          overrides={liveText.overrides}
+                          onChange={liveText.update}
+                          onReset={liveText.reset}
+                        />
+                      )}
                     </VisualTextProvider>
                   </EditModeProvider>
                 ) : (
