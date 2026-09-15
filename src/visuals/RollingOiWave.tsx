@@ -34,7 +34,11 @@ const CONTRACTS = [
 ]
 const TOTAL_MONTHS = 12
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-const calLabel = (m: number) => `${MONTH_NAMES[(10 + m) % 12]}${(10 + m) % 12 === 10 ? (m === 0 ? "'24" : "'25") : ''}`
+// Floor-safe: roll dates fall mid-month, so the index must stay an integer.
+const calLabel = (m: number) => {
+  const idx = Math.floor((10 + m) % 12)
+  return `${MONTH_NAMES[idx]}${idx === 10 ? (m < 1 ? "'24" : "'25") : ''}`
+}
 
 // Piecewise-linear series helper
 const lerp = (anchors: [number, number][], t: number): number => {
@@ -96,8 +100,33 @@ export function oiAt(t: number): number[] {
 // pull to spot. Decomposed against the front-path move so the ROLL YIELD
 // shows up as its own line.
 const LOT_TONNES = 10
-export function rolledLongAt(t: number): { pnl: number; marketMove: number; rollYield: number; holding: number; rolls: number } {
+
+/** One executed roll: close the dying contract, open the next one. */
+export type RollLeg = {
+  at: number       // months from the start
+  when: string     // calendar label
+  from: string     // code sold
+  to: string       // code bought
+  sold: number     // price the dying contract was closed at
+  bought: number   // price the new contract was opened at
+  gap: number      // $/t the new leg was re-entered CHEAPER (+) or dearer (−)
+  legPnl: number   // $ booked on the leg that just closed
+}
+
+export function rolledLongAt(t: number): {
+  pnl: number; marketMove: number; rollYield: number; holding: number; rolls: number
+  entry: number; legs: RollLeg[]
+  /** Spread locked at the rolls ALREADY EXECUTED — static, steps up at each roll. */
+  captured: number
+  /** The captured discount still converting into P&L on the leg currently held. */
+  working: number
+  /** What the NEXT roll would capture at today's curve — floating, not executed. */
+  nextSpread: number | null
+  nextTo: string | null
+} {
   const tc = Math.min(t, TOTAL_MONTHS)
+  const entry = priceAt(0, 0)
+  const legs: RollLeg[] = []
   let pnl = 0
   let j = 0
   let a = 0
@@ -105,13 +134,36 @@ export function rolledLongAt(t: number): { pnl: number; marketMove: number; roll
     const isLast = j >= CONTRACTS.length - 1
     const rollT = isLast ? CONTRACTS[CONTRACTS.length - 1].exp : CONTRACTS[j].exp - ROLL_WINDOW / 2
     const b = Math.min(tc, rollT)
-    if (b > a) pnl += (priceAt(b, j) - priceAt(a, j)) * LOT_TONNES
+    const legPnl = b > a ? (priceAt(b, j) - priceAt(a, j)) * LOT_TONNES : 0
+    if (b > a) pnl += legPnl
     if (tc <= rollT || isLast) break
+    // The roll actually happens: record what was sold and what was bought.
+    const sold = priceAt(rollT, j)
+    const bought = priceAt(rollT, j + 1)
+    legs.push({
+      at: rollT, when: calLabel(rollT),
+      from: CONTRACTS[j].code, to: CONTRACTS[j + 1].code,
+      sold, bought, gap: sold - bought, legPnl: Math.round(legPnl),
+    })
     a = rollT
     j++
   }
   const marketMove = (lerp(FRONT_PATH, tc) - lerp(FRONT_PATH, 0)) * LOT_TONNES
-  return { pnl: Math.round(pnl), marketMove: Math.round(marketMove), rollYield: Math.round(pnl - marketMove), holding: j, rolls: j }
+  const rollYield = pnl - marketMove
+  // The roll advantage splits in two: the spread LOCKED at each executed roll
+  // (static — it steps up once per roll and never moves again), and the part
+  // of it still converting into P&L on the leg currently held.
+  const captured = legs.reduce((s, lg) => s + lg.gap * LOT_TONNES, 0)
+  const hasNext = j < CONTRACTS.length - 1 && tc < TOTAL_MONTHS
+  return {
+    pnl: Math.round(pnl), marketMove: Math.round(marketMove),
+    rollYield: Math.round(rollYield), holding: j, rolls: j,
+    entry, legs,
+    captured: Math.round(captured),
+    working: Math.round(rollYield - captured),
+    nextSpread: hasNext ? Math.round((priceAt(tc, j) - priceAt(tc, j + 1)) * LOT_TONNES) : null,
+    nextTo: hasNext ? CONTRACTS[j + 1].code : null,
+  }
 }
 
 export default function RollingOiWave() {
@@ -296,9 +348,45 @@ export default function RollingOiWave() {
         const alive = now < TOTAL_MONTHS
         return (
           <div className="space-y-2 self-start">
+            {/* The live board: every contract's price level as the year plays,
+                so the curve on the chart can be read as numbers. */}
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
+              <div className="eyebrow mb-1.5">Live board · {calLabel(Math.min(now, TOTAL_MONTHS))}</div>
+              <div className="mb-1 flex justify-between text-[9px] uppercase tracking-wide text-slate-600">
+                <span>contract</span><span>price</span><span className="w-12 text-right">vs front</span>
+              </div>
+              {CONTRACTS.map((c, i) => {
+                const dead = now >= c.exp
+                const isFront = i === k
+                const px = priceAt(Math.min(now, c.exp), i)
+                const frontPx = k !== -1 ? priceAt(now, k) : null
+                const diff = frontPx !== null && !dead && !isFront ? px - frontPx : null
+                return (
+                  <div key={c.code} className={`flex items-baseline justify-between ${dead ? 'opacity-35' : ''}`}>
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: c.color }} />
+                      <span style={{ color: dead ? '#64748b' : c.color }} className={isFront ? 'font-bold' : ''}>{c.code}</span>
+                      <span className="text-[9px] text-slate-600">{c.m}</span>
+                      {isFront && <span className="text-[8.5px] uppercase text-amber-400">front</span>}
+                    </span>
+                    <span className={dead ? 'text-slate-600' : isFront ? 'font-bold text-slate-100' : 'text-slate-300'}>
+                      {dead ? 'expired' : px.toLocaleString('en-US')}
+                    </span>
+                    <span className={`w-12 text-right text-[9px] ${diff === null ? 'text-slate-700' : diff < 0 ? 'text-cyan-300' : 'text-rose-300'}`}>
+                      {dead || diff === null ? '—' : `${diff > 0 ? '+' : '−'}${Math.abs(diff)}`}
+                    </span>
+                  </div>
+                )
+              })}
+              <div className="mt-1 border-t border-white/[0.06] pt-1 text-[9px] leading-relaxed text-slate-600">
+                Deferreds UNDER the front (blue) = backwardation; ABOVE (red) = contango.
+              </div>
+            </div>
+
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
               <div className="eyebrow mb-1.5">The rolled long · 1 lot (10 t)</div>
-              <div className="flex justify-between"><span className="text-slate-500">Entry</span><span className="text-slate-200">bought F @ 4,820</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">Entry · {calLabel(0)}</span>
+                <span className="text-slate-200">bought F @ {rl.entry.toLocaleString('en-US')}</span></div>
               <div className="flex justify-between"><span className="text-slate-500">{alive ? 'Holding' : 'Ended'}</span>
                 <span style={{ color: holdingC.color }} className="font-bold">
                   {alive ? `${holdingC.code} @ ${priceAt(now, rl.holding).toLocaleString('en-US')}` : `${holdingC.code} expired`}
@@ -307,17 +395,76 @@ export default function RollingOiWave() {
               <div className="flex justify-between"><span className="text-slate-500">Rolls executed</span><span className="text-slate-200">{rl.rolls}</span></div>
             </div>
 
+            {/* The roll log — WHEN each roll happened and at what two prices.
+                Without it the P&L looks wrong: the entry price belongs to a
+                contract the position no longer holds. */}
+            {rl.legs.length > 0 && (
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
+                <div className="eyebrow mb-1.5">Roll log · {rl.legs.length} roll{rl.legs.length === 1 ? '' : 's'}</div>
+                {rl.legs.map((lg, i) => (
+                  <div key={i} className="mb-1.5 border-b border-white/[0.06] pb-1.5 last:mb-0 last:border-0 last:pb-0">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">{lg.when} · +{lg.at.toFixed(1)}mo</span>
+                      <span className="text-slate-300">
+                        sold <span className="text-slate-100">{lg.from} {lg.sold.toLocaleString('en-US')}</span>
+                        {' → '}bought <span className="text-slate-100">{lg.to} {lg.bought.toLocaleString('en-US')}</span>
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-[9.5px]">
+                      <span className="text-slate-600">booked on the {lg.from} leg {lg.legPnl < 0 ? '−' : '+'}${Math.abs(lg.legPnl).toLocaleString('en-US')}</span>
+                      <span className={lg.gap >= 0 ? 'text-emerald-300' : 'text-rose-300'}>
+                        re-entered ${Math.abs(lg.gap)}/t {lg.gap >= 0 ? 'CHEAPER' : 'dearer'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div className={`rounded-xl border p-3 font-mono text-[10px] tabular-nums ${rl.pnl >= 0 ? 'border-emerald-500/30 bg-emerald-500/[0.05]' : 'border-rose-500/40 bg-rose-500/[0.06]'}`}>
               <div className="flex justify-between"><span className="text-slate-400">Rolled long P&L</span>
                 <span className={`text-sm font-bold ${rl.pnl >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>{rl.pnl < 0 ? '−' : '+'}${Math.abs(rl.pnl).toLocaleString('en-US')}</span></div>
-              <div className="mt-1.5 flex justify-between border-t border-white/10 pt-1.5"><span className="text-slate-500">of which market move</span>
+              <div className="mt-1.5 flex justify-between border-t border-white/10 pt-1.5"><span className="text-slate-500">of which FRONT-MONTH move</span>
                 <span className={rl.marketMove >= 0 ? 'text-emerald-300/80' : 'text-rose-300/80'}>{rl.marketMove < 0 ? '−' : '+'}${Math.abs(rl.marketMove).toLocaleString('en-US')}</span></div>
               <div className="flex justify-between"><span className="text-slate-500">of which ROLL YIELD</span>
                 <span className={`font-bold ${rl.rollYield >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>{rl.rollYield < 0 ? '−' : '+'}${Math.abs(rl.rollYield).toLocaleString('en-US')}</span></div>
+              <div className="mt-1 border-t border-white/[0.06] pt-1 text-[9px] leading-relaxed text-slate-600">
+                The benchmark is the FRONT-MONTH path ({Math.round(lerp(FRONT_PATH, 0)).toLocaleString('en-US')} → {Math.round(lerp(FRONT_PATH, Math.min(now, TOTAL_MONTHS))).toLocaleString('en-US')}), not
+                entry-vs-holding: those are two different contracts, and the roll log above bridges them.
+              </div>
+            </div>
+
+            {/* Roll yield is EARNED AT THE ROLLS: the spread locked at each one
+                is static, and only the next roll's spread is still floating. */}
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
+              <div className="eyebrow mb-1.5">Roll yield · locked vs pending</div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">DONE · captured at {rl.rolls} roll{rl.rolls === 1 ? '' : 's'}</span>
+                <span className={`font-bold ${rl.captured >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                  {rl.captured < 0 ? '−' : '+'}${Math.abs(rl.captured).toLocaleString('en-US')}
+                </span>
+              </div>
+              <div className="flex justify-between text-[9.5px]">
+                <span className="text-slate-600">…of which still converging on the {holdingC.code} leg</span>
+                <span className="text-slate-400">{rl.working < 0 ? '−' : '+'}${Math.abs(rl.working).toLocaleString('en-US')}</span>
+              </div>
+              <div className="mt-1.5 flex justify-between border-t border-white/10 pt-1.5">
+                <span className="text-slate-500">NEXT roll {rl.nextTo ? `${holdingC.code}→${rl.nextTo}` : ''} · today&rsquo;s spread</span>
+                {rl.nextSpread === null ? (
+                  <span className="text-slate-500">— no roll left</span>
+                ) : (
+                  <span className={`font-bold ${rl.nextSpread >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                    {rl.nextSpread < 0 ? '−' : '+'}${Math.abs(rl.nextSpread).toLocaleString('en-US')}
+                  </span>
+                )}
+              </div>
+              <div className="text-[9px] leading-relaxed text-slate-600">
+                floating — not executed yet, and it moves with the curve every day
+              </div>
             </div>
 
             <p className="text-[9.5px] leading-relaxed text-slate-500">
-              The roll books nothing by itself — the ROLL YIELD is earned by buying each deferred CHEAP (backwardation) and riding its pull to spot. Watch it stall when the curve flips to contango.
+              The roll books no cash by itself: at each one you LOCK a spread — buying the deferred CHEAP in backwardation — and it turns into P&amp;L as that contract pulls to spot. So the DONE line only moves at a roll; only the NEXT line floats. Scrub into the autumn and watch the next-roll spread turn NEGATIVE as the curve flips to contango: from then on, rolling costs the long money.
             </p>
           </div>
         )
