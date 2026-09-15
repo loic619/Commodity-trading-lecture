@@ -471,6 +471,7 @@ test('RollingOiWave: the live board lists every contract’s price as the year p
   expect(container.textContent).toContain('Live board')
   expect(container.textContent).not.toContain('5,456')
 })
+<<<<<<< HEAD
 
 test('RollingOiWave: the arithmetic reconciles exactly — legs sum, and naive + roll gaps = total', () => {
   for (const t of [0.8, 2.3, 4.2, 6.6, 9.1, 11.4, 12]) {
@@ -503,3 +504,5 @@ test('RollingOiWave: the arithmetic panel can be opened and shows the reconcilia
   expect(text).toContain('Why the obvious subtraction is short')
   expect(text).toContain('+ roll gaps captured (1)')
 })
+=======
+>>>>>>> origin/main
