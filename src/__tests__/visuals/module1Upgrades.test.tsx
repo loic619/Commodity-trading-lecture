@@ -471,3 +471,35 @@ test('RollingOiWave: the live board lists every contract’s price as the year p
   expect(container.textContent).toContain('Live board')
   expect(container.textContent).not.toContain('5,456')
 })
+
+test('RollingOiWave: the arithmetic reconciles exactly — legs sum, and naive + roll gaps = total', () => {
+  for (const t of [0.8, 2.3, 4.2, 6.6, 9.1, 11.4, 12]) {
+    const rl = rolledLongAt(t)
+    // Every leg is accounted for, and they sum to the headline P&L
+    expect(rl.ledger.length).toBe(rl.rolls + 1)
+    const sum = rl.ledger.reduce((s, lg) => s + lg.pnl, 0)
+    expect(sum).toBe(rl.pnl)
+    // Exactly one open leg while the year is running
+    const open = rl.ledger.filter(lg => lg.open).length
+    expect(open).toBe(t >= 12 ? 0 : 1)
+    // The bridge students need: naive subtraction + the captured roll gaps
+    expect(rl.naive + rl.captured).toBe(rl.pnl)
+  }
+})
+
+test('RollingOiWave: the arithmetic panel can be opened and shows the reconciliation', () => {
+  const { container } = render(<RollingOiWave />)
+  fireEvent.change(screen.getByRole('slider', { name: 'Timeline (months)' }), { target: { value: '2.3' } })
+  // Collapsed by default so the panel stays readable in class
+  expect(container.textContent).toContain('Show the arithmetic')
+  expect(container.textContent).not.toContain('Why the obvious subtraction is short')
+  fireEvent.click(screen.getByRole('button', { name: /Show the arithmetic/ }))
+  const text = container.textContent ?? ''
+  expect(text).toContain('Every leg, bought → valued')
+  expect(text).toContain('1. F 4,820 → 5,314')
+  expect(text).toContain('2. H 5,190 → 5,456')
+  expect(text).toContain('(open)')
+  expect(text).toContain('sum of legs')
+  expect(text).toContain('Why the obvious subtraction is short')
+  expect(text).toContain('+ roll gaps captured (1)')
+})

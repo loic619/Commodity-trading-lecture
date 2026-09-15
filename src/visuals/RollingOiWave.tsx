@@ -113,9 +113,22 @@ export type RollLeg = {
   legPnl: number   // $ booked on the leg that just closed
 }
 
+/** One leg of the position: what was held, from what price to what price. */
+export type LedgerLeg = {
+  code: string
+  boughtAt: number
+  valuedAt: number   // sold price if closed, current price if still open
+  open: boolean
+  pnl: number
+}
+
 export function rolledLongAt(t: number): {
   pnl: number; marketMove: number; rollYield: number; holding: number; rolls: number
   entry: number; legs: RollLeg[]
+  /** Every leg, closed and open — these sum EXACTLY to the total P&L. */
+  ledger: LedgerLeg[]
+  /** The read a student does first: (price now − entry) × lot. Short by the roll gaps. */
+  naive: number
   /** Spread locked at the rolls ALREADY EXECUTED — static, steps up at each roll. */
   captured: number
   /** The captured discount still converting into P&L on the leg currently held. */
@@ -127,6 +140,7 @@ export function rolledLongAt(t: number): {
   const tc = Math.min(t, TOTAL_MONTHS)
   const entry = priceAt(0, 0)
   const legs: RollLeg[] = []
+  const ledger: LedgerLeg[] = []
   let pnl = 0
   let j = 0
   let a = 0
@@ -135,7 +149,18 @@ export function rolledLongAt(t: number): {
     const rollT = isLast ? CONTRACTS[CONTRACTS.length - 1].exp : CONTRACTS[j].exp - ROLL_WINDOW / 2
     const b = Math.min(tc, rollT)
     const legPnl = b > a ? (priceAt(b, j) - priceAt(a, j)) * LOT_TONNES : 0
-    if (b > a) pnl += legPnl
+    if (b > a) {
+      pnl += legPnl
+      ledger.push({
+        code: CONTRACTS[j].code,
+        boughtAt: priceAt(a, j),
+        valuedAt: priceAt(b, j),
+        // Still open only while the year is running — at the end the last
+        // contract has expired, which is what the panel above reports too.
+        open: b >= tc && tc < TOTAL_MONTHS,
+        pnl: Math.round(legPnl),
+      })
+    }
     if (tc <= rollT || isLast) break
     // The roll actually happens: record what was sold and what was bought.
     const sold = priceAt(rollT, j)
@@ -158,7 +183,8 @@ export function rolledLongAt(t: number): {
   return {
     pnl: Math.round(pnl), marketMove: Math.round(marketMove),
     rollYield: Math.round(rollYield), holding: j, rolls: j,
-    entry, legs,
+    entry, legs, ledger,
+    naive: Math.round((priceAt(tc, j) - entry) * LOT_TONNES),
     captured: Math.round(captured),
     working: Math.round(rollYield - captured),
     nextSpread: hasNext ? Math.round((priceAt(tc, j) - priceAt(tc, j + 1)) * LOT_TONNES) : null,
@@ -170,6 +196,7 @@ export default function RollingOiWave() {
   const t = useVisualText(textDef)
   const [now, setNow] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const [showMath, setShowMath] = useState(false)
 
   useEffect(() => {
     if (!playing) return
@@ -461,6 +488,63 @@ export default function RollingOiWave() {
               <div className="text-[9px] leading-relaxed text-slate-600">
                 floating — not executed yet, and it moves with the curve every day
               </div>
+            </div>
+
+            {/* Full transparency: the leg-by-leg ledger that sums EXACTLY to
+                the total, and the bridge from the read students do first. */}
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
+              <button type="button" onClick={() => setShowMath(v => !v)}
+                className="flex w-full items-center justify-between text-left">
+                <span className="eyebrow">Show the arithmetic</span>
+                <span className="text-slate-500">{showMath ? '−' : '+'}</span>
+              </button>
+              {showMath && (
+                <div className="mt-2">
+                  <div className="mb-1 text-[9px] uppercase tracking-wide text-slate-600">Every leg, bought → valued</div>
+                  {rl.ledger.map((lg, i) => (
+                    <div key={i} className="flex justify-between">
+                      <span className="text-slate-400">
+                        {i + 1}. {lg.code} {lg.boughtAt.toLocaleString('en-US')} → {lg.valuedAt.toLocaleString('en-US')}
+                        {lg.open && <span className="text-slate-600"> (open)</span>}
+                      </span>
+                      <span className={lg.pnl >= 0 ? 'text-emerald-300/80' : 'text-rose-300/80'}>
+                        {lg.pnl < 0 ? '−' : '+'}${Math.abs(lg.pnl).toLocaleString('en-US')}
+                      </span>
+                    </div>
+                  ))}
+                  <div className="mt-1 flex justify-between border-t border-white/10 pt-1">
+                    <span className="text-slate-300">sum of legs</span>
+                    <span className={`font-bold ${rl.pnl >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                      {rl.pnl < 0 ? '−' : '+'}${Math.abs(rl.pnl).toLocaleString('en-US')}
+                    </span>
+                  </div>
+
+                  <div className="mt-2 border-t border-white/10 pt-2">
+                    <div className="mb-1 text-[9px] uppercase tracking-wide text-amber-400/80">Why the obvious subtraction is short</div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">({priceAt(Math.min(now, TOTAL_MONTHS), rl.holding).toLocaleString('en-US')} − {rl.entry.toLocaleString('en-US')}) × 10 t</span>
+                      <span className="text-slate-300">{rl.naive < 0 ? '−' : '+'}${Math.abs(rl.naive).toLocaleString('en-US')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">+ roll gaps captured ({rl.rolls})</span>
+                      <span className={rl.captured >= 0 ? 'text-emerald-300/80' : 'text-rose-300/80'}>
+                        {rl.captured < 0 ? '−' : '+'}${Math.abs(rl.captured).toLocaleString('en-US')}
+                      </span>
+                    </div>
+                    <div className="mt-1 flex justify-between border-t border-white/10 pt-1">
+                      <span className="text-slate-300">= rolled long P&amp;L</span>
+                      <span className={`font-bold ${rl.pnl >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                        {rl.pnl < 0 ? '−' : '+'}${Math.abs(rl.pnl).toLocaleString('en-US')}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-[9px] leading-relaxed text-slate-600">
+                      The subtraction compares the entry price of a contract you no longer hold with the price of a
+                      different one. Every roll sold one and bought the other at two DIFFERENT prices — the roll log
+                      above has both.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <p className="text-[9.5px] leading-relaxed text-slate-500">
