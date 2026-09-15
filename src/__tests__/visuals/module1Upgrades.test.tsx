@@ -454,3 +454,20 @@ test('RollingOiWave: the panel shows the done vs pending roll-yield split', () =
   expect(text).toContain('NEXT roll H→K')
   expect(text).toContain('not executed yet')
 })
+
+test('RollingOiWave: the live board lists every contract’s price as the year plays', () => {
+  const { container } = render(<RollingOiWave />)
+  fireEvent.change(screen.getByRole('slider', { name: 'Timeline (months)' }), { target: { value: '2.3' } })
+  const text = container.textContent ?? ''
+  expect(text).toContain('Live board')
+  // H is the front at 2.3 and prints its level; the dead F reads as expired
+  expect(text).toContain('5,456')
+  expect(text).toContain('expired')
+  // Deferreds are quoted against the front, which is what makes the
+  // curve readable as numbers rather than only as lines
+  expect(text).toContain('vs front')
+  // Late in the year the board follows the collapse
+  fireEvent.change(screen.getByRole('slider', { name: 'Timeline (months)' }), { target: { value: '9' } })
+  expect(container.textContent).toContain('Live board')
+  expect(container.textContent).not.toContain('5,456')
+})

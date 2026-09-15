@@ -348,6 +348,41 @@ export default function RollingOiWave() {
         const alive = now < TOTAL_MONTHS
         return (
           <div className="space-y-2 self-start">
+            {/* The live board: every contract's price level as the year plays,
+                so the curve on the chart can be read as numbers. */}
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
+              <div className="eyebrow mb-1.5">Live board · {calLabel(Math.min(now, TOTAL_MONTHS))}</div>
+              <div className="mb-1 flex justify-between text-[9px] uppercase tracking-wide text-slate-600">
+                <span>contract</span><span>price</span><span className="w-12 text-right">vs front</span>
+              </div>
+              {CONTRACTS.map((c, i) => {
+                const dead = now >= c.exp
+                const isFront = i === k
+                const px = priceAt(Math.min(now, c.exp), i)
+                const frontPx = k !== -1 ? priceAt(now, k) : null
+                const diff = frontPx !== null && !dead && !isFront ? px - frontPx : null
+                return (
+                  <div key={c.code} className={`flex items-baseline justify-between ${dead ? 'opacity-35' : ''}`}>
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: c.color }} />
+                      <span style={{ color: dead ? '#64748b' : c.color }} className={isFront ? 'font-bold' : ''}>{c.code}</span>
+                      <span className="text-[9px] text-slate-600">{c.m}</span>
+                      {isFront && <span className="text-[8.5px] uppercase text-amber-400">front</span>}
+                    </span>
+                    <span className={dead ? 'text-slate-600' : isFront ? 'font-bold text-slate-100' : 'text-slate-300'}>
+                      {dead ? 'expired' : px.toLocaleString('en-US')}
+                    </span>
+                    <span className={`w-12 text-right text-[9px] ${diff === null ? 'text-slate-700' : diff < 0 ? 'text-cyan-300' : 'text-rose-300'}`}>
+                      {dead || diff === null ? '—' : `${diff > 0 ? '+' : '−'}${Math.abs(diff)}`}
+                    </span>
+                  </div>
+                )
+              })}
+              <div className="mt-1 border-t border-white/[0.06] pt-1 text-[9px] leading-relaxed text-slate-600">
+                Deferreds UNDER the front (blue) = backwardation; ABOVE (red) = contango.
+              </div>
+            </div>
+
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
               <div className="eyebrow mb-1.5">The rolled long · 1 lot (10 t)</div>
               <div className="flex justify-between"><span className="text-slate-500">Entry · {calLabel(0)}</span>
