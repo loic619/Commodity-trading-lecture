@@ -374,3 +374,83 @@ test('Module 1 opens on the introduction topic and still runs exactly 3 hours', 
   const total = m1.topics.reduce((s, t) => s + t.estimatedMinutes, 0)
   expect(total).toBe(180)
 })
+
+test('RollingOiWave: the rolled long reconciles — entry, roll log and P&L identity', () => {
+  // At +2.3 months the position has rolled ONCE: F was sold and H bought.
+  const rl = rolledLongAt(2.3)
+  expect(rl.entry).toBe(4820)
+  expect(rl.rolls).toBe(1)
+
+  const roll = rl.legs[0]
+  expect(roll.from).toBe('F')
+  expect(roll.to).toBe('H')
+  // The roll is executed mid-window, half a roll-window before F's expiry
+  expect(roll.at).toBeCloseTo(1.55, 2)
+  // Backwardation: the new leg is re-entered CHEAPER than the one sold
+  expect(roll.gap).toBeGreaterThan(0)
+  expect(roll.sold - roll.bought).toBe(roll.gap)
+
+  // The naive read — (price of the contract now held − original entry) — is
+  // NOT the P&L: it ignores the roll gap. This is the discrepancy the
+  // instructor spotted, and the roll log is what explains it.
+  const holdingNow = priceAt(2.3, rl.holding)
+  const naive = (holdingNow - rl.entry) * 10
+  expect(rl.pnl).toBe(naive + roll.gap * 10)
+
+  // …and the panel's own decomposition always ties out.
+  expect(rl.pnl).toBe(rl.marketMove + rl.rollYield)
+})
+
+test('RollingOiWave: the roll log is shown, with dates and both prices', () => {
+  const { container } = render(<RollingOiWave />)
+  fireEvent.change(screen.getByRole('slider', { name: 'Timeline (months)' }), { target: { value: '2.3' } })
+  const text = container.textContent ?? ''
+  expect(text).toContain('Roll log · 1 roll')
+  expect(text).toContain('+1.6mo')          // when the roll happened
+  expect(text).toContain('sold F 5,314')    // …and at what two prices
+  expect(text).toContain('bought H 5,190')
+  expect(text).toContain('CHEAPER')
+  // The benchmark line names itself, so it is not read as entry-vs-holding
+  expect(text).toContain('FRONT-MONTH move')
+})
+
+test('RollingOiWave: roll yield splits into a STATIC done figure and a floating next roll', () => {
+  // Between two rolls the captured figure must not move at all…
+  const a = rolledLongAt(2.3)
+  const b = rolledLongAt(3.1)
+  expect(a.rolls).toBe(1)
+  expect(b.rolls).toBe(1)
+  expect(b.captured).toBe(a.captured)
+  // …while the pending next-roll spread does move with the curve.
+  expect(b.nextSpread).not.toBe(a.nextSpread)
+
+  // It steps up only when a roll is actually executed
+  const c = rolledLongAt(3.6) // past H's roll into K
+  expect(c.rolls).toBe(2)
+  expect(c.captured).toBeGreaterThan(a.captured)
+  expect(c.captured).toBe(c.legs.reduce((s, lg) => s + lg.gap * 10, 0))
+
+  // done + still-converging always reconciles to the total roll advantage
+  for (const t of [1, 2.3, 5, 7.5, 11]) {
+    const rl = rolledLongAt(t)
+    expect(rl.captured + rl.working).toBe(rl.rollYield)
+  }
+
+  // Once the curve flips to contango the NEXT roll costs the long money
+  const autumn = rolledLongAt(9.5) // holding U, next X — and struct is positive
+  expect(autumn.nextTo).toBe('X')
+  expect(autumn.nextSpread).toBeLessThan(0)
+  // …and once the position is in the last contract there is no roll left
+  expect(rolledLongAt(10.5).nextSpread).toBeNull()
+  expect(rolledLongAt(12).nextSpread).toBeNull()
+})
+
+test('RollingOiWave: the panel shows the done vs pending roll-yield split', () => {
+  const { container } = render(<RollingOiWave />)
+  fireEvent.change(screen.getByRole('slider', { name: 'Timeline (months)' }), { target: { value: '2.3' } })
+  const text = container.textContent ?? ''
+  expect(text).toContain('Roll yield · locked vs pending')
+  expect(text).toContain('DONE · captured at 1 roll')
+  expect(text).toContain('NEXT roll H→K')
+  expect(text).toContain('not executed yet')
+})
