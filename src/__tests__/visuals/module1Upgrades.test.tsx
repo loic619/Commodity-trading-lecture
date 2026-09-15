@@ -503,3 +503,23 @@ test('RollingOiWave: the arithmetic panel can be opened and shows the reconcilia
   expect(text).toContain('Why the obvious subtraction is short')
   expect(text).toContain('+ roll gaps captured (1)')
 })
+
+test('RollingOiWave: the panels are laid out in columns, not one thin stack', () => {
+  const { container } = render(<RollingOiWave />)
+  // Market board sits beside the chart, in the chart's own two-column row
+  const chartRow = container.querySelector('.lg\\:grid-cols-\\[minmax\\(0\\,1fr\\)_230px\\]')
+  expect(chartRow).not.toBeNull()
+  expect(chartRow?.querySelector('svg')).not.toBeNull()
+  expect(chartRow?.textContent).toContain('Live board')
+  // …and the market column carries ONLY the board, not the P&L stack
+  expect(chartRow?.textContent).not.toContain('The rolled long')
+
+  // Below it, a two-column band: position/P&L on the left, explanations right
+  const band = container.querySelector('.md\\:grid-cols-2')
+  expect(band).not.toBeNull()
+  const cols = band ? Array.from(band.children) : []
+  expect(cols).toHaveLength(2)
+  expect(cols[0].textContent).toContain('The rolled long')
+  expect(cols[0].textContent).toContain('Roll yield · locked vs pending')
+  expect(cols[1].textContent).toContain('Show the arithmetic')
+})

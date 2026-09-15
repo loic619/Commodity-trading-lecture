@@ -226,6 +226,11 @@ export default function RollingOiWave() {
   const done = now >= TOTAL_MONTHS
   const struct = lerp(STRUCT_PATH, now)
 
+  // The rolled long, read once and shown across the panel columns below.
+  const rl = rolledLongAt(now)
+  const holdingC = CONTRACTS[rl.holding]
+  const alive = now < TOTAL_MONTHS
+
   // Each contract's price path, drawn up to NOW (or its death)
   const pathOf = (i: number): string => {
     const end = Math.min(now, CONTRACTS[i].exp)
@@ -271,7 +276,7 @@ export default function RollingOiWave() {
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_195px] gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_230px]">
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ maxHeight: '420px' }}>
         {/* price grid — the y-axis IS the price */}
         {[3500, 4000, 4500, 5000, 5500].map(p => (
@@ -368,13 +373,8 @@ export default function RollingOiWave() {
         <text x={x(now)} y={mt - 3} textAnchor="middle" fill="#fbbf24" fontSize="9" fontFamily="monospace" fontWeight="bold">NOW</text>
       </svg>
 
-      {/* ── The margin P&L: a long taken at the start and ROLLED all year ── */}
-      {(() => {
-        const rl = rolledLongAt(now)
-        const holdingC = CONTRACTS[rl.holding]
-        const alive = now < TOTAL_MONTHS
-        return (
-          <div className="space-y-2 self-start">
+      {/* ── Market column: the board, beside the chart it describes ── */}
+      <div className="space-y-2 self-start">
             {/* The live board: every contract's price level as the year plays,
                 so the curve on the chart can be read as numbers. */}
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
@@ -409,150 +409,158 @@ export default function RollingOiWave() {
                 Deferreds UNDER the front (blue) = backwardation; ABOVE (red) = contango.
               </div>
             </div>
+      </div>
+      </div>
 
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
-              <div className="eyebrow mb-1.5">The rolled long · 1 lot (10 t)</div>
-              <div className="flex justify-between"><span className="text-slate-500">Entry · {calLabel(0)}</span>
-                <span className="text-slate-200">bought F @ {rl.entry.toLocaleString('en-US')}</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">{alive ? 'Holding' : 'Ended'}</span>
-                <span style={{ color: holdingC.color }} className="font-bold">
-                  {alive ? `${holdingC.code} @ ${priceAt(now, rl.holding).toLocaleString('en-US')}` : `${holdingC.code} expired`}
-                </span>
-              </div>
-              <div className="flex justify-between"><span className="text-slate-500">Rolls executed</span><span className="text-slate-200">{rl.rolls}</span></div>
+      {/* ── Two wide columns below the chart: the position & its P&L on the
+        left, the reconciliation and the reading notes on the right ── */}
+      <div className="mt-3 grid grid-cols-1 items-start gap-3 md:grid-cols-2">
+        <div className="space-y-2">
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
+            <div className="eyebrow mb-1.5">The rolled long · 1 lot (10 t)</div>
+            <div className="flex justify-between"><span className="text-slate-500">Entry · {calLabel(0)}</span>
+              <span className="text-slate-200">bought F @ {rl.entry.toLocaleString('en-US')}</span></div>
+            <div className="flex justify-between"><span className="text-slate-500">{alive ? 'Holding' : 'Ended'}</span>
+              <span style={{ color: holdingC.color }} className="font-bold">
+                {alive ? `${holdingC.code} @ ${priceAt(now, rl.holding).toLocaleString('en-US')}` : `${holdingC.code} expired`}
+              </span>
             </div>
+            <div className="flex justify-between"><span className="text-slate-500">Rolls executed</span><span className="text-slate-200">{rl.rolls}</span></div>
+          </div>
 
-            {/* The roll log — WHEN each roll happened and at what two prices.
-                Without it the P&L looks wrong: the entry price belongs to a
-                contract the position no longer holds. */}
-            {rl.legs.length > 0 && (
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
-                <div className="eyebrow mb-1.5">Roll log · {rl.legs.length} roll{rl.legs.length === 1 ? '' : 's'}</div>
-                {rl.legs.map((lg, i) => (
-                  <div key={i} className="mb-1.5 border-b border-white/[0.06] pb-1.5 last:mb-0 last:border-0 last:pb-0">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">{lg.when} · +{lg.at.toFixed(1)}mo</span>
-                      <span className="text-slate-300">
-                        sold <span className="text-slate-100">{lg.from} {lg.sold.toLocaleString('en-US')}</span>
-                        {' → '}bought <span className="text-slate-100">{lg.to} {lg.bought.toLocaleString('en-US')}</span>
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-[9.5px]">
-                      <span className="text-slate-600">booked on the {lg.from} leg {lg.legPnl < 0 ? '−' : '+'}${Math.abs(lg.legPnl).toLocaleString('en-US')}</span>
-                      <span className={lg.gap >= 0 ? 'text-emerald-300' : 'text-rose-300'}>
-                        re-entered ${Math.abs(lg.gap)}/t {lg.gap >= 0 ? 'CHEAPER' : 'dearer'}
-                      </span>
-                    </div>
+          {/* The roll log — WHEN each roll happened and at what two prices.
+              Without it the P&L looks wrong: the entry price belongs to a
+              contract the position no longer holds. */}
+          {rl.legs.length > 0 && (
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
+              <div className="eyebrow mb-1.5">Roll log · {rl.legs.length} roll{rl.legs.length === 1 ? '' : 's'}</div>
+              {rl.legs.map((lg, i) => (
+                <div key={i} className="mb-1.5 border-b border-white/[0.06] pb-1.5 last:mb-0 last:border-0 last:pb-0">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">{lg.when} · +{lg.at.toFixed(1)}mo</span>
+                    <span className="text-slate-300">
+                      sold <span className="text-slate-100">{lg.from} {lg.sold.toLocaleString('en-US')}</span>
+                      {' → '}bought <span className="text-slate-100">{lg.to} {lg.bought.toLocaleString('en-US')}</span>
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-[9.5px]">
+                    <span className="text-slate-600">booked on the {lg.from} leg {lg.legPnl < 0 ? '−' : '+'}${Math.abs(lg.legPnl).toLocaleString('en-US')}</span>
+                    <span className={lg.gap >= 0 ? 'text-emerald-300' : 'text-rose-300'}>
+                      re-entered ${Math.abs(lg.gap)}/t {lg.gap >= 0 ? 'CHEAPER' : 'dearer'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className={`rounded-xl border p-3 font-mono text-[10px] tabular-nums ${rl.pnl >= 0 ? 'border-emerald-500/30 bg-emerald-500/[0.05]' : 'border-rose-500/40 bg-rose-500/[0.06]'}`}>
+            <div className="flex justify-between"><span className="text-slate-400">Rolled long P&L</span>
+              <span className={`text-sm font-bold ${rl.pnl >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>{rl.pnl < 0 ? '−' : '+'}${Math.abs(rl.pnl).toLocaleString('en-US')}</span></div>
+            <div className="mt-1.5 flex justify-between border-t border-white/10 pt-1.5"><span className="text-slate-500">of which FRONT-MONTH move</span>
+              <span className={rl.marketMove >= 0 ? 'text-emerald-300/80' : 'text-rose-300/80'}>{rl.marketMove < 0 ? '−' : '+'}${Math.abs(rl.marketMove).toLocaleString('en-US')}</span></div>
+            <div className="flex justify-between"><span className="text-slate-500">of which ROLL YIELD</span>
+              <span className={`font-bold ${rl.rollYield >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>{rl.rollYield < 0 ? '−' : '+'}${Math.abs(rl.rollYield).toLocaleString('en-US')}</span></div>
+            <div className="mt-1 border-t border-white/[0.06] pt-1 text-[9px] leading-relaxed text-slate-600">
+              The benchmark is the FRONT-MONTH path ({Math.round(lerp(FRONT_PATH, 0)).toLocaleString('en-US')} → {Math.round(lerp(FRONT_PATH, Math.min(now, TOTAL_MONTHS))).toLocaleString('en-US')}), not
+              entry-vs-holding: those are two different contracts, and the roll log above bridges them.
+            </div>
+          </div>
+
+          {/* Roll yield is EARNED AT THE ROLLS: the spread locked at each one
+              is static, and only the next roll's spread is still floating. */}
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
+            <div className="eyebrow mb-1.5">Roll yield · locked vs pending</div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">DONE · captured at {rl.rolls} roll{rl.rolls === 1 ? '' : 's'}</span>
+              <span className={`font-bold ${rl.captured >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                {rl.captured < 0 ? '−' : '+'}${Math.abs(rl.captured).toLocaleString('en-US')}
+              </span>
+            </div>
+            <div className="flex justify-between text-[9.5px]">
+              <span className="text-slate-600">…of which still converging on the {holdingC.code} leg</span>
+              <span className="text-slate-400">{rl.working < 0 ? '−' : '+'}${Math.abs(rl.working).toLocaleString('en-US')}</span>
+            </div>
+            <div className="mt-1.5 flex justify-between border-t border-white/10 pt-1.5">
+              <span className="text-slate-500">NEXT roll {rl.nextTo ? `${holdingC.code}→${rl.nextTo}` : ''} · today&rsquo;s spread</span>
+              {rl.nextSpread === null ? (
+                <span className="text-slate-500">— no roll left</span>
+              ) : (
+                <span className={`font-bold ${rl.nextSpread >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                  {rl.nextSpread < 0 ? '−' : '+'}${Math.abs(rl.nextSpread).toLocaleString('en-US')}
+                </span>
+              )}
+            </div>
+            <div className="text-[9px] leading-relaxed text-slate-600">
+              floating — not executed yet, and it moves with the curve every day
+            </div>
+          </div>
+
+        </div>
+
+        {/* Right column — the explanations */}
+        <div className="space-y-2">
+          {/* Full transparency: the leg-by-leg ledger that sums EXACTLY to
+              the total, and the bridge from the read students do first. */}
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
+            <button type="button" onClick={() => setShowMath(v => !v)}
+              className="flex w-full items-center justify-between text-left">
+              <span className="eyebrow">Show the arithmetic</span>
+              <span className="text-slate-500">{showMath ? '−' : '+'}</span>
+            </button>
+            {showMath && (
+              <div className="mt-2">
+                <div className="mb-1 text-[9px] uppercase tracking-wide text-slate-600">Every leg, bought → valued</div>
+                {rl.ledger.map((lg, i) => (
+                  <div key={i} className="flex justify-between">
+                    <span className="text-slate-400">
+                      {i + 1}. {lg.code} {lg.boughtAt.toLocaleString('en-US')} → {lg.valuedAt.toLocaleString('en-US')}
+                      {lg.open && <span className="text-slate-600"> (open)</span>}
+                    </span>
+                    <span className={lg.pnl >= 0 ? 'text-emerald-300/80' : 'text-rose-300/80'}>
+                      {lg.pnl < 0 ? '−' : '+'}${Math.abs(lg.pnl).toLocaleString('en-US')}
+                    </span>
                   </div>
                 ))}
-              </div>
-            )}
-
-            <div className={`rounded-xl border p-3 font-mono text-[10px] tabular-nums ${rl.pnl >= 0 ? 'border-emerald-500/30 bg-emerald-500/[0.05]' : 'border-rose-500/40 bg-rose-500/[0.06]'}`}>
-              <div className="flex justify-between"><span className="text-slate-400">Rolled long P&L</span>
-                <span className={`text-sm font-bold ${rl.pnl >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>{rl.pnl < 0 ? '−' : '+'}${Math.abs(rl.pnl).toLocaleString('en-US')}</span></div>
-              <div className="mt-1.5 flex justify-between border-t border-white/10 pt-1.5"><span className="text-slate-500">of which FRONT-MONTH move</span>
-                <span className={rl.marketMove >= 0 ? 'text-emerald-300/80' : 'text-rose-300/80'}>{rl.marketMove < 0 ? '−' : '+'}${Math.abs(rl.marketMove).toLocaleString('en-US')}</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">of which ROLL YIELD</span>
-                <span className={`font-bold ${rl.rollYield >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>{rl.rollYield < 0 ? '−' : '+'}${Math.abs(rl.rollYield).toLocaleString('en-US')}</span></div>
-              <div className="mt-1 border-t border-white/[0.06] pt-1 text-[9px] leading-relaxed text-slate-600">
-                The benchmark is the FRONT-MONTH path ({Math.round(lerp(FRONT_PATH, 0)).toLocaleString('en-US')} → {Math.round(lerp(FRONT_PATH, Math.min(now, TOTAL_MONTHS))).toLocaleString('en-US')}), not
-                entry-vs-holding: those are two different contracts, and the roll log above bridges them.
-              </div>
-            </div>
-
-            {/* Roll yield is EARNED AT THE ROLLS: the spread locked at each one
-                is static, and only the next roll's spread is still floating. */}
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
-              <div className="eyebrow mb-1.5">Roll yield · locked vs pending</div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">DONE · captured at {rl.rolls} roll{rl.rolls === 1 ? '' : 's'}</span>
-                <span className={`font-bold ${rl.captured >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
-                  {rl.captured < 0 ? '−' : '+'}${Math.abs(rl.captured).toLocaleString('en-US')}
-                </span>
-              </div>
-              <div className="flex justify-between text-[9.5px]">
-                <span className="text-slate-600">…of which still converging on the {holdingC.code} leg</span>
-                <span className="text-slate-400">{rl.working < 0 ? '−' : '+'}${Math.abs(rl.working).toLocaleString('en-US')}</span>
-              </div>
-              <div className="mt-1.5 flex justify-between border-t border-white/10 pt-1.5">
-                <span className="text-slate-500">NEXT roll {rl.nextTo ? `${holdingC.code}→${rl.nextTo}` : ''} · today&rsquo;s spread</span>
-                {rl.nextSpread === null ? (
-                  <span className="text-slate-500">— no roll left</span>
-                ) : (
-                  <span className={`font-bold ${rl.nextSpread >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
-                    {rl.nextSpread < 0 ? '−' : '+'}${Math.abs(rl.nextSpread).toLocaleString('en-US')}
+                <div className="mt-1 flex justify-between border-t border-white/10 pt-1">
+                  <span className="text-slate-300">sum of legs</span>
+                  <span className={`font-bold ${rl.pnl >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                    {rl.pnl < 0 ? '−' : '+'}${Math.abs(rl.pnl).toLocaleString('en-US')}
                   </span>
-                )}
-              </div>
-              <div className="text-[9px] leading-relaxed text-slate-600">
-                floating — not executed yet, and it moves with the curve every day
-              </div>
-            </div>
+                </div>
 
-            {/* Full transparency: the leg-by-leg ledger that sums EXACTLY to
-                the total, and the bridge from the read students do first. */}
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 font-mono text-[10px] tabular-nums">
-              <button type="button" onClick={() => setShowMath(v => !v)}
-                className="flex w-full items-center justify-between text-left">
-                <span className="eyebrow">Show the arithmetic</span>
-                <span className="text-slate-500">{showMath ? '−' : '+'}</span>
-              </button>
-              {showMath && (
-                <div className="mt-2">
-                  <div className="mb-1 text-[9px] uppercase tracking-wide text-slate-600">Every leg, bought → valued</div>
-                  {rl.ledger.map((lg, i) => (
-                    <div key={i} className="flex justify-between">
-                      <span className="text-slate-400">
-                        {i + 1}. {lg.code} {lg.boughtAt.toLocaleString('en-US')} → {lg.valuedAt.toLocaleString('en-US')}
-                        {lg.open && <span className="text-slate-600"> (open)</span>}
-                      </span>
-                      <span className={lg.pnl >= 0 ? 'text-emerald-300/80' : 'text-rose-300/80'}>
-                        {lg.pnl < 0 ? '−' : '+'}${Math.abs(lg.pnl).toLocaleString('en-US')}
-                      </span>
-                    </div>
-                  ))}
+                <div className="mt-2 border-t border-white/10 pt-2">
+                  <div className="mb-1 text-[9px] uppercase tracking-wide text-amber-400/80">Why the obvious subtraction is short</div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">({priceAt(Math.min(now, TOTAL_MONTHS), rl.holding).toLocaleString('en-US')} − {rl.entry.toLocaleString('en-US')}) × 10 t</span>
+                    <span className="text-slate-300">{rl.naive < 0 ? '−' : '+'}${Math.abs(rl.naive).toLocaleString('en-US')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">+ roll gaps captured ({rl.rolls})</span>
+                    <span className={rl.captured >= 0 ? 'text-emerald-300/80' : 'text-rose-300/80'}>
+                      {rl.captured < 0 ? '−' : '+'}${Math.abs(rl.captured).toLocaleString('en-US')}
+                    </span>
+                  </div>
                   <div className="mt-1 flex justify-between border-t border-white/10 pt-1">
-                    <span className="text-slate-300">sum of legs</span>
+                    <span className="text-slate-300">= rolled long P&amp;L</span>
                     <span className={`font-bold ${rl.pnl >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
                       {rl.pnl < 0 ? '−' : '+'}${Math.abs(rl.pnl).toLocaleString('en-US')}
                     </span>
                   </div>
-
-                  <div className="mt-2 border-t border-white/10 pt-2">
-                    <div className="mb-1 text-[9px] uppercase tracking-wide text-amber-400/80">Why the obvious subtraction is short</div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">({priceAt(Math.min(now, TOTAL_MONTHS), rl.holding).toLocaleString('en-US')} − {rl.entry.toLocaleString('en-US')}) × 10 t</span>
-                      <span className="text-slate-300">{rl.naive < 0 ? '−' : '+'}${Math.abs(rl.naive).toLocaleString('en-US')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">+ roll gaps captured ({rl.rolls})</span>
-                      <span className={rl.captured >= 0 ? 'text-emerald-300/80' : 'text-rose-300/80'}>
-                        {rl.captured < 0 ? '−' : '+'}${Math.abs(rl.captured).toLocaleString('en-US')}
-                      </span>
-                    </div>
-                    <div className="mt-1 flex justify-between border-t border-white/10 pt-1">
-                      <span className="text-slate-300">= rolled long P&amp;L</span>
-                      <span className={`font-bold ${rl.pnl >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
-                        {rl.pnl < 0 ? '−' : '+'}${Math.abs(rl.pnl).toLocaleString('en-US')}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-[9px] leading-relaxed text-slate-600">
-                      The subtraction compares the entry price of a contract you no longer hold with the price of a
-                      different one. Every roll sold one and bought the other at two DIFFERENT prices — the roll log
-                      above has both.
-                    </p>
-                  </div>
+                  <p className="mt-1 text-[9px] leading-relaxed text-slate-600">
+                    The subtraction compares the entry price of a contract you no longer hold with the price of a
+                    different one. Every roll sold one and bought the other at two DIFFERENT prices — the roll log
+                    above has both.
+                  </p>
                 </div>
-              )}
-            </div>
-
-            <p className="text-[9.5px] leading-relaxed text-slate-500">
-              The roll books no cash by itself: at each one you LOCK a spread — buying the deferred CHEAP in backwardation — and it turns into P&amp;L as that contract pulls to spot. So the DONE line only moves at a roll; only the NEXT line floats. Scrub into the autumn and watch the next-roll spread turn NEGATIVE as the curve flips to contango: from then on, rolling costs the long money.
-            </p>
+              </div>
+            )}
           </div>
-        )
-      })()}
+
+          <p className="text-[9.5px] leading-relaxed text-slate-500">
+            The roll books no cash by itself: at each one you LOCK a spread — buying the deferred CHEAP in backwardation — and it turns into P&amp;L as that contract pulls to spot. So the DONE line only moves at a roll; only the NEXT line floats. Scrub into the autumn and watch the next-roll spread turn NEGATIVE as the curve flips to contango: from then on, rolling costs the long money.
+          </p>
+        </div>
       </div>
 
       {/* scrub the timeline by hand — same state the animation drives */}
