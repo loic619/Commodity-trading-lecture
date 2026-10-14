@@ -81,6 +81,8 @@ import ExposureBook from './ExposureBook'
 import RiskTypes from './RiskTypes'
 import HedgeRatioDial from './HedgeRatioDial'
 import MvhrCalculator from './MvhrCalculator'
+import IncotermsLadder from './IncotermsLadder'
+import TenderableParity from './TenderableParity'
 import TankerDimensions, { textDef as tankerDimensionsText } from './TankerDimensions'
 import DraftCapacityCalc from './DraftCapacityCalc'
 import VoyageEstimator from './VoyageEstimator'
@@ -191,6 +193,8 @@ export const visualRegistry: Record<string, ComponentType> = {
   'risk-types': RiskTypes,
   'hedge-ratio-dial': HedgeRatioDial,
   'mvhr-calculator': MvhrCalculator,
+  'incoterms-ladder': IncotermsLadder,
+  'tenderable-parity': TenderableParity,
 }
 
 // Visuals whose text is editable expose a VisualTextDef schema here.
