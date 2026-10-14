@@ -14,7 +14,7 @@ const topic: Topic = {
     {
       id: 'trading-floor',
       title: 'The Trading Floor',
-      body: `This is the same two-trade PTBF simulator you met in Module 1 \u2014 exporter (buy VND \u2192 sell FOB) and importer (buy FOB \u2192 sell spot EUR) \u2014 now with everything you have learned since: hedge mechanics, margin cash, basis P&L, freight and Incoterms.\n\nOn the instructor's count: **\u25b6 Live market**, and trade the five crop years. Record each completed trade, and **export the trade report** at the end \u2014 that file is your deal ticket to hand in.`,
+      body: `This is the same two-trade PTBF simulator you met in the PTBF case study \u2014 exporter (buy VND \u2192 sell FOB) and importer (buy FOB \u2192 sell spot EUR) \u2014 now with everything you have learned since: hedge mechanics, margin cash, basis P&L, freight and Incoterms.\n\nOn the instructor's count: **\u25b6 Live market**, and trade the five crop years. Record each completed trade, and **export the trade report** at the end \u2014 that file is your deal ticket to hand in.`,
       visual: 'ptbf-mechanics',
     },
   ],

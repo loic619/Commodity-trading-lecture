@@ -10,20 +10,23 @@ import fobToCif from './05-FOBtoCIFtrades'
 import liveTrading from './06-live-trading-exercise'
 import type { Topic } from '@/types/content'
 
-// Theory first, then an escalating block of practice — mirrors the Module 1
-// re-pacing. The opening PTBF case study is the hook; the applied desk day now
-// lands AFTER the differential / exposure / hedging lectures it leans on, not
-// before them. Shipping (vessels, chartering, Worldscale, demurrage) moved to
-// Module 3, where the operational depth fits and lightens this module.
+// Theory, a checkpoint, then an escalating block of practice.
+//
+// The PTBF case study used to open the module, but it asks students to trade a
+// differential, hold a hedge and read a basis P&L before any of those words
+// have been defined. It now sits AFTER the theory block and the quiz, as the
+// first (Easy) rung of the practice ladder that ends on the live floor.
+// Shipping (vessels, chartering, Worldscale, demurrage) moved to Module 3,
+// where the operational depth fits and lightens this module.
 export const topics: Topic[] = [
-  ptbfTrading,   // PTBF & the two trades — the module's opening case study (Easy level in class)
-  differential,
+  differential,  // what a differential IS — the vocabulary everything below needs
   knowExposure,
   hedgingTool,
   hedging,
-  hedgingQuiz,
+  hedgingQuiz,   // checkpoint on the theory block: basis, exposure, hedging, Incoterms
+  ptbfTrading,   // PTBF & the two trades — the case study, now that the notions are in place (Easy level in class)
   chainRecap,    // recap of the whole physical chain + risk map — the parcel walk, now that the vocabulary is in place
-  dayInLife,     // the hedged desk's inbox — every concept above, under time pressure (moved out of the early slot)
+  dayInLife,     // the hedged desk's inbox — every concept above, under time pressure
   fobToCif,      // guided solo simulation (theory → practice)
   liveTrading,   // timed live-market exercise (the capstone of the module)
 ]

@@ -619,8 +619,26 @@ test('FuturesOnlySim live: its OWN tape — a different scenario from the Module
   }
 })
 
-test('the PTBF case study now opens module 2, and module 1 trades futures only', () => {
-  expect(modules[1].topics[0].id).toBe('00-ptbf-trading')
+test('module 2 teaches the notions before the PTBF case study asks students to trade them', () => {
+  const m2 = modules[1].topics.map(t => t.id)
+  const at = (id: string) => {
+    const i = m2.indexOf(id)
+    expect(i).toBeGreaterThanOrEqual(0)
+    return i
+  }
+  // Theory block opens the module: a differential has to be defined before it
+  // can be traded, and exposure/hedging before a hedge can be held.
+  expect(m2[0]).toBe('01-differential')
+  for (const prereq of ['01-differential', '02-knowyourexposure', '03-hedgingstrategies']) {
+    expect(at(prereq)).toBeLessThan(at('00-ptbf-trading'))
+  }
+  // The quiz checkpoints the theory, then the case study opens the practice
+  // ladder that ends on the live floor.
+  expect(at('03b-hedging-quiz')).toBeLessThan(at('00-ptbf-trading'))
+  expect(at('00-ptbf-trading')).toBeLessThan(at('05-FOBtoCIFtrades'))
+  expect(at('05-FOBtoCIFtrades')).toBeLessThan(at('06-live-trading-exercise'))
+
+  // Module 1 still trades futures only — PTBF mechanics stay in module 2.
   const m1Ids = modules[0].topics.map(t => t.id)
   expect(m1Ids).toContain('06-futures-first')
   expect(m1Ids).not.toContain('00-ptbf-trading')

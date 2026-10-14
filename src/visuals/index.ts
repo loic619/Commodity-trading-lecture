@@ -75,6 +75,12 @@ import PhysicalFlow, { textDef as physicalFlowText } from './PhysicalFlow'
 import TraderPillars, { textDef as traderPillarsText } from './TraderPillars'
 import EveryoneIsATrader from './EveryoneIsATrader'
 import PtbfInvention from './PtbfInvention'
+import SupplyTons from './SupplyTons'
+import DemandTons from './DemandTons'
+import ExposureBook from './ExposureBook'
+import RiskTypes from './RiskTypes'
+import HedgeRatioDial from './HedgeRatioDial'
+import MvhrCalculator from './MvhrCalculator'
 import TankerDimensions, { textDef as tankerDimensionsText } from './TankerDimensions'
 import DraftCapacityCalc from './DraftCapacityCalc'
 import VoyageEstimator from './VoyageEstimator'
@@ -179,6 +185,12 @@ export const visualRegistry: Record<string, ComponentType> = {
   'trader-pillars': TraderPillars,
   'everyone-is-a-trader': EveryoneIsATrader,
   'ptbf-invention': PtbfInvention,
+  'supply-tons': SupplyTons,
+  'demand-tons': DemandTons,
+  'exposure-book': ExposureBook,
+  'risk-types': RiskTypes,
+  'hedge-ratio-dial': HedgeRatioDial,
+  'mvhr-calculator': MvhrCalculator,
 }
 
 // Visuals whose text is editable expose a VisualTextDef schema here.

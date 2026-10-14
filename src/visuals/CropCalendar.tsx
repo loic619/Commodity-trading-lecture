@@ -49,30 +49,65 @@ function monthArc(startMonth: number, endMonth: number, rOuter: number, rInner: 
   ].join(' ')
 }
 
-// Radii per ring position (outermost first)
-const RADII = [
-  { rOuter: 148, rInner: 130 },
-  { rOuter: 124, rInner: 106 },
-  { rOuter: 100, rInner: 82 },
-  { rOuter: 76, rInner: 58 },
-] as const
+// Ring radii, outermost first. Derived from the ring count so a view with five
+// or six origins packs the same annulus as the four-origin default.
+const R_MAX = 148
+const R_MIN = 58
+function radiiFor(n: number): { rOuter: number; rInner: number }[] {
+  const band = (R_MAX - R_MIN) / n
+  const gap = Math.min(5, band * 0.22)
+  return Array.from({ length: n }, (_, i) => ({
+    rOuter: R_MAX - i * band,
+    rInner: R_MAX - (i + 1) * band + gap,
+  }))
+}
 
-const HEX = ['#f59e0b', '#22d3ee', '#34d399', '#8b5cf6'] as const
+const HEX = ['#f59e0b', '#22d3ee', '#34d399', '#8b5cf6', '#f472b6', '#facc15'] as const
 
 // One harvest wheel per crop. `textKey` rings read their (editable) label from
 // the coffee textDef; the other crops carry plain labels. Arcs are month
 // ranges (0 = Jan), `thin` marks a secondary window drawn slimmer.
 type Ring = { label?: string; textKey?: 'o1' | 'o2' | 'o3' | 'o4'; arcs: { start: number; end: number; thin?: boolean }[] }
-type Crop = { key: string; name: string; rings: Ring[]; caption?: string }
+// `views` splits one crop into alternative line-ups behind a second toggle —
+// coffee is really two crops on two different calendars.
+type View = { key: string; name: string; rings: Ring[]; caption?: string }
+type Crop = { key: string; name: string; rings: Ring[]; caption?: string; views?: View[] }
+
+const COFFEE_ALL: Ring[] = [
+  { textKey: 'o1', arcs: [{ start: 4, end: 8 }] },   // Brazil May–Sep
+  { textKey: 'o2', arcs: [{ start: 10, end: 1 }] },  // Vietnam Nov–Feb
+  { textKey: 'o3', arcs: [{ start: 9, end: 0 }, { start: 3, end: 5, thin: true }] }, // Colombia + mitaca
+  { textKey: 'o4', arcs: [{ start: 9, end: 2 }] },   // Indonesia Oct–Mar
+]
 
 const CROPS: Crop[] = [
   {
     key: 'coffee', name: 'Coffee',
-    rings: [
-      { textKey: 'o1', arcs: [{ start: 4, end: 8 }] },   // Brazil May–Sep
-      { textKey: 'o2', arcs: [{ start: 10, end: 1 }] },  // Vietnam Nov–Feb
-      { textKey: 'o3', arcs: [{ start: 9, end: 0 }, { start: 3, end: 5, thin: true }] }, // Colombia + mitaca
-      { textKey: 'o4', arcs: [{ start: 9, end: 2 }] },   // Indonesia Oct–Mar
+    rings: COFFEE_ALL,
+    views: [
+      { key: 'all', name: 'Both', rings: COFFEE_ALL },
+      {
+        key: 'arabica', name: 'Arabica',
+        rings: [
+          { label: 'Brazil (Minas, Sul de Minas) — May–Sep', arcs: [{ start: 4, end: 8 }] },
+          { label: 'Colombia — Oct–Jan main crop, Apr–Jun mitaca', arcs: [{ start: 9, end: 0 }, { start: 3, end: 5, thin: true }] },
+          { label: 'Ethiopia — Oct–Jan', arcs: [{ start: 9, end: 0 }] },
+          { label: 'Honduras & Central America — Nov–Mar', arcs: [{ start: 10, end: 2 }] },
+          { label: 'Peru — Apr–Sep', arcs: [{ start: 3, end: 8 }] },
+        ],
+        caption: 'Arabica is the high-altitude, mostly hand-picked crop, and its calendar is dominated by one origin: Brazil’s May–September window alone is around a third of world arabica. Colombia runs two crops (the main one from October, the smaller mitaca from April), Ethiopia and Central America harvest through the northern winter, and Peru fills the middle of the year. That shape is why the ICE New York board carries a different seasonality from London’s.',
+      },
+      {
+        key: 'robusta', name: 'Robusta',
+        rings: [
+          { label: 'Vietnam (Dak Lak, Central Highlands) — Nov–Feb', arcs: [{ start: 10, end: 1 }] },
+          { label: 'Indonesia (Lampung, South Sumatra) — Apr–Sep', arcs: [{ start: 3, end: 8 }] },
+          { label: 'Brazil conilon (Espírito Santo, Bahia) — Apr–Jul', arcs: [{ start: 3, end: 6 }] },
+          { label: 'India (Karnataka, Kerala) — Jan–Mar', arcs: [{ start: 0, end: 2 }] },
+          { label: 'Uganda — Nov–Feb main crop, May–Jul fly crop', arcs: [{ start: 10, end: 1 }, { start: 4, end: 6, thin: true }] },
+        ],
+        caption: 'Robusta’s year has two halves. Vietnam’s November–February harvest is the single biggest supply event in the whole coffee calendar — roughly a third of all the coffee on earth moves in those four months — and it is what sets the London differential. Then the April origins take over: Brazilian conilon and Indonesian Lampung through the middle of the year, with India in the northern winter and Uganda running two crops. Note where the needle sits: on the course’s trading date Vietnam is just starting to pick.',
+      },
     ],
   },
   {
@@ -148,16 +183,30 @@ const CROPS: Crop[] = [
 export default function CropCalendar() {
   const t = useVisualText(textDef)
   const [sel, setSel] = useState(0)
+  const [view, setView] = useState(0)
   const crop = CROPS[sel]
+  // A crop may split into variety views (coffee → both / arabica / robusta).
+  const views = crop.views
+  const active = views ? views[Math.min(view, views.length - 1)] : undefined
+  const rings = active?.rings ?? crop.rings
+  const radii = radiiFor(rings.length)
   const ringLabel = (r: Ring) => (r.textKey ? t(r.textKey) : r.label ?? '')
+  // The curated caption belongs to coffee's combined view; variety views and
+  // the other crops carry their own.
+  const caption = active && active.caption ? active.caption
+    : crop.key === 'coffee' ? t('caption')
+      : crop.caption
+  const heading = crop.key === 'coffee'
+    ? (active && active.key !== 'all' ? `${active.name} crop calendar` : t('heading'))
+    : `${crop.name} crop calendar`
 
   return (
     <div className="glass mt-5 p-5 text-white">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <div className="eyebrow text-brand-cyan">{crop.key === 'coffee' ? t('heading') : `${crop.name} crop calendar`}</div>
+        <div className="eyebrow text-brand-cyan">{heading}</div>
         <div className="flex flex-wrap gap-1.5">
           {CROPS.map((c, i) => (
-            <button key={c.key} type="button" onClick={() => setSel(i)}
+            <button key={c.key} type="button" onClick={() => { setSel(i); setView(0) }}
               className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold transition-all ${
                 i === sel ? 'border-amber-500/60 bg-amber-500/15 text-amber-100' : 'border-white/10 text-slate-400 hover:text-slate-200'
               }`}>
@@ -167,12 +216,26 @@ export default function CropCalendar() {
         </div>
       </div>
 
+      {views && (
+        <div className="mb-3 flex flex-wrap items-center gap-1.5 border-t border-white/5 pt-3">
+          <span className="font-mono text-[10px] uppercase tracking-wide text-slate-500">Variety</span>
+          {views.map((v, i) => (
+            <button key={v.key} type="button" onClick={() => setView(i)}
+              className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold transition-all ${
+                i === view ? 'border-cyan-400/60 bg-cyan-400/15 text-cyan-100' : 'border-white/10 text-slate-400 hover:text-slate-200'
+              }`}>
+              {v.name}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row md:items-center gap-6">
         <svg
           viewBox="0 0 360 360"
           className="w-full max-w-[340px] mx-auto md:mx-0 shrink-0"
           role="img"
-          aria-label={`Circular 12-month calendar showing main ${crop.name.toLowerCase()} harvest windows by origin`}
+          aria-label={`Circular 12-month calendar showing main ${(active && active.key !== 'all' ? active.name : crop.name).toLowerCase()} harvest windows by origin`}
         >
           {/* month boundary ticks */}
           {MONTHS.map((_, m) => {
@@ -185,8 +248,8 @@ export default function CropCalendar() {
           })}
 
           {/* faint tracks for each origin ring */}
-          {crop.rings.map((_, ri) => {
-            const { rOuter, rInner } = RADII[ri]
+          {rings.map((_, ri) => {
+            const { rOuter, rInner } = radii[ri]
             return (
               <circle key={ri} cx={CX} cy={CY} r={(rOuter + rInner) / 2} fill="none"
                 stroke="rgba(255,255,255,0.04)" strokeWidth={rOuter - rInner} />
@@ -194,9 +257,9 @@ export default function CropCalendar() {
           })}
 
           {/* harvest arcs */}
-          {crop.rings.map((ring, ri) =>
+          {rings.map((ring, ri) =>
             ring.arcs.map((a, i) => {
-              const { rOuter, rInner } = RADII[ri]
+              const { rOuter, rInner } = radii[ri]
               const shrink = a.thin ? 4 : 0
               return (
                 <path
@@ -253,7 +316,7 @@ export default function CropCalendar() {
 
         <div className="flex-1">
           <ul className="space-y-3">
-            {crop.rings.map((ring, ri) => (
+            {rings.map((ring, ri) => (
               <li key={ri} className="flex items-start gap-3">
                 <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: HEX[ri] }} aria-hidden="true" />
                 <span className="text-slate-300 text-sm leading-relaxed">{ringLabel(ring)}</span>
@@ -262,7 +325,7 @@ export default function CropCalendar() {
           </ul>
 
           <p className="text-slate-400 text-sm leading-relaxed mt-5 border-t border-white/5 pt-4">
-            {crop.key === 'coffee' ? t('caption') : crop.caption}
+            {caption}
           </p>
         </div>
       </div>
