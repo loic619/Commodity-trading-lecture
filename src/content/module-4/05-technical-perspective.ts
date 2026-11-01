@@ -14,7 +14,8 @@ const topic: Topic = {
     {
       id: 'dow',
       title: 'Dow Theory',
-      body: `**Charles Dow** (Wall Street Journal, 1890s) laid the foundations:\n\n- **Averages discount everything**\n- The market has **three trends**: Primary, Secondary, Minor\n- A major trend has **three phases**: Accumulation → Public Participation → Distribution\n- **Averages must confirm each other**, and **volume must confirm the trend**\n- A trend continues **until there are definite signals it has reversed**\n\nThat last rule — don't call the reversal early — is the spine of trend trading.`,
+      body: `**Charles Dow** (Wall Street Journal, 1890s) laid the foundations:\n\n- **Averages discount everything**\n- The market has **three trends**: Primary, Secondary, Minor\n- A major trend has **three phases**: Accumulation → Public Participation → Distribution\n- **Averages must confirm each other**, and **volume must confirm the trend**\n- A trend continues **until there are definite signals it has reversed**\n\nThat last rule — don't call the reversal early — is the spine of trend trading.\n\nThe three phases are a shape, so the diagram below draws them on one idealised bull market. The labels that matter are not the prices but **who is on each side of the trade**: informed money accumulating from discouraged holders at the bottom, and distributing to the newly enthusiastic at the top. Dow's framework is really about crowd psychology, and the chart is just where you can see it.`,
+      visual: 'dow-phases',
     },
     {
       id: 'trend-support',
@@ -25,7 +26,8 @@ const topic: Topic = {
     {
       id: 'ma-fib',
       title: 'Moving Averages & Fibonacci',
-      body: `**Moving averages** smooth price to reveal the trend and flag when it breaks. Traders often use **Fibonacci** periods — 21, 34, 55 days — stacked to read momentum (price above a rising ribbon = bullish).\n\n**Fibonacci retracements** gauge how far a counter-trend pullback might run. A market typically corrects around **50%** of a move, with the **38.2%** and **61.8%** ratios bracketing it. The ratios come from the Fibonacci series — 1, 1, 2, 3, 5, 8, 13, 21, 34, 55… — where each number divided by the next approaches 0.618.`,
+      body: `**Moving averages** smooth price to reveal the trend and flag when it breaks. Traders often use **Fibonacci** periods — 21, 34, 55 days — stacked to read momentum (price above a rising ribbon = bullish).\n\n**Fibonacci retracements** gauge how far a counter-trend pullback might run. A market typically corrects around **50%** of a move, with the **38.2%** and **61.8%** ratios bracketing it. The ratios come from the Fibonacci series — 1, 1, 2, 3, 5, 8, 13, 21, 34, 55… — where each number divided by the next approaches 0.618.\n\nDrag the two swing points below and watch every level move with them. That is the honest caveat worth stating in class: two analysts picking different swings get different \"levels\" from the same chart. These are a framework for planning an entry, not a forecast — and they work partly because enough people watch them for the orders to actually be there.`,
+      visual: 'fibonacci-ribbon',
     },
     {
       id: 'pvoi',

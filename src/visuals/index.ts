@@ -88,6 +88,19 @@ import ArbitrageMap from './ArbitrageMap'
 import BasisCompass from './BasisCompass'
 import OptionStructures from './OptionStructures'
 import Black76Pricer from './Black76Pricer'
+import PriceFeedbackLoop from './PriceFeedbackLoop'
+import CallOnOpec from './CallOnOpec'
+import StocksAndSpare from './StocksAndSpare'
+import ValueChain from './ValueChain'
+import ConversionUnits from './ConversionUnits'
+import CapacityUtilisation from './CapacityUtilisation'
+import CrudeYields from './CrudeYields'
+import CrudeBenchmarks from './CrudeBenchmarks'
+import ProductUnits from './ProductUnits'
+import InformationCalendar from './InformationCalendar'
+import OilEventHistory from './OilEventHistory'
+import DowPhases from './DowPhases'
+import FibonacciRibbon from './FibonacciRibbon'
 import TankerDimensions, { textDef as tankerDimensionsText } from './TankerDimensions'
 import DraftCapacityCalc from './DraftCapacityCalc'
 import VoyageEstimator from './VoyageEstimator'
@@ -205,6 +218,19 @@ export const visualRegistry: Record<string, ComponentType> = {
   'basis-compass': BasisCompass,
   'option-structures': OptionStructures,
   'black76-pricer': Black76Pricer,
+  'price-feedback-loop': PriceFeedbackLoop,
+  'call-on-opec': CallOnOpec,
+  'stocks-and-spare': StocksAndSpare,
+  'value-chain': ValueChain,
+  'conversion-units': ConversionUnits,
+  'capacity-utilisation': CapacityUtilisation,
+  'crude-yields': CrudeYields,
+  'crude-benchmarks': CrudeBenchmarks,
+  'product-units': ProductUnits,
+  'information-calendar': InformationCalendar,
+  'oil-event-history': OilEventHistory,
+  'dow-phases': DowPhases,
+  'fibonacci-ribbon': FibonacciRibbon,
 }
 
 // Visuals whose text is editable expose a VisualTextDef schema here.

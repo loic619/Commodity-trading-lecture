@@ -9,7 +9,8 @@ const topic: Topic = {
     {
       id: 'value-chain',
       title: 'Upstream to Downstream',
-      body: `Oil moves along a value chain from the ground to the consumer:\n\n**Upstream** — Exploration & Production\n↓ *(transport: tanker & pipeline · storage)*\n**Refining** — turning crude into a slate of products\n↓ *(transport & storage)*\n**Downstream** — Marketing & Distribution\n\nOut the far end comes the product slate — LPG, naphtha, gasoline, jet/kerosene, diesel, gas oil, fuel oil — each delivered to its consumer: petrochemical plants, cars, aircraft, trucks, power stations, homes and ships.`,
+      body: `Oil moves along a value chain from the ground to the consumer:\n\n**Upstream** — Exploration & Production\n↓ *(transport: tanker & pipeline · storage)*\n**Refining** — turning crude into a slate of products\n↓ *(transport & storage)*\n**Downstream** — Marketing & Distribution\n\nOut the far end comes the product slate — LPG, naphtha, gasoline, jet/kerosene, diesel, gas oil, fuel oil — each delivered to its consumer: petrochemical plants, cars, aircraft, trucks, power stations, homes and ships.\n\nClick along the chain below, and pay attention to the two **dashed** boxes. Those transport-and-storage legs are where a trading desk actually lives: upstream and downstream belong to other people. Freight, demurrage, storage economics and the timing option on a cargo all sit in the gaps between the stages, not in the stages themselves.\n\nThen click the products. \"Refined products\" is one phrase hiding six markets: gasoline follows the American driving season, naphtha follows petrochemical margins, diesel follows global industry. The same barrel feeds all of them.`,
+      visual: 'value-chain',
     },
     {
       id: 'distillation',
@@ -20,7 +21,8 @@ const topic: Topic = {
     {
       id: 'conversion',
       title: 'Treating, Converting, Blending',
-      body: `Straight-run cuts are rarely the final product. Refineries then:\n\n- **Treat** — remove sulphur (desulphurisation / hydrotreating)\n- **Convert** — **cracking** breaks big molecules into smaller, more valuable ones using heat, pressure and catalysts: the **Fluid Catalytic Cracker (FCC)**, **Hydrocracker**, **Visbreaker** (thermal, no catalyst) and **Coker** (turns vacuum residue into light products)\n- **Modify** — **reforming** and **isomerisation** raise gasoline octane\n- **Combine** — **alkylation** builds larger molecules\n- **Blend** — mix components to hit an exact specification\n\nThe deeper a refinery's conversion kit, the more light product it can squeeze from a barrel — and the cheaper, heavier crude it can afford to run.`,
+      body: `Straight-run cuts are rarely the final product. Refineries then:\n\n- **Treat** — remove sulphur (desulphurisation / hydrotreating)\n- **Convert** — **cracking** breaks big molecules into smaller, more valuable ones using heat, pressure and catalysts: the **Fluid Catalytic Cracker (FCC)**, **Hydrocracker**, **Visbreaker** (thermal, no catalyst) and **Coker** (turns vacuum residue into light products)\n- **Modify** — **reforming** and **isomerisation** raise gasoline octane\n- **Combine** — **alkylation** builds larger molecules\n- **Blend** — mix components to hit an exact specification\n\nThe deeper a refinery's conversion kit, the more light product it can squeeze from a barrel — and the cheaper, heavier crude it can afford to run.\n\nWork through the units below. Read the three cracking units together — **visbreaker, hydrocracker, coker** — and you have the whole economics of refinery investment: each costs more than the last, and each one buys access to a cheaper barrel. A refiner is not buying equipment, it is buying a wider slice of the crude market.`,
+      visual: 'conversion-units',
     },
     {
       id: 'refinery-types',
@@ -31,7 +33,8 @@ const topic: Topic = {
     {
       id: 'capacity-utilisation',
       title: 'Capacity, Throughput & Configuration',
-      body: `Three numbers, never equal: **capacity** > **consumption** > **throughput**. Global refining capacity (~103 mb/d) runs ahead of what's actually processed; **utilisation** is the swing factor, and periods of overcapacity (the 1980s, and again today) compress margins.\n\nConfiguration follows **regional demand**: US refineries maximise **gasoline** (~41% of the barrel), Europe is **diesel**-heavy, and Asia makes the most **fuel oil**. Same barrel of crude, different product mix — because each region built its kit around what it sells.`,
+      body: `Three numbers, never equal: **capacity** > **consumption** > **throughput**. Global refining capacity (~103 mb/d) runs ahead of what's actually processed; **utilisation** is the swing factor, and periods of overcapacity (the 1980s, and again today) compress margins.\n\nConfiguration follows **regional demand**: US refineries maximise **gasoline** (~41% of the barrel), Europe is **diesel**-heavy, and Asia makes the most **fuel oil**. Same barrel of crude, different product mix — because each region built its kit around what it sells.\n\nDrag the utilisation rate below and watch idle capacity appear — that gap is what compresses everyone's margin at once, and why overcapacity corrects through closures rather than through price. Then click between the three regions and watch the gasoline bar shrink as the diesel bar grows. The mismatch between what each region *makes* and what it *burns* is precisely what creates the product trade flows a desk arbitrages.`,
+      visual: 'capacity-utilisation',
     },
   ],
 }
