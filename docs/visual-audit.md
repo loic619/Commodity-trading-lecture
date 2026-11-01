@@ -10,8 +10,8 @@ npx tsx scripts/audit-visuals.mjs --all      # every section
 npx tsx scripts/audit-visuals.mjs --orphans  # visuals built but never used
 ```
 
-**State at the time of writing: 98 of 213 sections carry a visual (46%).**
-115 do not — but a missing visual is not automatically a gap, which is the
+**State at the time of writing: 100 of 213 sections carry a visual (47%).**
+113 do not — but a missing visual is not automatically a gap, which is the
 whole point of this document.
 
 ## The rule used here
@@ -50,6 +50,8 @@ Three verdicts are used below:
 | M2 · Differential · What is the Differential? | `differential-anatomy` — the equation taken apart, four coffees, and the ¢/lb vs $/t unit trap |
 | M2 · Differential · Three Types of Arbitrage | `arbitrage-map` — each arbitrage leg by leg, with the risk that eats the edge |
 | M2 · Differential · Basis Risk | `basis-compass` — direction only: which way is good for you, from four real desk positions |
+| M3 · Options · The Standard Hedging Structures | `option-structures` — the four compared on cost, what they give up, and which one margins |
+| M3 · Options · Pricing: Black-76 | `black76-pricer` — the formula substituted live, with put-call parity visible as the curve crossing |
 
 ## A — build these next
 
@@ -58,35 +60,30 @@ Ranked by teaching value per hour of work.
 **Module 2 is now complete** — every section either carries a visual or is
 deliberately prose (see the C list below).
 
-**Module 3 — options.**
+**Module 4 — oil analysis, now the thinnest module for visuals.**
 
-1. `01-options/strategies` — payoff shapes for the standard structures (collar, fence, participating). `option-payoff` exists next door and could likely be extended rather than rebuilt.
-2. `01-options/pricing` — a Black-76 calculator; put-call parity becomes self-evident when both sides move together.
-
-**Module 4 — oil analysis, currently the thinnest module for visuals.**
-
-3. `01-supply-demand/price-feedback` — price as both output and signal is a feedback loop, and a loop is a drawing.
-4. `01-supply-demand/opec-balance` — the call-on-OPEC arithmetic, as a balance.
-5. `02-value-chain-refining/value-chain` — upstream → downstream as one chain.
-6. `03-crude-quality/yields` — yield bars per grade; it is the bridge to the GPW calculator that follows.
-7. `04-benchmarks-information/information` — the information calendar (which report drops when, and what it moves). Pairs with M1's `sources`.
+1. `01-supply-demand/price-feedback` — price as both output and signal is a feedback loop, and a loop is a drawing.
+2. `01-supply-demand/opec-balance` — the call-on-OPEC arithmetic, as a balance.
+3. `02-value-chain-refining/value-chain` — upstream → downstream as one chain.
+4. `03-crude-quality/yields` — yield bars per grade; it is the bridge to the GPW calculator that follows.
+5. `04-benchmarks-information/information` — the information calendar (which report drops when, and what it moves). Pairs with M1's `sources`.
 
 **Module 5 — Brent.**
 
-8. `01-exposure-hedging/exposure-vocab` + `physical-vs-price` — one diagram covering both: a physical position is not a price risk.
-9. `02-futures-hedge/futures-not-enough` — the gaps futures leave open. It sets up the whole swaps/CFDs topic.
-10. `04-swaps-cfds/making-price` — making a price to a refiner, as a build-up.
+6. `01-exposure-hedging/exposure-vocab` + `physical-vs-price` — one diagram covering both: a physical position is not a price risk.
+7. `02-futures-hedge/futures-not-enough` — the gaps futures leave open. It sets up the whole swaps/CFDs topic.
+8. `04-swaps-cfds/making-price` — making a price to a refiner, as a build-up.
 
 **Chartering (M6–M9) — 47 sections without a visual, the newest course.**
 
-11. `M6 02-worldscale/freight-cost-elements` — the freight cost stack.
-12. `M9 02-demurrage-calculation/cp-clauses` + `worked-examples` — a laytime clock showing commencement, counting and exceptions. Demurrage is a clock; it should be drawn as one.
-13. `M9 01-demurrage-claims/invoices-claims` — the claim families with their time bars.
-14. `M8 02-laden-passage-2/bl-loi-orders` — the LOI chain. Hard to follow in prose and legally consequential.
-15. `M7 04-loading-operations-2/documentation-bl` — the bill-of-lading flow.
-16. `M8 03-discharge-operations/inspection-measurement-discharge` — a quantity-loss waterfall from B/L figure to outturn.
-17. `M7 02-arrival-delays/delays` — the delay families and who pays for each.
-18. `M6 05-negotiation-roleplay/offers-counters` — an offer/counter ladder for the role play.
+9. `M6 02-worldscale/freight-cost-elements` — the freight cost stack.
+10. `M9 02-demurrage-calculation/cp-clauses` + `worked-examples` — a laytime clock showing commencement, counting and exceptions. Demurrage is a clock; it should be drawn as one.
+11. `M9 01-demurrage-claims/invoices-claims` — the claim families with their time bars.
+12. `M8 02-laden-passage-2/bl-loi-orders` — the LOI chain. Hard to follow in prose and legally consequential.
+13. `M7 04-loading-operations-2/documentation-bl` — the bill-of-lading flow.
+14. `M8 03-discharge-operations/inspection-measurement-discharge` — a quantity-loss waterfall from B/L figure to outturn.
+15. `M7 02-arrival-delays/delays` — the delay families and who pays for each.
+16. `M6 05-negotiation-roleplay/offers-counters` — an offer/counter ladder for the role play.
 
 ## B — optional
 

@@ -86,6 +86,8 @@ import TenderableParity from './TenderableParity'
 import DifferentialAnatomy from './DifferentialAnatomy'
 import ArbitrageMap from './ArbitrageMap'
 import BasisCompass from './BasisCompass'
+import OptionStructures from './OptionStructures'
+import Black76Pricer from './Black76Pricer'
 import TankerDimensions, { textDef as tankerDimensionsText } from './TankerDimensions'
 import DraftCapacityCalc from './DraftCapacityCalc'
 import VoyageEstimator from './VoyageEstimator'
@@ -201,6 +203,8 @@ export const visualRegistry: Record<string, ComponentType> = {
   'differential-anatomy': DifferentialAnatomy,
   'arbitrage-map': ArbitrageMap,
   'basis-compass': BasisCompass,
+  'option-structures': OptionStructures,
+  'black76-pricer': Black76Pricer,
 }
 
 // Visuals whose text is editable expose a VisualTextDef schema here.
