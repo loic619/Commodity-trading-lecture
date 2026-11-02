@@ -101,6 +101,17 @@ import InformationCalendar from './InformationCalendar'
 import OilEventHistory from './OilEventHistory'
 import DowPhases from './DowPhases'
 import FibonacciRibbon from './FibonacciRibbon'
+import LongShortSenses from './LongShortSenses'
+import FixedVsFloating from './FixedVsFloating'
+import HedgeLifecycle from './HedgeLifecycle'
+import OilContracts from './OilContracts'
+import FormulaGap from './FormulaGap'
+import BrentWhy from './BrentWhy'
+import { DatedWindow, BfoeForward, DflSpread } from './BrentComplexMechanics'
+import PraIndex from './PraIndex'
+import TimeValueCargo from './TimeValueCargo'
+import CfdSettlement from './CfdSettlement'
+import PriceToRefiner from './PriceToRefiner'
 import TankerDimensions, { textDef as tankerDimensionsText } from './TankerDimensions'
 import DraftCapacityCalc from './DraftCapacityCalc'
 import VoyageEstimator from './VoyageEstimator'
@@ -231,6 +242,19 @@ export const visualRegistry: Record<string, ComponentType> = {
   'oil-event-history': OilEventHistory,
   'dow-phases': DowPhases,
   'fibonacci-ribbon': FibonacciRibbon,
+  'long-short-senses': LongShortSenses,
+  'fixed-vs-floating': FixedVsFloating,
+  'hedge-lifecycle': HedgeLifecycle,
+  'oil-contracts': OilContracts,
+  'formula-gap': FormulaGap,
+  'brent-why': BrentWhy,
+  'dated-window': DatedWindow,
+  'bfoe-forward': BfoeForward,
+  'dfl-spread': DflSpread,
+  'pra-index': PraIndex,
+  'time-value-cargo': TimeValueCargo,
+  'cfd-settlement': CfdSettlement,
+  'price-to-refiner': PriceToRefiner,
 }
 
 // Visuals whose text is editable expose a VisualTextDef schema here.

@@ -10,8 +10,8 @@ npx tsx scripts/audit-visuals.mjs --all      # every section
 npx tsx scripts/audit-visuals.mjs --orphans  # visuals built but never used
 ```
 
-**State at the time of writing: 113 of 213 sections carry a visual (53%).**
-100 do not — but a missing visual is not automatically a gap, which is the
+**State at the time of writing: 126 of 213 sections carry a visual (59%).**
+87 do not — but a missing visual is not automatically a gap, which is the
 whole point of this document.
 
 ## The rule used here
@@ -65,30 +65,38 @@ Three verdicts are used below:
 | M4 · Benchmarks · Reading the Market Through Events | `oil-event-history` — 35 years of Brent, every move classified |
 | M4 · Technical · Dow Theory | `dow-phases` — the three phases on one idealised bull market, and who is on each side |
 | M4 · Technical · Moving Averages & Fibonacci | `fibonacci-ribbon` — retracements that recompute as you drag the swing |
+| M5 · Exposure · Long & Short — Loosely Used | `long-short-senses` — four meanings of two words, and which one can be hedged |
+| M5 · Exposure · A Physical Position Is Not a Price Risk | `fixed-vs-floating` — flip each leg and watch the exposure appear and vanish |
+| M5 · Exposure · What Hedging Actually Is | `hedge-lifecycle` — two tracks, risk and hedge, with both end mistakes built in |
+| M5 · Futures · The Contracts | `oil-contracts` — filterable, with cash settlement and the M−2 expiry pulled out |
+| M5 · Futures · Why Futures Aren't Enough | `formula-gap` — a point cannot hedge an average |
+| M5 · Brent · Small Output, Global Benchmark | `brent-why` — the disproportion, and three ingredients you can switch off |
+| M5 · Brent · DFL | `dfl-spread` — settling Dated against futures, with the oil price conspicuously absent |
+| M5 · Brent · The Brent Forward | `bfoe-forward` — the nomination clock, and whose option it is |
+| M5 · Brent · Dated Brent | `dated-window` — the 10–31 day window, rolling |
+| M5 · Swaps · The Index | `pra-index` — an assessment built from a window of deals, and what the methodology does to your swap |
+| M5 · Swaps · Market Structure → CFDs | `time-value-cargo` — same formula, different dates, different value |
+| M5 · Swaps · A CFD Trade | `cfd-settlement` — five daily comparisons, settled |
+| M5 · Swaps · Making a Price to a Refiner | `price-to-refiner` — the quote built from its parts, each mapped to its instrument |
 
 ## A — build these next
 
 Ranked by teaching value per hour of work.
 
-**Modules 2 and 4 are now complete** — every section in them either carries a
-visual or is deliberately prose (see the C list below).
-
-**Module 5 — Brent, now the thinnest commodity module.**
-
-1. `01-exposure-hedging/exposure-vocab` + `physical-vs-price` — one diagram covering both: a physical position is not a price risk.
-2. `02-futures-hedge/futures-not-enough` — the gaps futures leave open. It sets up the whole swaps/CFDs topic.
-3. `04-swaps-cfds/making-price` — making a price to a refiner, as a build-up.
+**The whole commodity course is now done** — every section in Modules 1 to 5
+either carries a visual or is deliberately prose (see the C list below). What
+is left is the chartering course.
 
 **Chartering (M6–M9) — 47 sections without a visual, the newest course.**
 
-4. `M6 02-worldscale/freight-cost-elements` — the freight cost stack.
-5. `M9 02-demurrage-calculation/cp-clauses` + `worked-examples` — a laytime clock showing commencement, counting and exceptions. Demurrage is a clock; it should be drawn as one.
-6. `M9 01-demurrage-claims/invoices-claims` — the claim families with their time bars.
-7. `M8 02-laden-passage-2/bl-loi-orders` — the LOI chain. Hard to follow in prose and legally consequential.
-8. `M7 04-loading-operations-2/documentation-bl` — the bill-of-lading flow.
-9. `M8 03-discharge-operations/inspection-measurement-discharge` — a quantity-loss waterfall from B/L figure to outturn.
-10. `M7 02-arrival-delays/delays` — the delay families and who pays for each.
-11. `M6 05-negotiation-roleplay/offers-counters` — an offer/counter ladder for the role play.
+1. `M6 02-worldscale/freight-cost-elements` — the freight cost stack.
+2. `M9 02-demurrage-calculation/cp-clauses` + `worked-examples` — a laytime clock showing commencement, counting and exceptions. Demurrage is a clock; it should be drawn as one.
+3. `M9 01-demurrage-claims/invoices-claims` — the claim families with their time bars.
+4. `M8 02-laden-passage-2/bl-loi-orders` — the LOI chain. Hard to follow in prose and legally consequential.
+5. `M7 04-loading-operations-2/documentation-bl` — the bill-of-lading flow.
+6. `M8 03-discharge-operations/inspection-measurement-discharge` — a quantity-loss waterfall from B/L figure to outturn.
+7. `M7 02-arrival-delays/delays` — the delay families and who pays for each.
+8. `M6 05-negotiation-roleplay/offers-counters` — an offer/counter ladder for the role play.
 
 ## B — optional
 
@@ -97,7 +105,6 @@ Worth doing if the topic feels flat in the room, not worth a sprint:
 - M1 `04-supply-demand/sources` — a release calendar would teach the "diarise the WASDE" habit better than a bullet list.
 - M2 `03-hedgingstrategies/hedging-principle` — hedger sheds / speculator takes, as two sides of one transfer.
 - M3 `01-options/options-basics`, `physical-options`; `01c-shipping/worldscale-complications`, `freight-drivers`, `vessel-acceptability`; `02-esg-eudr/*` (the compliant / non-compliant split is the one worth drawing); `03-advancedsupply-demand/trader-2`, `operational-risk`.
-- M5 `01-exposure-hedging/hedging-defined`; `02-futures-hedge/contract-specs`, `futures-features`; `03-brent-complex/north-sea`, `dfl`, `forward`, `dated` (`brent-triangle` and `price-buildup` already carry most of this); `04-swaps-cfds/cfd-trade`.
 - Chartering: the process and documentation prose throughout M7–M9, plus `M6 04-single-voyage-contract/analysing-recap` (next to `fixture-recap-anatomy`), `M9 03-time-charter/*` (next to `tc-timeline`) and `M9 04-dispute-handling/*` (next to `dispute-ladder`).
 
 ## C — deliberately left alone
@@ -112,6 +119,8 @@ only sections without a visual:
 - M4 `03-crude-quality/two-measures` — the quality scatter in the very next section plots exactly these two axes.
 - M4 `05-technical-perspective/premises` — 85 words, three assumptions and a quote; the rest of the topic is the visuals.
 - M5 `02-futures-hedge/why-futures` — 61 words, and the point is that it is simple.
+- M5 `02-futures-hedge/futures-features` — a six-bullet summary of mechanics already shown in Module 1.
+- M5 `04-swaps-cfds/what-is-swap` and `swap-example` — a definition and a terms sheet that feed straight into the simulator two sections later.
 
 ## Visuals built but never shown
 
