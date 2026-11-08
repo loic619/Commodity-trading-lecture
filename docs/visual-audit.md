@@ -10,8 +10,8 @@ npx tsx scripts/audit-visuals.mjs --all      # every section
 npx tsx scripts/audit-visuals.mjs --orphans  # visuals built but never used
 ```
 
-**State at the time of writing: 126 of 213 sections carry a visual (59%).**
-87 do not — but a missing visual is not automatically a gap, which is the
+**State at the time of writing: 135 of 213 sections carry a visual (63%).**
+78 do not — but a missing visual is not automatically a gap, which is the
 whole point of this document.
 
 ## The rule used here
@@ -78,6 +78,15 @@ Three verdicts are used below:
 | M5 · Swaps · Market Structure → CFDs | `time-value-cargo` — same formula, different dates, different value |
 | M5 · Swaps · A CFD Trade | `cfd-settlement` — five daily comparisons, settled |
 | M5 · Swaps · Making a Price to a Refiner | `price-to-refiner` — the quote built from its parts, each mapped to its instrument |
+| M6 · Worldscale · Elements of Freight Costs | `freight-cost-stack` — four cost families, two floors, and the zone where owners sail at a loss and are right to |
+| M6 · Worldscale · Differences with Small Tankers | `small-tanker-scale` — WS55 and WS195 as the same market, once both are in $/t all-in |
+| M6 · Worldscale · The Exercises & Review | `worldscale-mistakes` — three wrong calculations beside their right ones |
+| M6 · Commercial · Market Research | `freight-market-research` — tonne-miles, and a position list where half the ships are not in your market |
+| M6 · Commercial · Quoting Cargoes and Vessels | `quote-anatomy` — every token in both messages, and what it tells you |
+| M6 · Contract · Analysing the Recap | `recap-analysis` — each line priced the way a claims analyst will read it |
+| M6 · Role Play · Chartering Decisions | `chartering-timing` — three sequencing choices, three different exposures |
+| M6 · Role Play · Offers and Counter-Offers | `offer-counter-ladder` — the dance, converging, with the etiquette rule on each message |
+| M6 · Role Play · Finalising & Lifting Subjects | `subjects-lifting` — on subs to clean, and the failing path |
 
 ## A — build these next
 
@@ -87,16 +96,17 @@ Ranked by teaching value per hour of work.
 either carries a visual or is deliberately prose (see the C list below). What
 is left is the chartering course.
 
-**Chartering (M6–M9) — 47 sections without a visual, the newest course.**
+**Module 6 is now complete too.** What is left is M7–M9: 38 sections, all of
+them operational prose.
 
-1. `M6 02-worldscale/freight-cost-elements` — the freight cost stack.
-2. `M9 02-demurrage-calculation/cp-clauses` + `worked-examples` — a laytime clock showing commencement, counting and exceptions. Demurrage is a clock; it should be drawn as one.
-3. `M9 01-demurrage-claims/invoices-claims` — the claim families with their time bars.
-4. `M8 02-laden-passage-2/bl-loi-orders` — the LOI chain. Hard to follow in prose and legally consequential.
-5. `M7 04-loading-operations-2/documentation-bl` — the bill-of-lading flow.
-6. `M8 03-discharge-operations/inspection-measurement-discharge` — a quantity-loss waterfall from B/L figure to outturn.
-7. `M7 02-arrival-delays/delays` — the delay families and who pays for each.
-8. `M6 05-negotiation-roleplay/offers-counters` — an offer/counter ladder for the role play.
+**Chartering (M7–M9).**
+
+1. `M9 02-demurrage-calculation/cp-clauses` + `worked-examples` — a laytime clock showing commencement, counting and exceptions. Demurrage is a clock; it should be drawn as one.
+2. `M9 01-demurrage-claims/invoices-claims` — the claim families with their time bars.
+3. `M8 02-laden-passage-2/bl-loi-orders` — the LOI chain. Hard to follow in prose and legally consequential.
+4. `M7 04-loading-operations-2/documentation-bl` — the bill-of-lading flow.
+5. `M8 03-discharge-operations/inspection-measurement-discharge` — a quantity-loss waterfall from B/L figure to outturn.
+6. `M7 02-arrival-delays/delays` — the delay families and who pays for each.
 
 ## B — optional
 
@@ -105,7 +115,7 @@ Worth doing if the topic feels flat in the room, not worth a sprint:
 - M1 `04-supply-demand/sources` — a release calendar would teach the "diarise the WASDE" habit better than a bullet list.
 - M2 `03-hedgingstrategies/hedging-principle` — hedger sheds / speculator takes, as two sides of one transfer.
 - M3 `01-options/options-basics`, `physical-options`; `01c-shipping/worldscale-complications`, `freight-drivers`, `vessel-acceptability`; `02-esg-eudr/*` (the compliant / non-compliant split is the one worth drawing); `03-advancedsupply-demand/trader-2`, `operational-risk`.
-- Chartering: the process and documentation prose throughout M7–M9, plus `M6 04-single-voyage-contract/analysing-recap` (next to `fixture-recap-anatomy`), `M9 03-time-charter/*` (next to `tc-timeline`) and `M9 04-dispute-handling/*` (next to `dispute-ladder`).
+- Chartering: the process and documentation prose throughout M7–M9, plus `M9 03-time-charter/*` (next to `tc-timeline`) and `M9 04-dispute-handling/*` (next to `dispute-ladder`).
 
 ## C — deliberately left alone
 

@@ -112,6 +112,15 @@ import PraIndex from './PraIndex'
 import TimeValueCargo from './TimeValueCargo'
 import CfdSettlement from './CfdSettlement'
 import PriceToRefiner from './PriceToRefiner'
+import FreightCostStack from './FreightCostStack'
+import SmallTankerScale from './SmallTankerScale'
+import WorldscaleMistakes from './WorldscaleMistakes'
+import FreightMarketResearch from './FreightMarketResearch'
+import QuoteAnatomy from './QuoteAnatomy'
+import RecapAnalysis from './RecapAnalysis'
+import CharteringTiming from './CharteringTiming'
+import OfferCounterLadder from './OfferCounterLadder'
+import SubjectsLifting from './SubjectsLifting'
 import TankerDimensions, { textDef as tankerDimensionsText } from './TankerDimensions'
 import DraftCapacityCalc from './DraftCapacityCalc'
 import VoyageEstimator from './VoyageEstimator'
@@ -255,6 +264,15 @@ export const visualRegistry: Record<string, ComponentType> = {
   'time-value-cargo': TimeValueCargo,
   'cfd-settlement': CfdSettlement,
   'price-to-refiner': PriceToRefiner,
+  'freight-cost-stack': FreightCostStack,
+  'small-tanker-scale': SmallTankerScale,
+  'worldscale-mistakes': WorldscaleMistakes,
+  'freight-market-research': FreightMarketResearch,
+  'quote-anatomy': QuoteAnatomy,
+  'recap-analysis': RecapAnalysis,
+  'chartering-timing': CharteringTiming,
+  'offer-counter-ladder': OfferCounterLadder,
+  'subjects-lifting': SubjectsLifting,
 }
 
 // Visuals whose text is editable expose a VisualTextDef schema here.
