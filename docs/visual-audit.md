@@ -10,8 +10,8 @@ npx tsx scripts/audit-visuals.mjs --all      # every section
 npx tsx scripts/audit-visuals.mjs --orphans  # visuals built but never used
 ```
 
-**State at the time of writing: 135 of 213 sections carry a visual (63%).**
-78 do not — but a missing visual is not automatically a gap, which is the
+**State at the time of writing: 148 of 213 sections carry a visual (69%).**
+65 do not — but a missing visual is not automatically a gap, which is the
 whole point of this document.
 
 ## The rule used here
@@ -87,6 +87,19 @@ Three verdicts are used below:
 | M6 · Role Play · Chartering Decisions | `chartering-timing` — three sequencing choices, three different exposures |
 | M6 · Role Play · Offers and Counter-Offers | `offer-counter-ladder` — the dance, converging, with the etiquette rule on each message |
 | M6 · Role Play · Finalising & Lifting Subjects | `subjects-lifting` — on subs to clean, and the failing path |
+| M7 · Pre-fixture · Approvals & Vetting | `vetting-funnel` — a funnel, not a checklist: the gates after a failure are never run |
+| M7 · Pre-fixture · Recap vs Charter Parties | `back-to-back-gap` — three documents, and the leak that exists from signature with nobody at fault |
+| M7 · Pre-fixture · Monitoring and Updating | `laycan-watch` — every ETA message re-tests the laycan |
+| M7 · Pre-fixture · Port & Terminal Clearance | `port-clearance` — three axes, plus the SSSCL stoppage and its laytime grey zone |
+| M7 · Delays · Weather, Canals, Cancelling | `delay-families` — the same storm, two payers, decided by whether the clock had started |
+| M7 · Loading I · Port Characteristics | `port-physical-layer` — including the constraint that the shore sets your loading rate |
+| M7 · Loading I · Administrative Requirements | `port-admin-layer` — the paper that stops a ship, and who pays for it |
+| M7 · Loading I · Documentation | `loading-documents` — the set a loading generates, with the ones that stop a ship flagged |
+| M7 · Loading I · Progress Monitoring | `port-log` — nine timestamps, each one future laytime evidence |
+| M7 · Loading II · Berthing & Lightering | `berthing-configurations` — berth, STS and double-banking, and whether NOR is valid there |
+| M7 · Loading II · Cargo Handling | `load-sequence` — five phases and a stoppage ledger: whose time was it? |
+| M7 · Loading II · Inspection & Measurement | `ship-shore-figures` — the VEF, the 0.3% tolerance and the note of protest |
+| M7 · Loading II · Bills of Lading | `bill-of-lading` — three instruments in one sheet, and the operator’s checkpoints |
 
 ## A — build these next
 
@@ -96,17 +109,15 @@ Ranked by teaching value per hour of work.
 either carries a visual or is deliberately prose (see the C list below). What
 is left is the chartering course.
 
-**Module 6 is now complete too.** What is left is M7–M9: 38 sections, all of
-them operational prose.
+**Modules 6 and 7 are complete too.** What is left is M8–M9: 25 sections,
+all of them operational prose.
 
-**Chartering (M7–M9).**
+**Chartering (M8–M9).**
 
 1. `M9 02-demurrage-calculation/cp-clauses` + `worked-examples` — a laytime clock showing commencement, counting and exceptions. Demurrage is a clock; it should be drawn as one.
 2. `M9 01-demurrage-claims/invoices-claims` — the claim families with their time bars.
 3. `M8 02-laden-passage-2/bl-loi-orders` — the LOI chain. Hard to follow in prose and legally consequential.
-4. `M7 04-loading-operations-2/documentation-bl` — the bill-of-lading flow.
-5. `M8 03-discharge-operations/inspection-measurement-discharge` — a quantity-loss waterfall from B/L figure to outturn.
-6. `M7 02-arrival-delays/delays` — the delay families and who pays for each.
+4. `M8 03-discharge-operations/inspection-measurement-discharge` — a quantity-loss waterfall from B/L figure to outturn.
 
 ## B — optional
 
@@ -115,7 +126,7 @@ Worth doing if the topic feels flat in the room, not worth a sprint:
 - M1 `04-supply-demand/sources` — a release calendar would teach the "diarise the WASDE" habit better than a bullet list.
 - M2 `03-hedgingstrategies/hedging-principle` — hedger sheds / speculator takes, as two sides of one transfer.
 - M3 `01-options/options-basics`, `physical-options`; `01c-shipping/worldscale-complications`, `freight-drivers`, `vessel-acceptability`; `02-esg-eudr/*` (the compliant / non-compliant split is the one worth drawing); `03-advancedsupply-demand/trader-2`, `operational-risk`.
-- Chartering: the process and documentation prose throughout M7–M9, plus `M9 03-time-charter/*` (next to `tc-timeline`) and `M9 04-dispute-handling/*` (next to `dispute-ladder`).
+- Chartering: the process and documentation prose throughout M8–M9, plus `M9 03-time-charter/*` (next to `tc-timeline`) and `M9 04-dispute-handling/*` (next to `dispute-ladder`).
 
 ## C — deliberately left alone
 

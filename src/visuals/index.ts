@@ -121,6 +121,14 @@ import RecapAnalysis from './RecapAnalysis'
 import CharteringTiming from './CharteringTiming'
 import OfferCounterLadder from './OfferCounterLadder'
 import SubjectsLifting from './SubjectsLifting'
+import VettingFunnel from './VettingFunnel'
+import BackToBackGap from './BackToBackGap'
+import { LaycanWatch, PortClearance } from './PreFixtureOps'
+import DelayFamilies from './DelayFamilies'
+import { PortPhysicalLayer, PortAdminLayer } from './LoadPortLayers'
+import { LoadingDocuments, PortLog } from './LoadingRecords'
+import { BerthingConfigurations, LoadSequence } from './BerthOperations'
+import { ShipShoreFigures, BillOfLading } from './CargoMeasurement'
 import TankerDimensions, { textDef as tankerDimensionsText } from './TankerDimensions'
 import DraftCapacityCalc from './DraftCapacityCalc'
 import VoyageEstimator from './VoyageEstimator'
@@ -273,6 +281,19 @@ export const visualRegistry: Record<string, ComponentType> = {
   'chartering-timing': CharteringTiming,
   'offer-counter-ladder': OfferCounterLadder,
   'subjects-lifting': SubjectsLifting,
+  'vetting-funnel': VettingFunnel,
+  'back-to-back-gap': BackToBackGap,
+  'laycan-watch': LaycanWatch,
+  'port-clearance': PortClearance,
+  'delay-families': DelayFamilies,
+  'port-physical-layer': PortPhysicalLayer,
+  'port-admin-layer': PortAdminLayer,
+  'loading-documents': LoadingDocuments,
+  'port-log': PortLog,
+  'berthing-configurations': BerthingConfigurations,
+  'load-sequence': LoadSequence,
+  'ship-shore-figures': ShipShoreFigures,
+  'bill-of-lading': BillOfLading,
 }
 
 // Visuals whose text is editable expose a VisualTextDef schema here.
