@@ -6,6 +6,7 @@ import QuizSummary from '@/components/QuizSummary'
 import QuizEditor from '@/components/QuizEditor'
 import ExportPanel from '@/components/ExportPanel'
 import Breadcrumb from '@/components/Breadcrumb'
+import { moduleIdForSlug, type ModuleSlug } from '@/lib/moduleSlugs'
 import ProgressBar from '@/components/ProgressBar'
 import type { Question } from '@/types/content'
 import { loadEditMode, saveEditMode, requestEditUnlock } from '@/lib/slideOverrides'
@@ -17,12 +18,13 @@ import { buildQuizTs } from '@/lib/exportBuilders'
 
 type Props = {
   questions: Question[]
-  moduleId: number
+  moduleSlug: ModuleSlug
   topicTitle: string
   topicId?: string
 }
 
-export default function QuizRunner({ questions, moduleId, topicTitle, topicId = '' }: Props) {
+export default function QuizRunner({ questions, moduleSlug, topicTitle, topicId = '' }: Props) {
+  const moduleId = moduleIdForSlug(moduleSlug)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [score, setScore] = useState(0)
   const [done, setDone] = useState(false)
@@ -80,15 +82,15 @@ export default function QuizRunner({ questions, moduleId, topicTitle, topicId = 
   if (done) {
     return (
       <div className="min-h-screen text-white">
-        <Breadcrumb moduleId={moduleId} topicTitle={topicTitle} />
-        <QuizSummary score={score} total={questions.length} moduleId={moduleId} />
+        <Breadcrumb moduleSlug={moduleSlug} topicTitle={topicTitle} />
+        <QuizSummary score={score} total={questions.length} moduleSlug={moduleSlug} />
       </div>
     )
   }
 
   return (
     <div className="min-h-screen text-white">
-      <Breadcrumb moduleId={moduleId} topicTitle={topicTitle} />
+      <Breadcrumb moduleSlug={moduleSlug} topicTitle={topicTitle} />
       <ProgressBar current={currentIndex + 1} total={questions.length} />
 
       {/* Edit toolbar */}

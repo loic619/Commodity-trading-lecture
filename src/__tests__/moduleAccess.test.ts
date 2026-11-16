@@ -1,31 +1,55 @@
-import { checkModuleCode, moduleCode, moduleCookieName } from '@/lib/moduleAccess'
+import { checkModuleKey, moduleKey, moduleCookieName, invitationPath, MODULE_SLUGS } from '@/lib/moduleAccess'
+import { isModuleSlug, moduleIdForSlug, slugForModuleId } from '@/lib/moduleSlugs'
 
-test('every module has its own unlock code, checked case- and space-insensitively', () => {
-  // Each of the nine modules carries a non-empty default code
-  for (let m = 1; m <= 9; m++) expect(moduleCode(m)).toBeTruthy()
-  // The check tolerates case and stray whitespace…
-  expect(checkModuleCode(1, '  Saigon ')).toBe(true)
-  expect(checkModuleCode(2, 'ANTWERP')).toBe(true)
-  // …but one module's code does NOT open another module
-  expect(checkModuleCode(2, 'saigon')).toBe(false)
-  expect(checkModuleCode(1, 'antwerp')).toBe(false)
-  expect(checkModuleCode(1, '')).toBe(false)
-  // Each module stores its own cookie
-  expect(moduleCookieName(3)).not.toBe(moduleCookieName(4))
-  // The two crude modules share one code (back-to-back sessions)
-  expect(checkModuleCode(4, 'houston')).toBe(true)
-  expect(checkModuleCode(5, 'houston')).toBe(true)
-  // The chartering course (modules 6–9) shares one code: rotterdam
-  for (let m = 6; m <= 9; m++) expect(checkModuleCode(m, 'Rotterdam')).toBe(true)
-  expect(checkModuleCode(6, 'london')).toBe(false)
+test('every module has its own slug, id and invitation key', () => {
+  expect(MODULE_SLUGS).toHaveLength(9)
+  // slug ↔ id is a bijection
+  const ids = MODULE_SLUGS.map(moduleIdForSlug)
+  expect(new Set(ids).size).toBe(9)
+  for (const slug of MODULE_SLUGS) expect(slugForModuleId(moduleIdForSlug(slug))).toBe(slug)
+  // every key is long enough to be unguessable, and unique
+  const keys = MODULE_SLUGS.map(moduleKey)
+  for (const k of keys) expect(k.length).toBeGreaterThanOrEqual(16)
+  expect(new Set(keys).size).toBe(9)
 })
 
-test('module codes can be overridden per environment', () => {
-  process.env.MODULE_1_CODE = 'espresso'
+test('a key opens its own module and no other', () => {
+  expect(checkModuleKey('cherry', moduleKey('cherry'))).toBe(true)
+  expect(checkModuleKey('basis', moduleKey('cherry'))).toBe(false)
+  expect(checkModuleKey('cherry', moduleKey('basis'))).toBe(false)
+})
+
+test('the key check tolerates case and stray whitespace, and rejects nothing-like input', () => {
+  expect(checkModuleKey('cherry', `  ${moduleKey('cherry').toUpperCase()} `)).toBe(true)
+  expect(checkModuleKey('cherry', '')).toBe(false)
+  expect(checkModuleKey('cherry', undefined)).toBe(false)
+  expect(checkModuleKey('cherry', moduleKey('cherry').slice(0, -1))).toBe(false)
+})
+
+test('each module stores its own cookie', () => {
+  const names = MODULE_SLUGS.map(moduleCookieName)
+  expect(new Set(names).size).toBe(9)
+  // and the cookie name does not leak the module number
+  for (const n of names) expect(n).not.toMatch(/\d/)
+})
+
+test('slugs carry no ordering information', () => {
+  // nothing in a slug tells a student where it sits, or that others exist
+  for (const slug of MODULE_SLUGS) expect(slug).not.toMatch(/\d/)
+  expect(isModuleSlug('module-1')).toBe(false)
+  expect(isModuleSlug('2')).toBe(false)
+})
+
+test('the invitation path is the slug plus its key', () => {
+  expect(invitationPath('cherry')).toBe(`/m/cherry?k=${moduleKey('cherry')}`)
+})
+
+test('a key can be rotated per environment without a deploy', () => {
+  process.env.MODULE_CHERRY_KEY = 'a-much-longer-replacement-key'
   try {
-    expect(checkModuleCode(1, 'espresso')).toBe(true)
-    expect(checkModuleCode(1, 'saigon')).toBe(false)
+    expect(checkModuleKey('cherry', 'a-much-longer-replacement-key')).toBe(true)
+    expect(checkModuleKey('cherry', 'q7mk2xr9vbt4ndshjw')).toBe(false)
   } finally {
-    delete process.env.MODULE_1_CODE
+    delete process.env.MODULE_CHERRY_KEY
   }
 })

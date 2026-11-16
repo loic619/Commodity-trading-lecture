@@ -4,24 +4,25 @@ import { COURSE_LABELS, courseOf } from '@/types/content'
 import ModuleTabs from '@/components/ModuleTabs'
 import TopicCard from '@/components/TopicCard'
 import SiteHeader from '@/components/SiteHeader'
-import ModuleGate from '@/components/ModuleGate'
 import { EditRoot, EditableText } from '@/lib/textOverrides'
 import { moduleTitleKey, moduleObjectiveKey } from '@/lib/contentKeys'
+import { isModuleSlug, moduleIdForSlug } from '@/lib/moduleAccess'
+import { requireModuleAccess } from '@/lib/requireModuleAccess'
+import { unlockedSlugs } from '@/lib/unlocked'
 
-type Props = { params: { id: string } }
+type Props = { params: { slug: string } }
 
 export default function ModulePage({ params }: Props) {
-  const moduleId = parseInt(params.id, 10)
-  if (isNaN(moduleId) || moduleId < 1 || moduleId > modules.length) notFound()
-  const mod = modules[moduleId - 1]
+  if (!isModuleSlug(params.slug)) notFound()
+  const slug = params.slug
+  requireModuleAccess(slug)
+
+  const mod = modules[moduleIdForSlug(slug) - 1]
+  if (!mod) notFound()
 
   const topics = mod.topics
   const totalMin = topics.reduce((s, t) => s + (t.estimatedMinutes || 0), 0)
-
-  // Modules number within their own course ("Chartering & Voyage · Module 2")
   const course = courseOf(mod)
-  const courseMods = modules.filter(m => courseOf(m) === course)
-  const localNo = courseMods.findIndex(m => m.id === mod.id) + 1
 
   // One accent per objective tile — the house palette
   const objectiveColors = ['#3b82f6', '#22d3ee', '#8b5cf6', '#34d399']
@@ -30,14 +31,14 @@ export default function ModulePage({ params }: Props) {
     <div className="min-h-screen">
       <SiteHeader />
       <EditRoot>
-      <ModuleTabs activeId={moduleId} />
+      <ModuleTabs activeSlug={slug} visible={unlockedSlugs()} />
 
-      <ModuleGate moduleId={moduleId} returnTo={`/module/${moduleId}`}>
       <main className="mx-auto max-w-7xl px-5 pb-20 pt-10 sm:px-6">
-        {/* Hero */}
+        {/* Hero. The course is named; the module is NOT numbered — a number
+            would tell a student that the modules before it exist. */}
         <section className="animate-fade-up">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="chip text-slate-300">{COURSE_LABELS[course]} · Module {localNo}</span>
+            <span className="chip text-slate-300">{COURSE_LABELS[course]}</span>
           </div>
           <h2 className="mt-4 max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl">
             <EditableText id={moduleTitleKey(mod.id)} value={mod.title} as="span" className="text-gradient"
@@ -81,12 +82,11 @@ export default function ModulePage({ params }: Props) {
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {topics.map((topic, i) => (
-              <TopicCard key={topic.id} topic={topic} moduleId={moduleId} index={i} />
+              <TopicCard key={topic.id} topic={topic} moduleSlug={slug} index={i} />
             ))}
           </div>
         </section>
       </main>
-      </ModuleGate>
       </EditRoot>
     </div>
   )

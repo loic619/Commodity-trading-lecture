@@ -15,41 +15,41 @@ const sections: Section[] = [
 beforeEach(() => { window.localStorage.clear() })
 
 test('renders first section title and body', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicTitle="Test" />)
   expect(screen.getByText('Section One')).toBeInTheDocument()
   expect(screen.getByText(/Body of section one/)).toBeInTheDocument()
 })
 
 test('Back button is disabled on first section', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicTitle="Test" />)
   expect(screen.getByRole('button', { name: /Back/ })).toBeDisabled()
 })
 
 test('Continue advances to next section', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicTitle="Test" />)
   fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
   expect(screen.getByText('Section Two')).toBeInTheDocument()
 })
 
 test('last section shows "Back to Module" button', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicTitle="Test" initialIndex={2} />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicTitle="Test" initialIndex={2} />)
   expect(screen.getByRole('button', { name: /Back to Module/ })).toBeInTheDocument()
 })
 
 test('ArrowRight key advances section', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicTitle="Test" />)
   fireEvent.keyDown(window, { key: 'ArrowRight' })
   expect(screen.getByText('Section Two')).toBeInTheDocument()
 })
 
 test('ArrowLeft key goes to previous section', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicTitle="Test" initialIndex={1} />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicTitle="Test" initialIndex={1} />)
   fireEvent.keyDown(window, { key: 'ArrowLeft' })
   expect(screen.getByText('Section One')).toBeInTheDocument()
 })
 
 test('arrow keys inside an input do not change slides', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicTitle="Test" />)
   const input = document.createElement('input')
   document.body.appendChild(input)
   fireEvent.keyDown(input, { key: 'ArrowRight' })
@@ -58,7 +58,7 @@ test('arrow keys inside an input do not change slides', () => {
 })
 
 test('a live session locks all navigation until it ends', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicTitle="Test" />)
   fireEvent(window, new CustomEvent('ptbf-live-lock', { detail: true }))
   // Buttons disabled, arrows dead, lock banner shown
   expect(screen.getByRole('button', { name: /Continue/ })).toBeDisabled()
@@ -72,17 +72,17 @@ test('a live session locks all navigation until it ends', () => {
 })
 
 test('shows section counter', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicTitle="Test" />)
   expect(screen.getByText('1 / 3')).toBeInTheDocument()
 })
 
 test('edit-mode toggle is off by default (no Edit slide button)', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicId="t1" topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicId="t1" topicTitle="Test" />)
   expect(screen.queryByRole('button', { name: /Edit slide/ })).not.toBeInTheDocument()
 })
 
 test('enabling edit mode lets you edit and save a slide override', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicId="t1" topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicId="t1" topicTitle="Test" />)
   // Toggle edit mode on
   fireEvent.click(screen.getByRole('button', { name: /^Edit$/ }))
   // The "Edit slide" affordance now appears
@@ -100,7 +100,7 @@ test('graphic-text fields edit the text rendered inside a visual', () => {
   const visualSections: Section[] = [
     { id: 'v1', title: 'Laws', body: 'notes', visual: 'three-laws' },
   ]
-  render(<SectionReader sections={visualSections} moduleId={1} topicId="t1" topicTitle="Test" />)
+  render(<SectionReader sections={visualSections} moduleSlug="cherry" topicId="t1" topicTitle="Test" />)
   // The visual renders its default text
   expect(screen.getByText('Absolute Ethics')).toBeInTheDocument()
   // Enter edit mode and open the editor
@@ -119,7 +119,7 @@ test('graphic-text fields edit the text rendered inside a visual', () => {
 })
 
 test('inserting a slide after the current one grows the deck and opens it for editing', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicId="t1" topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicId="t1" topicTitle="Test" />)
   fireEvent.click(screen.getByRole('button', { name: /^Edit$/ }))
   expect(screen.getByText('1 / 3')).toBeInTheDocument()
   fireEvent.click(screen.getByRole('button', { name: /\+ After/ }))
@@ -134,7 +134,7 @@ test('inserting a slide after the current one grows the deck and opens it for ed
 })
 
 test('inserting before the first slide prepends a new slide', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicId="t1" topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicId="t1" topicTitle="Test" />)
   fireEvent.click(screen.getByRole('button', { name: /^Edit$/ }))
   fireEvent.click(screen.getByRole('button', { name: /\+ Before/ }))
   fireEvent.change(screen.getByDisplayValue('New slide'), { target: { value: 'Intro' } })
@@ -146,7 +146,7 @@ test('inserting before the first slide prepends a new slide', () => {
 })
 
 test('an inserted slide can be deleted, restoring the deck', () => {
-  render(<SectionReader sections={sections} moduleId={1} topicId="t1" topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicId="t1" topicTitle="Test" />)
   fireEvent.click(screen.getByRole('button', { name: /^Edit$/ }))
   fireEvent.click(screen.getByRole('button', { name: /\+ After/ }))
   fireEvent.change(screen.getByDisplayValue('New slide'), { target: { value: 'Throwaway' } })
@@ -161,24 +161,24 @@ test('an inserted slide can be deleted, restoring the deck', () => {
 })
 
 test('inserted slides persist to localStorage and reload on remount', () => {
-  const { unmount } = render(<SectionReader sections={sections} moduleId={1} topicId="t1" topicTitle="Test" />)
+  const { unmount } = render(<SectionReader sections={sections} moduleSlug="cherry" topicId="t1" topicTitle="Test" />)
   fireEvent.click(screen.getByRole('button', { name: /^Edit$/ }))
   fireEvent.click(screen.getByRole('button', { name: /\+ After/ }))
   fireEvent.change(screen.getByDisplayValue('New slide'), { target: { value: 'Persisted slide' } })
   fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
   unmount()
-  render(<SectionReader sections={sections} moduleId={1} topicId="t1" topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicId="t1" topicTitle="Test" />)
   // Deck still has the 4th slide after remount
   expect(screen.getByText('1 / 4')).toBeInTheDocument()
 })
 
 test('override persists to localStorage and reapplies on remount', () => {
-  const { unmount } = render(<SectionReader sections={sections} moduleId={1} topicId="t1" topicTitle="Test" />)
+  const { unmount } = render(<SectionReader sections={sections} moduleSlug="cherry" topicId="t1" topicTitle="Test" />)
   fireEvent.click(screen.getByRole('button', { name: /^Edit$/ }))
   fireEvent.click(screen.getByRole('button', { name: /Edit slide/ }))
   fireEvent.change(screen.getByDisplayValue('Body of section one'), { target: { value: 'Persisted body' } })
   fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
   unmount()
-  render(<SectionReader sections={sections} moduleId={1} topicId="t1" topicTitle="Test" />)
+  render(<SectionReader sections={sections} moduleSlug="cherry" topicId="t1" topicTitle="Test" />)
   expect(screen.getByText('Persisted body')).toBeInTheDocument()
 })

@@ -9,10 +9,11 @@ export type Topic = {
   tool?: ToolConfig
 }
 
-// Routing rule (used by TopicCard):
-//   lecture | case-study → /module/[id]/section/[topic.id]
-//   quiz                 → /module/[id]/quiz/[topic.id]
-//   tool                 → /module/[id]/tool/[topic.id]
+// Routing rule (used by TopicCard). The module is addressed by its SLUG, never
+// by its number — see src/lib/moduleSlugs.ts:
+//   lecture | case-study → /m/[slug]/section/[topic.id]
+//   quiz                 → /m/[slug]/quiz/[topic.id]
+//   tool                 → /m/[slug]/tool/[topic.id]
 //   simulation           → disabled (v2)
 
 export type Section = {

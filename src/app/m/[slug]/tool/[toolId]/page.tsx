@@ -2,12 +2,15 @@ import { notFound } from 'next/navigation'
 import { modules } from '@/content'
 import { toolRegistry } from '@/tools'
 import Breadcrumb from '@/components/Breadcrumb'
-import ModuleGate from '@/components/ModuleGate'
+import { isModuleSlug, moduleIdForSlug } from '@/lib/moduleAccess'
+import { requireModuleAccess } from '@/lib/requireModuleAccess'
 
-type Props = { params: { id: string; toolId: string } }
+type Props = { params: { slug: string; toolId: string } }
 
 export default function ToolPage({ params }: Props) {
-  const moduleId = parseInt(params.id, 10)
+  if (!isModuleSlug(params.slug)) notFound()
+  const slug = params.slug
+  const moduleId = moduleIdForSlug(slug)
   const mod = modules[moduleId - 1]
   if (!mod) notFound()
 
@@ -17,12 +20,13 @@ export default function ToolPage({ params }: Props) {
   const Tool = toolRegistry[topic.tool.componentKey]
   if (!Tool) notFound()
 
+  requireModuleAccess(slug)
+
+
   return (
-    <ModuleGate moduleId={moduleId} returnTo={`/module/${moduleId}/tool/${topic.id}`}>
       <div className="min-h-screen text-white">
-        <Breadcrumb moduleId={moduleId} topicTitle={topic.title} />
+        <Breadcrumb moduleSlug={slug} topicTitle={topic.title} />
         <Tool />
       </div>
-    </ModuleGate>
   )
 }

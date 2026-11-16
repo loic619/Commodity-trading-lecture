@@ -5,7 +5,7 @@ export default function SiteHeader() {
   return (
     <header className="border-b border-white/[0.06]">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-6">
-        <Link href="/module/1" className="group flex items-center gap-3">
+        <Link href="/" className="group flex items-center gap-3">
           {/* Gradient brand mark */}
           <span className="relative flex h-9 w-9 items-center justify-center rounded-xl"
             style={{ background: 'linear-gradient(135deg,#22d3ee,#3b82f6 45%,#8b5cf6)', boxShadow: '0 8px 24px -8px rgba(59,130,246,0.7)' }}>

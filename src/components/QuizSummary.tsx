@@ -1,8 +1,10 @@
 import Link from 'next/link'
 
-type Props = { score: number; total: number; moduleId: number }
+import type { ModuleSlug } from '@/lib/moduleSlugs'
 
-export default function QuizSummary({ score, total, moduleId }: Props) {
+type Props = { score: number; total: number; moduleSlug: ModuleSlug }
+
+export default function QuizSummary({ score, total, moduleSlug }: Props) {
   const pct = Math.round((score / total) * 100)
   const tier = pct >= 80
     ? { color: '#34d399', label: 'Pass', text: 'text-emerald-300' }
@@ -35,7 +37,7 @@ export default function QuizSummary({ score, total, moduleId }: Props) {
           <span className="font-semibold text-white">{score}</span> of {total} correct
         </p>
 
-        <Link href={`/module/${moduleId}`} className="btn-primary mt-8 w-full">
+        <Link href={`/m/${moduleSlug}`} className="btn-primary mt-8 w-full">
           ← Back to module
         </Link>
       </div>
