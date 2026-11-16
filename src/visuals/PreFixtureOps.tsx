@@ -118,7 +118,7 @@ const AXES: Axis[] = [
   {
     key: 'tech', name: 'Technical',
     items: ['LOA, beam, draft, displacement against berth limits', 'Manifold setup and height', 'WLTHC in ballast', 'Air draft under the loading gantries'],
-    fail: 'The numbers from Module 1, now with consequences. A ship that cannot physically take the berth was never a candidate — and discovering it after fixing is an expensive way to learn the terminal’s limits.',
+    fail: 'The numbers from the fixture module, now with consequences. A ship that cannot physically take the berth was never a candidate — and discovering it after fixing is an expensive way to learn the terminal’s limits.',
   },
   {
     key: 'comm', name: 'Commercial',

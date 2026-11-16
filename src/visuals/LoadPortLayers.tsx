@@ -26,7 +26,7 @@ const PHYSICAL: Group[] = [
   {
     key: 'mooring', name: 'Mooring arrangements', color: '#34d399',
     items: [
-      { k: 'Terminal plan vs ship’s equipment', v: 'The winches and ropes from Module 1, now against a specific jetty’s bollard layout and the terminal’s required pattern.' },
+      { k: 'Terminal plan vs ship’s equipment', v: 'The winches and ropes from the fixture module, now against a specific jetty’s bollard layout and the terminal’s required pattern.' },
       { k: 'Tugs', v: 'How many required, and — separately — how many are actually available on your dates.' },
       { k: 'SBM operations', v: 'Dedicated crews, and daylight windows at many terminals. A night arrival at an SBM can simply wait for morning.' },
     ],

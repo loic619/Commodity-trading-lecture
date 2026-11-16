@@ -183,7 +183,7 @@ export function PortLog() {
       </div>
 
       <p className="mt-3 border-t border-white/5 pt-3 text-xs leading-relaxed text-slate-400">
-        Module 4&apos;s demurrage calculations are only as good as this document. A Statement of Facts that disagrees with the
+        The demurrage module&apos;s calculations are only as good as this document. A Statement of Facts that disagrees with the
         terminal&apos;s by two hours is not a paperwork problem — at $45,000 a day it is{' '}
         <strong className="text-slate-200">$3,750</strong>, and it will be argued over for months.
       </p>

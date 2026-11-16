@@ -6,7 +6,7 @@ import loadingOps2 from './04-loading-operations-2'
 import fixingGame from './05-fixing-game'
 import type { Topic } from '@/types/content'
 
-// Chartering & Voyage · Module 2 — from lifted subjects to sailing:
+// Chartering & Voyage · the loading module — from lifted subjects to sailing:
 // vetting and the pre-loading file, the laycan and its delays, a checkpoint
 // test, the load port in two passes (port/paper, then NOR-to-sailing), and
 // the end-of-day fixing game.

@@ -16,7 +16,7 @@ import type { Topic } from '@/types/content'
 // contract is (order book, margin, swaps) → market structure → a CHECKPOINT
 // quiz to consolidate the theory → what moves prices (supply & demand) → trade
 // futures against the news right after (the live screen) → the desk day (inbox)
-// → careers. Hedging & PTBF live in Module 2.
+// → careers. Hedging & PTBF live in the hedging module.
 export const topics: Topic[] = [
   introduction, // the job itself: three aspects, risks & paper, and PTBF derived from first principles
   panorama, // why markets exist: no-market world → crazy markets → CBOT → the answer
@@ -26,6 +26,6 @@ export const topics: Topic[] = [
   checkpoint, // single 17-question checkpoint over the theory so far — mid-session, not the end
   supplyDemand, // what moves these markets — read the news before pricing it
   futuresFirst, // futures-only live screen: buy & sell against the news — straight after S&D
-  dayOneDesk, // the junior's inbox: every Module 1 concept in work clothes
+  dayOneDesk, // the junior's inbox: every the panorama module concept in work clothes
   careersDesk, // the building, not the market: desk organisation as a career map
 ]

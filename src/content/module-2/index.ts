@@ -16,7 +16,7 @@ import type { Topic } from '@/types/content'
 // differential, hold a hedge and read a basis P&L before any of those words
 // have been defined. It now sits AFTER the theory block and the quiz, as the
 // first (Easy) rung of the practice ladder that ends on the live floor.
-// Shipping (vessels, chartering, Worldscale, demurrage) moved to Module 3,
+// Shipping (vessels, chartering, Worldscale, demurrage) moved to the strategies module,
 // where the operational depth fits and lightens this module.
 export const topics: Topic[] = [
   differential,  // what a differential IS — the vocabulary everything below needs

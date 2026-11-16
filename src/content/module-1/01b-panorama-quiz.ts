@@ -2,7 +2,7 @@ import type { Topic } from '@/types/content'
 
 const topic: Topic = {
   id: '01b-panorama-quiz',
-  title: 'Module 1 Checkpoint: Markets, Instruments & Structure',
+  title: 'the panorama module Checkpoint: Markets, Instruments & Structure',
   type: 'quiz',
   estimatedMinutes: 15,
   quiz: {
