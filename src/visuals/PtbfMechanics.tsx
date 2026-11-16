@@ -2275,7 +2275,7 @@ export function buildFuturesReport(execs: FutExec[], s: {
   realized: number; unrealized: number; maxDD: number
 }): string {
   const L: string[] = []
-  L.push('FUTURES SCREEN REPORT — Module 1 (speculation, futures only)')
+  L.push('FUTURES SCREEN REPORT — speculation, futures only')
   if (s.trader) L.push(`Trader: ${s.trader}`)
   L.push(`Generated: ${new Date().toISOString()}`)
   L.push('')

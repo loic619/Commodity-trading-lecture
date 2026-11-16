@@ -5,7 +5,7 @@ import singleVoyageContract from './04-single-voyage-contract'
 import negotiationRoleplay from './05-negotiation-roleplay'
 import type { Topic } from '@/types/content'
 
-// Chartering & Voyage · Module 1 — Introduction: the ship, the freight
+// Chartering & Voyage · the fixture module — Introduction: the ship, the freight
 // index, the market's commercial process, the voyage contract, and a
 // closing negotiation role play that uses all four.
 export const topics: Topic[] = [

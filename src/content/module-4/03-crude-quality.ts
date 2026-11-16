@@ -20,7 +20,8 @@ const topic: Topic = {
     {
       id: 'yields',
       title: 'Quality Drives the Yield',
-      body: `Simple-distillation yields show why quality matters, % weight:\n\n| Cut | WTI | Brent | Arab Light |\n|---|---|---|---|\n| Naphtha | 26 | 23 | 17 |\n| Kerosene | 14 | 12 | 12 |\n| Gas oil | 23 | 22 | 17 |\n| Fuel oil | 35 | 41 | 53 |\n| Fuel & loss | 2 | 2 | 1 |\n\nLighter **WTI** gives the most light ends; heavy **Arab Light** drops **53%** straight to fuel oil on simple distillation — which is exactly why it needs a complex, coking refinery to be worth running.`,
+      body: `Simple-distillation yields show why quality matters, % weight:\n\n| Cut | WTI | Brent | Arab Light |\n|---|---|---|---|\n| Naphtha | 26 | 23 | 17 |\n| Kerosene | 14 | 12 | 12 |\n| Gas oil | 23 | 22 | 17 |\n| Fuel oil | 35 | 41 | 53 |\n| Fuel & loss | 2 | 2 | 1 |\n\nLighter **WTI** gives the most light ends; heavy **Arab Light** drops **53%** straight to fuel oil on simple distillation — which is exactly why it needs a complex, coking refinery to be worth running.\n\nCompare the three bars below and watch the red block grow. Then read the valuation panel: at indicative product prices the slates are worth several dollars a barrel apart *before any conversion kit touches them*. That spread **is** the crude differential the market has to pay you to take the heavier barrel — and the next section turns it into a real Gross Product Worth calculation.`,
+      visual: 'crude-yields',
     },
     {
       id: 'gpw',

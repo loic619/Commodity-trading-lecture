@@ -1,17 +1,18 @@
 import Link from 'next/link'
 import type { Topic } from '@/types/content'
 import { TOPIC_META, TopicIcon } from './topicMeta'
+import type { ModuleSlug } from '@/lib/moduleSlugs'
 
-function getHref(topic: Topic, moduleId: number): string {
-  if (topic.type === 'quiz') return `/module/${moduleId}/quiz/${topic.id}`
-  if (topic.type === 'tool') return `/module/${moduleId}/tool/${topic.id}`
+function getHref(topic: Topic, slug: ModuleSlug): string {
+  if (topic.type === 'quiz') return `/m/${slug}/quiz/${topic.id}`
+  if (topic.type === 'tool') return `/m/${slug}/tool/${topic.id}`
   if (topic.type === 'simulation') return '#'
-  return `/module/${moduleId}/section/${topic.id}`
+  return `/m/${slug}/section/${topic.id}`
 }
 
-type Props = { topic: Topic; moduleId: number; index?: number }
+type Props = { topic: Topic; moduleSlug: ModuleSlug; index?: number }
 
-export default function TopicCard({ topic, moduleId, index = 0 }: Props) {
+export default function TopicCard({ topic, moduleSlug, index = 0 }: Props) {
   const meta = TOPIC_META[topic.type]
 
   // Coming-soon / disabled state
@@ -33,7 +34,7 @@ export default function TopicCard({ topic, moduleId, index = 0 }: Props) {
   }
 
   return (
-    <Link href={getHref(topic, moduleId)} className="group block h-full animate-fade-up"
+    <Link href={getHref(topic, moduleSlug)} className="group block h-full animate-fade-up"
       style={{ animationDelay: `${Math.min(index * 45, 360)}ms` }}>
       <div className="glass glass-hover relative flex h-full flex-col overflow-hidden p-5">
         {/* Accent rail */}

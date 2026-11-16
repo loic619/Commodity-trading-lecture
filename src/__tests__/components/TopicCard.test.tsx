@@ -48,41 +48,41 @@ const caseStudyTopic: Topic = {
 }
 
 test('renders topic title', () => {
-  render(<TopicCard topic={lectureTopic} moduleId={1} />)
+  render(<TopicCard topic={lectureTopic} moduleSlug="cherry" />)
   expect(screen.getByText('Test Lecture Topic')).toBeInTheDocument()
 })
 
 test('renders type badge', () => {
-  render(<TopicCard topic={lectureTopic} moduleId={1} />)
+  render(<TopicCard topic={lectureTopic} moduleSlug="cherry" />)
   expect(screen.getByText('Lecture')).toBeInTheDocument()
 })
 
 test('links to section reader for lecture type', () => {
-  render(<TopicCard topic={lectureTopic} moduleId={1} />)
-  expect(screen.getByRole('link')).toHaveAttribute('href', '/module/1/section/test-lecture')
+  render(<TopicCard topic={lectureTopic} moduleSlug="cherry" />)
+  expect(screen.getByRole('link')).toHaveAttribute('href', '/m/cherry/section/test-lecture')
 })
 
 test('renders Coming Soon badge for v2 topics', () => {
-  render(<TopicCard topic={v2Topic} moduleId={1} />)
+  render(<TopicCard topic={v2Topic} moduleSlug="cherry" />)
   expect(screen.getByText('Coming Soon')).toBeInTheDocument()
 })
 
 test('v2 topics do not render as links', () => {
-  render(<TopicCard topic={v2Topic} moduleId={1} />)
+  render(<TopicCard topic={v2Topic} moduleSlug="cherry" />)
   expect(screen.queryByRole('link')).not.toBeInTheDocument()
 })
 
 test('links to quiz page for quiz type', () => {
-  render(<TopicCard topic={quizTopic} moduleId={1} />)
-  expect(screen.getByRole('link')).toHaveAttribute('href', '/module/1/quiz/test-quiz')
+  render(<TopicCard topic={quizTopic} moduleSlug="cherry" />)
+  expect(screen.getByRole('link')).toHaveAttribute('href', '/m/cherry/quiz/test-quiz')
 })
 
 test('links to tool page for tool type', () => {
-  render(<TopicCard topic={toolTopic} moduleId={1} />)
-  expect(screen.getByRole('link')).toHaveAttribute('href', '/module/1/tool/test-tool')
+  render(<TopicCard topic={toolTopic} moduleSlug="cherry" />)
+  expect(screen.getByRole('link')).toHaveAttribute('href', '/m/cherry/tool/test-tool')
 })
 
 test('links to section reader for case-study type', () => {
-  render(<TopicCard topic={caseStudyTopic} moduleId={1} />)
-  expect(screen.getByRole('link')).toHaveAttribute('href', '/module/1/section/test-case')
+  render(<TopicCard topic={caseStudyTopic} moduleSlug="cherry" />)
+  expect(screen.getByRole('link')).toHaveAttribute('href', '/m/cherry/section/test-case')
 })

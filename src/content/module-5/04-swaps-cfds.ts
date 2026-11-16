@@ -14,7 +14,8 @@ const topic: Topic = {
     {
       id: 'the-index',
       title: 'The Index — the Floating Leg',
-      body: `The "floating" side of a swap settles against an **index**:\n\n- A **report of the price** of clearly assessable trades in a given market, usually on a **spot** basis\n- It is a **floating price record** — published by a Price Reporting Agency (Platts, Argus, OPIS…)\n\nA simple swap, then, is the purchase/sale at a **fixed** price versus the sale/purchase at the **floating** index average, over a future period.`,
+      body: `The "floating" side of a swap settles against an **index**:\n\n- A **report of the price** of clearly assessable trades in a given market, usually on a **spot** basis\n- It is a **floating price record** — published by a Price Reporting Agency (Platts, Argus, OPIS…)\n\nA simple swap, then, is the purchase/sale at a **fixed** price versus the sale/purchase at the **floating** index average, over a future period.\n\nAn index is not a number that exists in nature — it is a judgement, built from the assessable trades in a defined window. Work the day below, then tick the exclusion box and watch the assessment move. Your swap settles against *that* number, so the window, the minimum clip size and the treatment of bids and offers are in effect terms of your contract. When a PRA changes its methodology, every swap settling against that index changes with it.`,
+      visual: 'pra-index',
     },
     {
       id: 'swap-example',
@@ -30,7 +31,8 @@ const topic: Topic = {
     {
       id: 'structure-cfd',
       title: 'Market Structure → CFDs',
-      body: `**Backwardation** and **contango** are just adjectives for the price of oil in the future *relative* to oil today. **In crude, that structure is traded as CFDs.**\n\nWhy it bites: two cargoes with an **identical floating formula** (e.g. priced 5 days after B/L) are worth **different amounts** depending on *when they load* — a cargo offered 2–4 August is not the same value as one offered 21–25 August. That **time value can be quantified and locked in with CFDs.**`,
+      body: `**Backwardation** and **contango** are just adjectives for the price of oil in the future *relative* to oil today. **In crude, that structure is traded as CFDs.**\n\nWhy it bites: two cargoes with an **identical floating formula** (e.g. priced 5 days after B/L) are worth **different amounts** depending on *when they load* — a cargo offered 2–4 August is not the same value as one offered 21–25 August. That **time value can be quantified and locked in with CFDs.**\n\nThe two cargoes below are priced on identical terms and are not worth the same amount. Flip the market structure and watch which one is the valuable one invert — in contango the late cargo wins, in backwardation the early one does. Quote both at the same differential and you have given one of them away.`,
+      visual: 'time-value-cargo',
     },
     {
       id: 'cfd-curve',
@@ -41,12 +43,14 @@ const topic: Topic = {
     {
       id: 'cfd-trade',
       title: 'Worked Example — A CFD Trade',
-      body: `On **15 June 2017** you **buy** a CFD for the week **3–7 July**. It is offered at **AUG − 0.80** — that number is what you trade.\n\nThrough that week, Monday to Friday, you compare the published **Dated Brent** with the published **Brent front month**:\n\n- If the difference **narrows**, the **seller pays you**\n- If the difference **widens**, **you pay the seller**\n\nBuying the CFD makes you **long Dated / short the forward** — you profit as Dated strengthens relative to the front month.`,
+      body: `On **15 June 2017** you **buy** a CFD for the week **3–7 July**. It is offered at **AUG − 0.80** — that number is what you trade.\n\nThrough that week, Monday to Friday, you compare the published **Dated Brent** with the published **Brent front month**:\n\n- If the difference **narrows**, the **seller pays you**\n- If the difference **widens**, **you pay the seller**\n\nBuying the CFD makes you **long Dated / short the forward** — you profit as Dated strengthens relative to the front month.\n\nSettle the week below, day by day. Then try dragging all five days up or down *together*: the P&L does not move, because both legs of every comparison shift with the market. A CFD is a position in market structure, not in the oil price.`,
+      visual: 'cfd-settlement',
     },
     {
       id: 'making-price',
       title: 'Making a Price to a Refiner',
-      body: `Pull it together. When you quote a physical price to a refiner, it bundles up everything in this module:\n\n- The value of the **differential** (grade vs benchmark)\n- The cost of **freight, insurance and losses**\n- The value of **time** — i.e. market structure, captured via CFDs\n\nA price to a refiner includes **all of these** at once. The Brent complex is simply the toolkit for pricing and hedging each piece.`,
+      body: `Pull it together. When you quote a physical price to a refiner, it bundles up everything in this module:\n\n- The value of the **differential** (grade vs benchmark)\n- The cost of **freight, insurance and losses**\n- The value of **time** — i.e. market structure, captured via CFDs\n\nA price to a refiner includes **all of these** at once. The Brent complex is simply the toolkit for pricing and hedging each piece.\n\nBuild the quote below and click each component to see which instrument covers it. Four of the five have one: futures take the flat price, CFDs the time value, the DFL the Dated-to-futures gap, freight derivatives and insurance the voyage. The fifth — the **grade differential** — has no instrument, and that is not an oversight. It is the position the desk exists to hold, and the reason the whole apparatus was built: to strip everything else away until the one risk you understand better than the market is the only one left on the book.`,
+      visual: 'price-to-refiner',
     },
   ],
 }

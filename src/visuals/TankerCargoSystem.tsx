@@ -37,7 +37,7 @@ const SYSTEMS: Sys[] = [
   {
     key: 'slops', name: 'Slops & pump stack', color: '#3b82f6',
     what: 'Slop tanks (aft) receive tank washings and line displacements; the pump room drives discharge through the bottom lines.',
-    bites: 'The pump stack sets discharge rate against shore back pressure — the pumping-warranty fight of Module 3. Slop capacity loaded with cargo today is a grade-switch problem tomorrow.',
+    bites: 'The pump stack sets discharge rate against shore back pressure — the pumping-warranty fight of the laden-passage module. Slop capacity loaded with cargo today is a grade-switch problem tomorrow.',
   },
 ]
 

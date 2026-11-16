@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { Section } from '@/types/content'
 import Breadcrumb from './Breadcrumb'
+import { moduleIdForSlug, type ModuleSlug } from '@/lib/moduleSlugs'
 import ProgressBar from './ProgressBar'
 import SlideEditor from './SlideEditor'
 import ExportPanel from './ExportPanel'
@@ -26,7 +27,7 @@ import { buildTopicTs } from '@/lib/exportBuilders'
 
 type Props = {
   sections: Section[]
-  moduleId: number
+  moduleSlug: ModuleSlug
   topicTitle: string
   topicId?: string
   initialIndex?: number
@@ -41,7 +42,9 @@ const PROSE =
   'prose-code:rounded prose-code:bg-white/[0.06] prose-code:px-1.5 prose-code:py-0.5 prose-code:text-brand-cyan prose-code:before:content-none prose-code:after:content-none ' +
   'prose-table:text-slate-300 prose-th:text-slate-200 prose-blockquote:border-l-brand-blue prose-blockquote:text-slate-400'
 
-export default function SectionReader({ sections, moduleId, topicTitle, topicId = '', initialIndex = 0 }: Props) {
+export default function SectionReader({ sections, moduleSlug, topicTitle, topicId = '', initialIndex = 0 }: Props) {
+  // The id stays internal: it keys storage and the edit-mode source hint.
+  const moduleId = moduleIdForSlug(moduleSlug)
   const [current, setCurrent] = useState(initialIndex)
   const [notesOpen, setNotesOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
@@ -106,9 +109,9 @@ export default function SectionReader({ sections, moduleId, topicTitle, topicId 
 
   const goNext = useCallback(() => {
     if (liveLocked) return
-    if (isLast) router.push(`/module/${moduleId}`)
+    if (isLast) router.push(`/m/${moduleSlug}`)
     else setCurrent(cur + 1)
-  }, [isLast, cur, moduleId, router, liveLocked])
+  }, [isLast, cur, moduleSlug, router, liveLocked])
 
   const goPrev = useCallback(() => {
     if (liveLocked) return
@@ -195,7 +198,7 @@ export default function SectionReader({ sections, moduleId, topicTitle, topicId 
 
   return (
     <div className="flex h-screen flex-col">
-      <Breadcrumb moduleId={moduleId} topicTitle={topicTitle} />
+      <Breadcrumb moduleSlug={moduleSlug} topicTitle={topicTitle} />
       <ProgressBar current={cur + 1} total={total} />
 
       {/* Main content area */}

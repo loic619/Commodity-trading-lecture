@@ -75,6 +75,60 @@ import PhysicalFlow, { textDef as physicalFlowText } from './PhysicalFlow'
 import TraderPillars, { textDef as traderPillarsText } from './TraderPillars'
 import EveryoneIsATrader from './EveryoneIsATrader'
 import PtbfInvention from './PtbfInvention'
+import SupplyTons from './SupplyTons'
+import DemandTons from './DemandTons'
+import ExposureBook from './ExposureBook'
+import RiskTypes from './RiskTypes'
+import HedgeRatioDial from './HedgeRatioDial'
+import MvhrCalculator from './MvhrCalculator'
+import IncotermsLadder from './IncotermsLadder'
+import TenderableParity from './TenderableParity'
+import DifferentialAnatomy from './DifferentialAnatomy'
+import ArbitrageMap from './ArbitrageMap'
+import BasisCompass from './BasisCompass'
+import OptionStructures from './OptionStructures'
+import Black76Pricer from './Black76Pricer'
+import PriceFeedbackLoop from './PriceFeedbackLoop'
+import CallOnOpec from './CallOnOpec'
+import StocksAndSpare from './StocksAndSpare'
+import ValueChain from './ValueChain'
+import ConversionUnits from './ConversionUnits'
+import CapacityUtilisation from './CapacityUtilisation'
+import CrudeYields from './CrudeYields'
+import CrudeBenchmarks from './CrudeBenchmarks'
+import ProductUnits from './ProductUnits'
+import InformationCalendar from './InformationCalendar'
+import OilEventHistory from './OilEventHistory'
+import DowPhases from './DowPhases'
+import FibonacciRibbon from './FibonacciRibbon'
+import LongShortSenses from './LongShortSenses'
+import FixedVsFloating from './FixedVsFloating'
+import HedgeLifecycle from './HedgeLifecycle'
+import OilContracts from './OilContracts'
+import FormulaGap from './FormulaGap'
+import BrentWhy from './BrentWhy'
+import { DatedWindow, BfoeForward, DflSpread } from './BrentComplexMechanics'
+import PraIndex from './PraIndex'
+import TimeValueCargo from './TimeValueCargo'
+import CfdSettlement from './CfdSettlement'
+import PriceToRefiner from './PriceToRefiner'
+import FreightCostStack from './FreightCostStack'
+import SmallTankerScale from './SmallTankerScale'
+import WorldscaleMistakes from './WorldscaleMistakes'
+import FreightMarketResearch from './FreightMarketResearch'
+import QuoteAnatomy from './QuoteAnatomy'
+import RecapAnalysis from './RecapAnalysis'
+import CharteringTiming from './CharteringTiming'
+import OfferCounterLadder from './OfferCounterLadder'
+import SubjectsLifting from './SubjectsLifting'
+import VettingFunnel from './VettingFunnel'
+import BackToBackGap from './BackToBackGap'
+import { LaycanWatch, PortClearance } from './PreFixtureOps'
+import DelayFamilies from './DelayFamilies'
+import { PortPhysicalLayer, PortAdminLayer } from './LoadPortLayers'
+import { LoadingDocuments, PortLog } from './LoadingRecords'
+import { BerthingConfigurations, LoadSequence } from './BerthOperations'
+import { ShipShoreFigures, BillOfLading } from './CargoMeasurement'
 import TankerDimensions, { textDef as tankerDimensionsText } from './TankerDimensions'
 import DraftCapacityCalc from './DraftCapacityCalc'
 import VoyageEstimator from './VoyageEstimator'
@@ -179,6 +233,67 @@ export const visualRegistry: Record<string, ComponentType> = {
   'trader-pillars': TraderPillars,
   'everyone-is-a-trader': EveryoneIsATrader,
   'ptbf-invention': PtbfInvention,
+  'supply-tons': SupplyTons,
+  'demand-tons': DemandTons,
+  'exposure-book': ExposureBook,
+  'risk-types': RiskTypes,
+  'hedge-ratio-dial': HedgeRatioDial,
+  'mvhr-calculator': MvhrCalculator,
+  'incoterms-ladder': IncotermsLadder,
+  'tenderable-parity': TenderableParity,
+  'differential-anatomy': DifferentialAnatomy,
+  'arbitrage-map': ArbitrageMap,
+  'basis-compass': BasisCompass,
+  'option-structures': OptionStructures,
+  'black76-pricer': Black76Pricer,
+  'price-feedback-loop': PriceFeedbackLoop,
+  'call-on-opec': CallOnOpec,
+  'stocks-and-spare': StocksAndSpare,
+  'value-chain': ValueChain,
+  'conversion-units': ConversionUnits,
+  'capacity-utilisation': CapacityUtilisation,
+  'crude-yields': CrudeYields,
+  'crude-benchmarks': CrudeBenchmarks,
+  'product-units': ProductUnits,
+  'information-calendar': InformationCalendar,
+  'oil-event-history': OilEventHistory,
+  'dow-phases': DowPhases,
+  'fibonacci-ribbon': FibonacciRibbon,
+  'long-short-senses': LongShortSenses,
+  'fixed-vs-floating': FixedVsFloating,
+  'hedge-lifecycle': HedgeLifecycle,
+  'oil-contracts': OilContracts,
+  'formula-gap': FormulaGap,
+  'brent-why': BrentWhy,
+  'dated-window': DatedWindow,
+  'bfoe-forward': BfoeForward,
+  'dfl-spread': DflSpread,
+  'pra-index': PraIndex,
+  'time-value-cargo': TimeValueCargo,
+  'cfd-settlement': CfdSettlement,
+  'price-to-refiner': PriceToRefiner,
+  'freight-cost-stack': FreightCostStack,
+  'small-tanker-scale': SmallTankerScale,
+  'worldscale-mistakes': WorldscaleMistakes,
+  'freight-market-research': FreightMarketResearch,
+  'quote-anatomy': QuoteAnatomy,
+  'recap-analysis': RecapAnalysis,
+  'chartering-timing': CharteringTiming,
+  'offer-counter-ladder': OfferCounterLadder,
+  'subjects-lifting': SubjectsLifting,
+  'vetting-funnel': VettingFunnel,
+  'back-to-back-gap': BackToBackGap,
+  'laycan-watch': LaycanWatch,
+  'port-clearance': PortClearance,
+  'delay-families': DelayFamilies,
+  'port-physical-layer': PortPhysicalLayer,
+  'port-admin-layer': PortAdminLayer,
+  'loading-documents': LoadingDocuments,
+  'port-log': PortLog,
+  'berthing-configurations': BerthingConfigurations,
+  'load-sequence': LoadSequence,
+  'ship-shore-figures': ShipShoreFigures,
+  'bill-of-lading': BillOfLading,
 }
 
 // Visuals whose text is editable expose a VisualTextDef schema here.

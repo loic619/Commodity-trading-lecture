@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { isAuthenticated } from '@/lib/auth'
+import { MODULE_SLUGS, moduleCookieName } from '@/lib/moduleAccess'
 
 // Teacher-launched live sessions for the timed simulators. The whole market is
 // deterministic in `elapsed` seconds, so the ONLY thing that must be shared is
@@ -44,8 +44,11 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const serverNow = Date.now()
-  // Only someone who cleared the class password can launch/stop a session.
-  if (!isAuthenticated(req.cookies.get('session')?.value)) {
+  // Only someone who has opened a session with an invitation link can
+  // launch/stop one — the same strength as the class password this replaced,
+  // which every student also held.
+  const hasAnyModule = MODULE_SLUGS.some(s => req.cookies.get(moduleCookieName(s))?.value === 'valid')
+  if (!hasAnyModule) {
     return NextResponse.json({ ok: false, serverNow }, { status: 401 })
   }
   if (!configured) return NextResponse.json({ ok: false, configured: false, serverNow })

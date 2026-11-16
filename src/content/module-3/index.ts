@@ -9,7 +9,7 @@ import type { Topic } from '@/types/content'
 export const topics: Topic[] = [
   options,
   basisTool,
-  shipping,       // moved from Module 2: vessels, chartering, Worldscale & demurrage — the operational layer
+  shipping,       // moved from the hedging module: vessels, chartering, Worldscale & demurrage — the operational layer
   esgEudr,
   advancedSD,
   cherryToTerminal,

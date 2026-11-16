@@ -350,7 +350,7 @@ Marco`,
 function gradeAnalyst(total: number, base: number): InboxGrade {
   if (total >= base) return { label: 'Clean first day — the desk head asks Risk where they found you', cls: 'text-emerald-300', box: 'border-emerald-500/30 bg-emerald-500/[0.08]' }
   if (total >= 0) return { label: 'Survived day one — reread the feedback tonight, tomorrow is faster', cls: 'text-amber-300', box: 'border-amber-500/40 bg-amber-500/[0.10]' }
-  return { label: 'Day one ended in Risk’s office — the concepts are in Module 1, all of them', cls: 'text-rose-300', box: 'border-rose-500/40 bg-rose-500/[0.10]' }
+  return { label: 'Day one ended in Risk’s office — the concepts are all in this session', cls: 'text-rose-300', box: 'border-rose-500/40 bg-rose-500/[0.10]' }
 }
 
 // The screen above the inbox: the next five London contracts, date-adaptive,
